@@ -1,0 +1,41 @@
+
+
+Very simple example of clock domain crossing fifo (cdc_fifo) usage in Catapult HLS.
+This example uses a simple SystemC tlm_fifo based model in the pre-HLS SystemC simulation and
+a very simple simulation-only model in the Verilog RTL simulation.
+It is expected that a proper silicon target technology specific clock domain
+crossing fifo would be substituted for cdc_fifo.v in real world usage.
+(Usually such models are provided by ASIC vendors.)
+
+This simple example demonstrates usage of multiple clocks in the SystemC DUT which is to 
+be synthesized by Catapult, as well as usage of the hls_blackbox_module directive to substitute
+external Verilog models within Catapult generated RTL.
+
+Note that block1 in the DUT has a clock period of 3 ns and block2 has a clock period of 1 ns.
+These clocks are specified in the testbench.
+
+
+Steps:
+
+1. Build and run the SystemC simulation executable by typing:
+
+   make run
+
+   View the waveforms generated from the SC simulation:
+   make view_wave
+
+4. Run Catapult HLS to generate Verilog RTL for DUT:
+
+   BATCH: make go_hls
+
+   INTERACTIVE: catapult -f go_hls.tcl
+
+5. Launch SCVerify / QuestaSim with generated RTL by typing in Catapult command line:
+   (will automatically run the simulation and view the full waveform)
+
+   dofile scverify.tcl
+
+6. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+
+7. Delete all generated files
+   make clean

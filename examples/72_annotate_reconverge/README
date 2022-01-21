@@ -1,0 +1,39 @@
+
+This example shows a simple design which exhibits "stuttering" behavior in the RTL after HLS.
+It consists of four blocks. All blocks are pipelined with II=1.
+The stuttering behavior exists because block0 has a latency and capacity of 7 after HLS,
+while block1 has a latency and capacity of 1 after HLS.
+The primary input data stream diverges to feed the block0 and block1 inputs,
+and reconverges at their outputs.
+
+(This example is also known as "the bagel shop example").
+
+Step 1:
+Type
+  catapult -f go_hls.tcl
+
+Step 2:
+  Launch Questa on the RTL and type
+  run -all
+  view the waveforms and note the stuttering pattern in the input and output data streams.
+
+Step 3:
+  Build the pre-HLS SystemC model:
+  make build
+
+Step 4:
+  Run the SC simulation (copies json_all_zeros.txt to testbench.input.json)
+    make sim_sc_all_zeros
+  View the pre-HLS waveforms:
+    make view_wave
+  Note that because the annotations are all zeros,
+  the pre-HLS waveforms do not exhibit the stuttering behavior.
+
+Step 5:
+  Run the SC simulation with annotation file reflect the post-HLS latencies and capacities (copies json_nonzero.txt to testbench.input.json)
+    make sim_sc_nonzero
+  View the pre-HLS waveforms:
+    make view_wave
+  Note that because the annotations now more closely reflect the post-HLS latencies and capacities,
+  the pre-HLS waveforms now exhibit the stuttering behavior.
+

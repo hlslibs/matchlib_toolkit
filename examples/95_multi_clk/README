@@ -1,0 +1,27 @@
+
+
+Very simple Matchlib model showing Pre-HLS and Post-HLS simulations for a simple design
+and testbench using multiple clocks and dynamic reset.
+
+
+Steps:
+
+1. Build the SystemC simulation executable by typing:
+   make build
+
+2. Run the SC simulation by typing:
+   make run
+
+3. View the waveforms generated from the SC simulation:
+   make view_wave
+
+4. Run Catapult HLS to generate Verilog RTL for DUT:
+   make hls
+
+5. Launch SCVerify / QuestaSim with generated RTL by typing in Catapult command line:
+   dofile scverify.tcl
+
+6. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+
+7. Delete all generated files
+    make clean

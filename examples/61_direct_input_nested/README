@@ -1,0 +1,47 @@
+
+
+Catapult SystemC Direct Inputs "Stress Test"
+
+For a description of this test see:
+$MGC_HOME/shared/examples/matchlib/toolkit/doc/catapult_user_view_scheduling_rules.docx
+
+Note that run_logs dir contains pre-generated response logs for the cases below.
+These enable easy comparison of scenarios below just by using "diff".
+
+
+A. Pre-HLS Steps:
+
+1. Build and run the SystemC simulation executable by typing:
+   (Output responses will be in pre_hls.log)
+
+   make run
+
+   View the waveforms generated from the SC simulation:
+   make view_wave
+
+
+B. Post-HLS Using Regular SystemC signals (ie no direct inputs):
+   (Output responses will be logged to regular_signals.log)
+
+   BATCH: make regular_signals
+
+   INTERACTIVE: catapult -f regular_signals.tcl &
+                dofile scverify.tcl
+
+C. Post-HLS Using Direct Inputs and DIRECT_INPUT_SYNC
+   (Output responses will be logged to direct_input_sync.log)
+
+   BATCH: make direct_input_sync
+
+   INTERACTIVE: catapult -f direct_input_sync.tcl &
+                dofile scverify.tcl
+
+
+D. Post-HLS Using Direct Inputs and NO DIRECT_INPUT_SYNC
+   (Output responses will be logged to direct_input_no_sync.log)
+
+   BATCH: make direct_input_no_sync
+
+   INTERACTIVE: catapult -f direct_input_no_sync.tcl &
+                dofile scverify.tcl
+

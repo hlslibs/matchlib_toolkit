@@ -1,0 +1,16 @@
+{
+    "channels": {
+        "out1_comb_BA": {
+            "latency": 5,
+            "capacity": 2,
+            "src_name": "dut1.out1",
+            "dest_name": "UNBOUND"
+        },
+        "in1_comb_BA": {
+            "latency": 5,
+            "capacity": 2,
+            "src_name": "UNBOUND",
+            "dest_name": "dut1.in1"
+        }
+    }
+}

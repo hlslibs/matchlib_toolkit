@@ -1,0 +1,20 @@
+
+This simple example demonstrates an "car_factory" that is modeled in SystemC, and shows
+three different architectural approaches for the factory.
+
+See ../../docs/sc_hls_modeling_intro.pdf for a description of this example.
+
+
+Steps:
+
+1. Build the SystemC simulation executable by typing:
+   make build
+
+2. Run the SC simulation by typing:
+   ./sim_sc
+
+3. View the waveforms generated from the SC simulation:
+   make view_wave
+
+4. Delete all generated files
+    make clean

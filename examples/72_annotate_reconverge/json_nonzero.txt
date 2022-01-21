@@ -1,0 +1,40 @@
+{
+    "channels": {
+        "dut1.dout0_comb_BA": {
+            "latency": 0,
+            "capacity": 0,
+            "src_name": "dut1.divergence_inst.dout0_vld",
+            "dest_name": "dut1.block0_inst.din_vld"
+        },
+        "dut1.dout1_comb_BA": {
+            "latency": 0,
+            "capacity": 0,
+            "src_name": "dut1.divergence_inst.dout1_vld",
+            "dest_name": "dut1.block1_inst.din_vld"
+        },
+        "dut1.bout0_comb_BA": {
+            "latency": 7,
+            "capacity": 8,
+            "src_name": "dut1.block0_inst.dout_vld",
+            "dest_name": "dut1.reconvergence_inst.din0_vld"
+        },
+        "dut1.bout1_comb_BA": {
+            "latency": 1,
+            "capacity": 2,
+            "src_name": "dut1.block1_inst.dout_vld",
+            "dest_name": "dut1.reconvergence_inst.din1_vld"
+        },
+        "din_comb_BA": {
+            "latency": 0,
+            "capacity": 0,
+            "src_name": "UNBOUND",
+            "dest_name": "dut1.din_vld"
+        },
+        "dout_comb_BA": {
+            "latency": 0,
+            "capacity": 0,
+            "src_name": "dut1.dout_vld",
+            "dest_name": "UNBOUND"
+        }
+    }
+}

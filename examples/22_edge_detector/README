@@ -1,0 +1,17 @@
+To see the input and output image results, compile with -DHAVE_DISPLAY
+
+1. Build SC sim:
+  make build
+
+2. Run SC sim: (Need to let run for several minutes, then should see "SIMULATION PASSED")
+  ./sim_sc
+
+3. View SC waveforms:
+   make view_wave
+
+4. Run Catapult:
+  catapult -f go_hls.tcl
+
+5. Launch ModelSim from Catapult GUI: Verfication->ModelSim
+
+6. Type "run -all" in Modelsim command line. Let run for 10 minutes at least.

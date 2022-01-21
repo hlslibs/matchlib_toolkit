@@ -1,0 +1,44 @@
+#!/bin/bash
+
+trace=trace.vcd
+if [ $# -ne 0 ]; then
+  trace=$1
+fi
+
+if [ ! -f "$trace" ]; then
+    echo "$trace file does not exist"
+    exit 1
+fi
+
+cmd=vcd_hier_manip
+if [ ! -e "$cmd" ]; then
+  cdir="$(dirname $0)"
+  for dir in "$MATCHLIB_KIT_HOME/vcd_hier_fix/vcd_hierarchy_manipulator-master" \
+             "$cdir/../../vcd_hier_fix/vcd_hierarchy_manipulator-master" \
+             "$cdir"
+  do
+    if [ -e "$dir/vcd_hier_manip" ]; then
+      cmd="$dir/vcd_hier_manip"
+      break
+    fi
+  done
+fi
+
+out_trace=out.vcd
+$cmd "$trace" --output $out_trace >& /dev/null
+
+if [ $? != 0 -o ! -f out.vcd ]; then
+  echo "Warning: Could not convert '$trace' to $out_trace using '$cmd'"
+  echo "Attempting to convert '$trace' directly"
+  out_trace="$trace"
+fi
+
+wlf="`dirname $trace`/out.wlf"
+vcd2wlf "$out_trace" "$wlf"
+
+if [ $? != 0 ]; then
+  echo "Error: Could not convert '$trace' to Questa wlf file"
+  exit 1
+fi
+
+#vsim out.wlf -do "add wave out:/SystemC/*" -do "wave zoom full"

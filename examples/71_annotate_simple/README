@@ -1,0 +1,41 @@
+
+
+This is a very simple example showing Matchlib Connections Latency and Capacity backannotation.
+The latency and capacity info is backannotated from the top.input.json file.
+See the connections/annotate.h file for further information.
+
+You can edit the top.input.json file and experiment with different values.
+Note the reported times in the log file and also view the waveforms. (Make sure
+to remove the out.wlf file after each ./sim_sc run).
+Interesting values to try are:
+
+L: 0, C: 0
+L: 1, C: 1
+L: 1, C: 2
+L: 5, C: 1
+L: 5, C: 2
+
+
+
+
+Steps:
+
+1. Build the SystemC simulation executable by typing:
+   make build
+
+2. Run the SC simulation by typing:
+   make run
+
+3. View the waveforms generated from the SC simulation:
+   make view_wave
+
+4. Run Catapult HLS to generate Verilog RTL for DUT:
+   make hls
+
+5. Launch SCVerify / QuestaSim with generated RTL by typing in Catapult command line:
+   dofile scverify.tcl
+
+6. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+
+7. Delete all generated files
+   make clean
