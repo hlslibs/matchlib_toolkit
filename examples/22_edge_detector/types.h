@@ -4,7 +4,7 @@
  *                                                                        *
  *  Software Version: 1.2                                                 *
  *                                                                        *
- *  Release Date    : Fri Jan 21 15:24:39 PST 2022                        *
+ *  Release Date    : Fri Jan 28 15:04:19 PST 2022                        *
  *  Release Type    : Production Release                                  *
  *  Release Build   : 1.2.7                                               *
  *                                                                        *
@@ -23,7 +23,7 @@
 
 #include <ac_fixed.h>
 #include <mc_connections.h>
-#include <math/mgc_ac_math.h>
+#include <ac_math/ac_atan2_cordic.h>
 #include <ac_math/ac_sqrt_pwl.h>
 #include "edge_defs.h"
 

@@ -23,6 +23,12 @@ flow package option set /CCOV/CCOV_HOME $env(CCOV_HOME)
 # ===========
 flow package require /SCVerify
 
+# QuestaSim
+# ===========
+flow package require /QuestaSIM
+flow package option set /QuestaSIM/ENABLE_CODE_COVERAGE true
+flow package option set /QuestaSIM/MSIM_DOFILE $sfd/msim.do
+
 # solution file add
 # ===========
 solution file add "$sfd/apb_dma.h" -type CHEADER

@@ -4,7 +4,7 @@
  *                                                                        *
  *  Software Version: 1.2                                                 *
  *                                                                        *
- *  Release Date    : Fri Jan 21 15:24:39 PST 2022                        *
+ *  Release Date    : Fri Jan 28 15:04:19 PST 2022                        *
  *  Release Type    : Production Release                                  *
  *  Release Build   : 1.2.7                                               *
  *                                                                        *
@@ -78,7 +78,7 @@ private:
     out1.Reset();
     in1.Reset();
     wait();                                 // WAIT
-#define DESIGN_3 true
+
 #ifdef DESIGN_1
     while (1) {
       packet p = in1.Pop();
@@ -87,8 +87,8 @@ private:
     }
 
 #elif DESIGN_2
-#pragma hls_pipeline_init_interval 1
-#pragma pipeline_stall_mode flush
+    #pragma hls_pipeline_init_interval 1
+    #pragma pipeline_stall_mode flush
     while (1) {
       packet p = in1.Pop();
       for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
@@ -96,21 +96,21 @@ private:
     }
 
 #elif DESIGN_3
-#pragma hls_pipeline_init_interval 1
-#pragma pipeline_stall_mode flush
+    #pragma hls_pipeline_init_interval 1
+    #pragma pipeline_stall_mode flush
     while (1) {
       packet p = in1.Pop();
-#pragma unroll yes
+      #pragma unroll yes
       for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
       out1.Push(p);
     }
 
 #elif DESIGN_4
-#pragma hls_pipeline_init_interval 2
-#pragma pipeline_stall_mode flush
+    #pragma hls_pipeline_init_interval 2
+    #pragma pipeline_stall_mode flush
     while (1) {
       packet p = in1.Pop();
-#pragma unroll yes
+      #pragma unroll yes
       for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
       out1.Push(p);
     }
@@ -120,10 +120,10 @@ private:
       packet p = in1.Pop();
 
       if (p.coeff == 0) {
-#pragma unroll yes
+        #pragma unroll yes
         for (int i=0; i < packet::data_len; i++) { p.data[i] = 0; }
       } else if (p.coeff != 1) {
-#pragma unroll yes
+        #pragma unroll yes
         for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
       }
       out1.Push(p);
@@ -134,7 +134,7 @@ private:
     while (1) {
       packet p = in1.Pop();
       if (p.coeff == 0) {
-#pragma unroll yes
+        #pragma unroll yes
         for (int i=0; i < packet::data_len; i++) { p.data[i] = 0; }
       } else if (p.coeff != 1) {
         for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
@@ -148,12 +148,12 @@ private:
 
       if (p.coeff == 0) {
         LATENCY_CONTROL_BEGIN()
-#pragma unroll yes
+        #pragma unroll yes
         for (int i=0; i < packet::data_len; i++) { p.data[i] = 0; }
         LATENCY_CONTROL_END()
       } else if (p.coeff != 1) {
         LATENCY_CONTROL_BEGIN()
-#pragma unroll yes
+        #pragma unroll yes
         for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
         LATENCY_CONTROL_END()
       }
@@ -161,14 +161,13 @@ private:
     }
 
 #elif DESIGN_8
-
-#pragma hls_pipeline_init_interval 1
-#pragma pipeline_stall_mode flush
+    #pragma hls_pipeline_init_interval 1
+    #pragma pipeline_stall_mode flush
     while (1) {
       packet p = in1.Pop();
 
       if (p.coeff == 0) {
-#pragma unroll yes
+        #pragma unroll yes
         for (int i=0; i < packet::data_len; i++) { p.data[i] = 0; }
       } else if (p.coeff != 1) {
         for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
@@ -176,13 +175,12 @@ private:
       out1.Push(p);
     }
 
-
 #elif DESIGN_9
-#pragma hls_pipeline_init_interval 1
-#pragma pipeline_stall_mode flush
+    #pragma hls_pipeline_init_interval 1
+    #pragma pipeline_stall_mode flush
     while (1) {
       packet p = in1.Pop();
-#pragma unroll 5
+        #pragma unroll 5
       for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
       out1.Push(p);
     }

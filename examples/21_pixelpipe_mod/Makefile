@@ -115,7 +115,8 @@ export CATAPULT_HOME SYSTEMC_HOME CONNECTIONS_HOME MATCHLIB_HOME BOOST_HOME RAPI
 # Determine the director containing the source files from the path to this Makefile
 PWD := $(shell pwd)
 SOURCE_DIR1 = $(dir $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
-SOURCE_DIR = $(if $(subst ./,,$(SOURCE_DIR1)),$(SOURCE_DIR1),$(PWD)/)
+ROOT_DIR = $(if $(subst ./,,$(SOURCE_DIR1)),$(SOURCE_DIR1),$(PWD)/)
+SOURCE_DIR = $(ROOT_DIR)../20_DCT_sysc/
 
 INCDIRS := -I$(SOURCE_DIR) -I$(SOURCE_DIR)/../../include -I$(SOURCE_DIR)/RAM_lib
 INCDIRS += -I$(SYSTEMC_HOME)/include -I$(SYSTEMC_HOME)/src
@@ -141,7 +142,7 @@ run: trace.vcd
 
 trace.vcd: sim_sc
 	-@echo "Starting execution in directory `pwd`"
-	./$^ $(SOURCE_DIR)sample.bmp trace
+	./$^ $(ROOT_DIR)sample.bmp trace
 
 sim_sc: $(wildcard $(SOURCE_DIR)*.h) $(wildcard $(SOURCE_DIR)*.cpp)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LIBDIRS) $(wildcard $(SOURCE_DIR)*.cpp) -o $@ $(LIBS)

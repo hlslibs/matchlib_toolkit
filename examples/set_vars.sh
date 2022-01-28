@@ -79,7 +79,7 @@ export BOOST_HOME
 # Configure RapidJSON
 if [ ! -d ./rapidjson ]; then
  git clone http://github.com/Tencent/rapidjson
-endif
+fi
 RAPIDJSON_HOME=`pwd`/rapidjson
 export RAPIDJSON_HOME
 
@@ -96,7 +96,7 @@ if [ ! -d ./ac_math ]; then
   echo "Downloading AC_Math..."
   git clone http://github.com/hlslibs/ac_math.git
 fi
-AC_TYPES=`pwd`/ac_math
+AC_MATH=`pwd`/ac_math
 export AC_MATH
 
 # Configure AC Simutils
@@ -106,4 +106,15 @@ if [ ! -d ./ac_simutils ]; then
 fi
 AC_SIMUTILS=`pwd`/ac_simutils
 export AC_SIMUTILS
+
+# Configure BMP IO
+if [ ! -d ./bmp_io ]; then
+  mkdir ./bmp_io
+  cd ./bmp_io
+  wget --no-check-certificate https://people.math.sc.edu/Burkardt/cpp_src/bmp_io/bmp_io.cpp
+  wget --no-check-certificate https://people.math.sc.edu/Burkardt/cpp_src/bmp_io/bmp_io.hpp
+  cd ..
+fi
+BMP_IO=`pwd`/bmp_io
+export BMP_IO
 

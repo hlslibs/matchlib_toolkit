@@ -29,6 +29,9 @@ Steps:
    dofile scverify.tcl
 
 6. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+   run -all
+   wave zoom full
+
 
 7. Delete all generated files
     make clean

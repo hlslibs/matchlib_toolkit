@@ -72,7 +72,7 @@ directive set -CLOCKS {clk {-CLOCK_PERIOD 2.0}}
 go assembly
 directive set /EdgeHierarchy/MagnitudeAngle -DESIGN_GOAL latency
 directive set /EdgeHierarchy/MagnitudeAngle/while -PIPELINE_INIT_INTERVAL 0
-directive set /EdgeHierarchy/MagnitudeAngle/atan2<9,9,AC_TRN,AC_WRAP,9,9,AC_TRN,AC_WRAP,8,3,AC_TRN,AC_WRAP>:for -UNROLL yes
+directive set /EdgeHierarchy/MagnitudeAngle/ac_math::ac_atan2_cordic<9,9,AC_TRN,AC_WRAP,9,9,AC_TRN,AC_WRAP,8,3,AC_TRN,AC_WRAP>:for -UNROLL yes
 directive set /EdgeHierarchy/MagnitudeAngle/while -PIPELINE_STALL_MODE flush
 directive set /EdgeHierarchy/VerticalGradient/line_buf1:rsc -MAP_TO_MODULE ccs_sample_mem.ccs_ram_sync_singleport
 directive set /EdgeHierarchy/VerticalGradient/line_buf0:rsc -MAP_TO_MODULE ccs_sample_mem.ccs_ram_sync_singleport

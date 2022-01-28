@@ -41,12 +41,9 @@ Steps:
       ModelSim->
         RTL Verilog   (Double click)
 
-6. In ModelSim GUI, at command prompt:
-     run -all
-
-7. If desired, delete generated files:
+6. If desired, delete generated files:
    make clean
 
-8. To generate the Verilog wrapper around the SystemC DUT, use this command:
+7. To generate the Verilog wrapper around the SystemC DUT, use this command:
 ./bin/wrapper_gen.py sim_sc --clock_period 10 --clock_name clk top.dma1
 

@@ -4,7 +4,7 @@
  *                                                                        *
  *  Software Version: 1.2                                                 *
  *                                                                        *
- *  Release Date    : Fri Jan 21 15:24:39 PST 2022                        *
+ *  Release Date    : Fri Jan 28 15:04:19 PST 2022                        *
  *  Release Type    : Production Release                                  *
  *  Release Build   : 1.2.7                                               *
  *                                                                        *
@@ -162,7 +162,8 @@ public: // Interface
           // Catapult's math library implementation of piecewise linear sqrt and atan2
           ac_sqrt_pwl(sum,sq_rt);
           // sqrt(sum,sq_rt);
-          atan2((ac_fixed<9,9>)dy,(ac_fixed<9,9>)dx,at);
+          ac_atan2_cordic((ac_fixed<9,9>)dy,(ac_fixed<9,9>)dx,at);
+          //atan2((ac_fixed<9,9>)dy,(ac_fixed<9,9>)dx,at);
           magn_i = sq_rt.to_uint();
 
           magn.Push(magn_i);

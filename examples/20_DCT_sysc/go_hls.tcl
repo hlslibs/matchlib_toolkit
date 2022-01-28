@@ -22,7 +22,7 @@ flow package option set /SCVerify/INVOKE_ARGS "[file join $sfd sample.bmp] trace
 
 flow package require /QuestaSIM
 flow package option set /QuestaSIM/ENABLE_CODE_COVERAGE true
-flow package option set /QuestaSIM/MSIM_DOFILE msim.do
+flow package option set /QuestaSIM/MSIM_DOFILE $sfd/msim.do
 
 
 solution file add "$sfd/dct.cpp"

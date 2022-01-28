@@ -96,3 +96,13 @@ if (! -e ./ac_simutils) then
 endif
 setenv AC_SIMUTILS `pwd`/ac_simutils
 
+# Configure BMP IO
+if ( ! -e ./bmp_io ) then
+  mkdir ./bmp_io
+  cd ./bmp_io
+  wget --no-check-certificate https://people.math.sc.edu/Burkardt/cpp_src/bmp_io/bmp_io.cpp
+  wget --no-check-certificate https://people.math.sc.edu/Burkardt/cpp_src/bmp_io/bmp_io.hpp
+  cd ..
+endif
+setenv BMP_IO `pwd`/bmp_io
+
