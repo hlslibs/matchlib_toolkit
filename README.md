@@ -27,7 +27,8 @@ For a complete, standalone environment, do the following
 - shell> source examples/set_vars.csh
 -   OR
 - shell> . examples/set_vars.sh
-- shell> cd examples/<a particular example>
+Now run the first example '01_and_gate'
+- shell> cd examples/01_and_gate
 - shell> gmake all
 
 
