@@ -4,9 +4,9 @@
  *                                                                        *
  *  Software Version: 1.2                                                 *
  *                                                                        *
- *  Release Date    : Fri Jan 28 15:18:06 PST 2022                        *
+ *  Release Date    : Tue Feb  1 15:18:00 PST 2022                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 1.2.7                                               *
+ *  Release Build   : 1.2.8                                               *
  *                                                                        *
  *  Unpublished work. Copyright 2020 Siemens                              *
  *                                                                        *
@@ -67,9 +67,9 @@ SC_MODULE(dut)
     wait();                                 // WAIT
 
     while (1) {
+      sync1.sync_in();
 #pragma hls_pipeline_init_interval 1
 #pragma pipeline_stall_mode flush
-      sync1.sync_in();
       for (int i=0; i < 8; i++) {
         out1.Push(mem[i + (8 * ping_pong)]);
       }
