@@ -55,6 +55,7 @@ directive set /pixelpipe_mod/dct/dct_v/COPY_ROW1 -UNROLL yes
 directive set /pixelpipe_mod/dct/dct_v/ROW1 -UNROLL yes
 directive set /pixelpipe_mod/dct/dct_v/PRE_ADD -UNROLL yes
 directive set /pixelpipe_mod/dct/dct_v/MAC -UNROLL yes
+directive set /pixelpipe_mod/quantize_exec -DESIGN_GOAL latency
 
 go architect
 go allocate

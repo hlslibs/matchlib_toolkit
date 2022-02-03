@@ -25,13 +25,14 @@ foreach example {DESIGN_1 DESIGN_2 DESIGN_3 DESIGN_4 DESIGN_5 DESIGN_6 DESIGN_7 
   solution options set /Input/CompilerFlags "-DCONNECTIONS_ACCURATE_SIM -DCONNECTIONS_NAMING_ORIGINAL -D${example}"
   solution file add "$sfd/dut.h" -type CHEADER
   solution file add "$sfd/testbench.cpp" -type C++ -exclude true
-
+  
+  solution rename $example
+  
   go analyze
   directive set -DESIGN_HIERARCHY dut
 
   go compile
   solution library add nangate-45nm_beh -- -rtlsyntool OasysRTL -vendor Nangate -technology 045nm
-  solution rename $example
 
   go libraries
   directive set -CLOCKS {clk {-CLOCK_PERIOD 2.0}}
