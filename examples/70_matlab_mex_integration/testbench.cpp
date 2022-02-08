@@ -4,20 +4,30 @@
  *                                                                        *
  *  Software Version: 1.2                                                 *
  *                                                                        *
- *  Release Date    : Wed Feb  2 17:40:47 PST 2022                        *
+ *  Release Date    : Mon Feb  7 16:22:08 PST 2022                        *
  *  Release Type    : Production Release                                  *
  *  Release Build   : 1.2.8                                               *
  *                                                                        *
- *  Unpublished work. Copyright 2020 Siemens                              *
+ *  Copyright 2020 Siemens                                                *
  *                                                                        *
- **************************************************************************/
-
-// This document contains information that is proprietary to Siemens
-// The original recipient of this document may duplicate this  
-// document in whole or in part for internal business purposes only, provided  
-// that this entire notice appears in all copies. In duplicating any part of  
-// this document, the recipient agrees to make every reasonable effort to  
-// prevent the unauthorized use and distribution of the proprietary information.
+ **************************************************************************
+ *  Licensed under the Apache License, Version 2.0 (the "License");       *
+ *  you may not use this file except in compliance with the License.      * 
+ *  You may obtain a copy of the License at                               *
+ *                                                                        *
+ *      http://www.apache.org/licenses/LICENSE-2.0                        *
+ *                                                                        *
+ *  Unless required by applicable law or agreed to in writing, software   * 
+ *  distributed under the License is distributed on an "AS IS" BASIS,     * 
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
+ *  implied.                                                              * 
+ *  See the License for the specific language governing permissions and   * 
+ *  limitations under the License.                                        *
+ **************************************************************************
+ *                                                                        *
+ *  The most recent version of this package is available at github.       *
+ *                                                                        *
+ *************************************************************************/
 
 #include <systemc.h>
 #include "dut.h"
