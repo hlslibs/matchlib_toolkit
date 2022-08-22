@@ -1,0 +1,54 @@
+
+This simple example demonstrates a "throughput accurate" DMA model using NVidia Matchlib and Catapult HLS. 
+
+This particular example wraps both the DMA DUT and the RAM model in SystemC TLM2 wrappers (to hide the synthesizeable axi4 master and slave interfaces). The testbench uses standard SystemC TLM2 instantations and bindings, as SystemC TLM2 virtual platform models typically do.
+
+In summary, this example is the same as example ../08* but the testbench is coded using TLM2 virtual platform APIs. The TLM2 APIs that this example uses are the "b_transport()" APIs,
+which correspond to the so-called "LT" (loosely timed) modeling approach in SystemC TLM2.
+Because virtual platforms are typically loosely timed and modeled for highest simulation performance, it is appropriate to use the Matchlib "FAST_SIM" mode for the Matchlib models that are embedded in TLM2 simulations. This is shown in the steps below. 
+
+When FAST_SIM mode is used, the clock input for the matchlib models is rarely used.
+In a TLM2 virtual platform model running for millions/billions of actual clock cycles,
+the clock ticking itself might slow down the overall system needlessly. When FAST_SIM mode is 
+used, an easy solution to this issue would be to set the clock period to perhaps 100x
+its actual period. This should resolve any simulation performance issues without introducing
+any functional issues.
+
+The intent of this example is to provide a simple demonstration of how Matchlib connections models and that use synthesizeable bus interfaces such as AXI4 can be easily wrapped and instantiated in larger TLM2 virtual platform models.
+
+See ../../docs/matchlib_intro_dac2019.pdf for a description of this example.
+
+See also ./wrapping*tlm2*.pdf for a description of this example.
+
+Steps:
+
+0. Set your shell environment variables:
+
+1. Build FAST_SIM SystemC model within TLM2 TB:
+   make fast_sim_sc
+
+2. Run FAST_SIM SystemC model within TLM2 TB:
+   ./fast_sim_sc
+
+3. Build ACCURATE_SIM SystemC model within TLM2 TB:
+   make ./sim_sc
+
+4. Run ACCURATE_SIM SystemC model within TLM2 TB:
+   ./sim_sc
+
+   Note log output similar to following:
+85 ns Top.testbench start_time: 14 ns end_time: 85 ns
+85 ns Top.testbench axi beats (dec): 64
+85 ns Top.testbench elapsed time: 71 ns
+85 ns Top.testbench beat rate: 1109 ps
+85 ns Top.testbench clock period: 1 ns
+
+   The DMA is performing a concurrent 64 beat burst read and write to the ram.
+   The beat rate indicates that it is achieving nearly 1 beat per clock. 
+   (As the burst length increases, the beat rate converges to 1).
+
+
+5. View VCD waveforms from SystemC model before HLS:
+
+   make view_wave
+

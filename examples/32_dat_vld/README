@@ -1,0 +1,33 @@
+
+
+Very simple Matchlib model showing Pre-HLS and Post-HLS simulations that demonstrates Matchlib Pop/Push operations.
+
+This particular example shows how to have a "data/valid" output interface of the DUT
+which works properly even though the DUT is pipelined with an II=2 during HLS.
+With the data/valid interface, the "ready" signal is not present but is implicitly
+always true, so that message passing semantics are maintained. The conversion
+block in this example simply wires the "rdy" signal to true for the main dut, which uses
+normal Matchlib Push/Pop message passing interfaces.
+
+
+Steps:
+
+1. Build the SystemC simulation executable by typing:
+   make build
+
+2. Run the SC simulation by typing:
+   ./sim_sc
+
+3. View the waveforms generated from the SC simulation:
+   make view_wave
+
+4. Run Catapult HLS to generate Verilog RTL for DUT:
+   catapult -f go_hls.tcl
+
+5. Launch SCVerify / QuestaSim with generated RTL by typing in Catapult command line:
+   dofile scverify.tcl
+
+6. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+
+7. Delete all generated files
+    make clean

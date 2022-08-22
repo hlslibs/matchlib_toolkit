@@ -4,9 +4,9 @@
  *                                                                        *
  *  Software Version: 1.2                                                 *
  *                                                                        *
- *  Release Date    : Mon Feb  7 16:22:08 PST 2022                        *
+ *  Release Date    : Thu Aug 11 16:24:59 PDT 2022                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 1.2.8                                               *
+ *  Release Build   : 1.2.9                                               *
  *                                                                        *
  *  Copyright 2020 Siemens                                                *
  *                                                                        *
@@ -33,20 +33,7 @@
 
 #include "axi4_segment.h"
 
-// Below 2 macros should be moved into ../../include/axi4_segment.h
-#ifndef AXI4_W_SEGMENT_CFG
-#define AXI4_W_SEGMENT_CFG(cfg, n) \
-  cfg::w_segment CCS_INIT_S1(n); \
-  Connections::Combinational<cfg::ex_aw_payload> CCS_INIT_S1(n ## _ex_aw_chan); \
-  Connections::Combinational<cfg::w_payload>     CCS_INIT_S1(n ## _w_chan); \
-  Connections::Combinational<cfg::b_payload> CCS_INIT_S1(n ## _b_chan);
-#endif
-
-#ifndef AXI4_R_SEGMENT_CFG
-#define AXI4_R_SEGMENT_CFG(cfg, n) \
-  cfg::r_segment CCS_INIT_S1(n); \
-  Connections::Combinational<cfg::ex_ar_payload> CCS_INIT_S1(n ## _ex_ar_chan);
-#endif
+#include "axi_bus_params.h"
 
 /**
  *  * \brief dma command sent to the DMA engine
@@ -84,26 +71,6 @@ struct dma_address_map {
   uint64_t  start;
 };
 
-typedef axi::axi4_segment<axi::cfg::standard> local_axi_64;
-
-struct axi_16 {
-  enum {
-    dataWidth = 16,
-    useVariableBeatSize = 0,
-    useMisalignedAddresses = 0,
-    useLast = 1,
-    useWriteStrobes = 1,
-    useBurst = 1, useFixedBurst = 0, useWrapBurst = 0, maxBurstSize = 256,
-    useQoS = 0, useLock = 0, useProt = 0, useCache = 0, useRegion = 0,
-    aUserWidth = 0, wUserWidth = 0, bUserWidth = 0, rUserWidth = 0,
-    addrWidth = 32,
-    idWidth = 4,
-    useWriteResponses = 1,
-  };
-};
-
-typedef axi::axi4_segment<axi_16> local_axi_16;
-
 /**
  *  * \brief dma module
 */
@@ -111,15 +78,18 @@ typedef axi::axi4_segment<axi_16> local_axi_16;
 class dma : public sc_module
 {
 public:
-  sc_in<bool> CCS_INIT_S1(clk);
-  sc_in<bool> CCS_INIT_S1(rst_bar);
-
-  local_axi_16::r_master<> CCS_INIT_S1(r_master0);
-  local_axi_16::w_master<> CCS_INIT_S1(w_master0);
-  local_axi_64::r_slave<>  CCS_INIT_S1(r_slave0);
-  local_axi_64::w_slave<>  CCS_INIT_S1(w_slave0);
-  Connections::Out<bool> CCS_INIT_S1(dma_done);
+  sc_in<bool>                   CCS_INIT_S1(clk);
+  sc_in<bool>                   CCS_INIT_S1(rst_bar);
+  Connections::Out<bool>        CCS_INIT_S1(dma_done);
   Connections::Out<sc_uint<32>> CCS_INIT_S1(dma_dbg);
+
+  // Declare the slave connection to the CPU
+  local_axi_64::r_slave<>       CCS_INIT_S1(r_slave0);
+  local_axi_64::w_slave<>       CCS_INIT_S1(w_slave0);
+
+  // Declare the master connection to the RAM
+  local_axi_16::r_master<>      CCS_INIT_S1(r_master0);
+  local_axi_16::w_master<>      CCS_INIT_S1(w_master0);
 
   SC_CTOR(dma) {
     SC_THREAD(slave_process);
@@ -142,7 +112,7 @@ private:
   AXI4_W_SEGMENT_CFG(local_axi_16, w_segment0)
   AXI4_R_SEGMENT_CFG(local_axi_16, r_segment0)
 
-  // master_process recieves dma_cmd transactions from the slave_process.
+  // master_process receives dma_cmd transactions from the slave_process.
   // the master_process performs the dma operations via the master0 axi port,
   // and then sends a done signal to the requester via the dma_done transaction.
   void master_process() {
@@ -159,21 +129,21 @@ private:
       local_axi_16::ex_ar_payload ar;
       local_axi_16::ex_aw_payload aw;
 
-      dma_cmd cmd = dma_cmd_chan.Pop();
-      ar.ex_len = cmd.len;
+      dma_cmd cmd = dma_cmd_chan.Pop(); // Blocking read - waiting for cmd
+      ar.ex_len = cmd.len;              // Get transfer settings into payloads
       aw.ex_len = cmd.len;
       ar.addr = cmd.ar_addr;
       aw.addr = cmd.aw_addr;
-      r_segment0_ex_ar_chan.Push(ar);
-      w_segment0_ex_aw_chan.Push(aw);
+      r_segment0_ex_ar_chan.Push(ar);   // Start the AXI4 read request
+      w_segment0_ex_aw_chan.Push(aw);   // Start the AXI4 write request
 
       #pragma hls_pipeline_init_interval 1
 #pragma pipeline_stall_mode flush
       while (1) {
-        local_axi_16::r_payload r = r_master0.r.Pop();
+        local_axi_16::r_payload r = r_master0.r.Pop();   // Read the data in ...
         local_axi_16::w_payload w;
         w.data = r.data;
-        w_segment0_w_chan.Push(w);
+        w_segment0_w_chan.Push(w);                       // ... and write it out
 
         if (ar.ex_len-- == 0) { break; }
       }
@@ -183,7 +153,7 @@ private:
     }
   }
 
-  // slave_process accepts incoming axi4 requests from slave0 and programs the dma registers.
+  // slave_process accepts incoming axi4 requests from slave0 and programs the dma registers (cmd1).
   // when the start register is written to, a dma_cmd transaction is sent to the dma master_process
   void slave_process() {
     r_slave0.reset();
@@ -202,20 +172,20 @@ private:
       if (w_slave0.get_single_write(aw, w, b)) {
         b.resp = local_axi_64::Enc::XRESP::SLVERR;
         switch (aw.addr) {
-          case offsetof(dma_address_map, ar_addr):
+          case offsetof(dma_address_map, ar_addr):       // CPU programming the read address
             cmd1.ar_addr = w.data;
             b.resp = local_axi_64::Enc::XRESP::OKAY;
             break;
-          case offsetof(dma_address_map, aw_addr):
+          case offsetof(dma_address_map, aw_addr):       // CPU programming the write address
             cmd1.aw_addr = w.data;
             b.resp = local_axi_64::Enc::XRESP::OKAY;
             break;
-          case offsetof(dma_address_map, len):
+          case offsetof(dma_address_map, len):           // CPU programming the length
             cmd1.len = w.data;
             b.resp = local_axi_64::Enc::XRESP::OKAY;
             break;
-          case offsetof(dma_address_map, start):
-            dma_cmd_chan.Push(cmd1);
+          case offsetof(dma_address_map, start):         // CPU initiating the DMA operation
+            dma_cmd_chan.Push(cmd1);                     // acutally push the message
             b.resp = local_axi_64::Enc::XRESP::OKAY;
             break;
         }

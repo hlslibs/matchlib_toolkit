@@ -246,7 +246,7 @@ class BufferStatus : public sc_module {
 
 typedef ac_int<16,true> STATUS_TYPE;
 
-template <class T, unsigned N, class STATUS_TYPE = ac_int<16,16>>
+template <class T, unsigned N, class STATUS_TYPE = ac_int<16,true>>
 class FifoChannelStatus : public sc_module {
 public:
   sc_in<bool>         CCS_INIT_S1(clk);

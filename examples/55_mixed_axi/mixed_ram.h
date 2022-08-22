@@ -4,9 +4,9 @@
  *                                                                        *
  *  Software Version: 1.2                                                 *
  *                                                                        *
- *  Release Date    : Mon Feb  7 16:22:08 PST 2022                        *
+ *  Release Date    : Thu Aug 11 16:24:59 PDT 2022                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 1.2.8                                               *
+ *  Release Build   : 1.2.9                                               *
  *                                                                        *
  *  Copyright 2020 Siemens                                                *
  *                                                                        *
@@ -41,8 +41,8 @@ template <class cfg>
 class ram : public sc_module
 {
 public:
-  sc_in<bool> CCS_INIT_S1(clk);
-  sc_in<bool> CCS_INIT_S1(rst_bar);
+  sc_in<bool>                                   CCS_INIT_S1(clk);
+  sc_in<bool>                                   CCS_INIT_S1(rst_bar);
   typename cfg::template r_slave<AUTO_PORT>     CCS_INIT_S1(r_slave0);
   typename cfg::template w_slave<AUTO_PORT>     CCS_INIT_S1(w_slave0);
 

@@ -1,0 +1,66 @@
+
+
+This is a simple example that demonstrates the basic approach to embed a Matchlib SystemC design
+into a Python environment or a Matlab Mex environment. 
+
+For more information on the approach used here to make the Matchlib SystemC simulation
+available to the Python environment, see:
+
+https://docs.python.org/3/library/ctypes.html
+
+For more information on Matlab Mex, see:
+
+https://www.mathworks.com/help/matlab/cpp-mex-file-applications.html
+
+The key issue is that SystemC is a multithreaded simulation environment that needs to preserve
+the state of all threads in the design while running in a Python program or Matlab simulation.
+However Python and Matlab Mex expect to be able to call a single (non-blocking) C/C++ function that
+will take input data and return output results immediately.
+
+The approach demonstrated in this example shows how the SystemC sc_start and sc_pause functions
+can be used to step the SystemC simulation so that it can be called from Python and Matlab Mex.
+In this example, the process_one_sample() function represents a simple non-blocking C
+function that can be repeatedly called from Python and Matlab Mex, and which looks like a normal
+C++ function. In reality, each invocation of this function starts and then pauses the entire SC
+simulation as needed to process an input data item and produce an output result, which is then
+returned.
+
+
+Note: since Python is freely available on every Linux system, this example uses Python only.
+The approach used for Matlab Mex (including the Makefile steps for building the shared library)
+will be similar when using Matlab Mex.
+
+There is also discussion on some of the techniques used in this example here:
+
+https://forums.accellera.org/topic/24-systemc-230-with-main/
+
+
+Steps:
+
+1. Build the SystemC shared library for export to Python by typing:
+   make libpy.so
+
+2. Run the SC simulation from the Python testbench by typing:
+   make sim_py
+
+3. View the waveforms generated from the SC simulation:
+   ./vsim_vcd
+
+4. If desired make and run the equivalent standalone SC simulation
+   make sim_sc
+   ./sim_sc
+
+5. Run Catapult HLS to generate Verilog RTL for DUT:
+   catapult -f go_hls.tcl
+
+6. Launch SCVerify / QuestaSim with generated RTL by typing in Catapult command line:
+   dofile scverify.tcl
+
+7. Run RTL Sim by typing in QuestaSim command line:
+   run -all
+   wave zoom full
+
+8. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+
+9. Delete all generated files
+    make clean

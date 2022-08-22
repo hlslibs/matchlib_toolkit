@@ -4,9 +4,9 @@
  *                                                                        *
  *  Software Version: 1.2                                                 *
  *                                                                        *
- *  Release Date    : Mon Feb  7 16:22:08 PST 2022                        *
+ *  Release Date    : Thu Aug 11 16:24:59 PDT 2022                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 1.2.8                                               *
+ *  Release Build   : 1.2.9                                               *
  *                                                                        *
  *  Copyright 2020 Siemens                                                *
  *                                                                        *
@@ -37,6 +37,8 @@
 #undef CONNECTIONS_ASSERT_MSG
 #undef CONNECTIONS_SIM_ONLY_ASSERT_MSG
 
+// Include matchlib/cmod/include/axi/axi4.h for
+// standard AXI4 bus configurations.
 #include "axi/axi4.h"
 
 namespace apb
