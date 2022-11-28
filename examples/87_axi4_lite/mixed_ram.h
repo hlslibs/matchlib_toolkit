@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 1.2                                                 *
+ *  Software Version: 1.3                                                 *
  *                                                                        *
- *  Release Date    : Thu Aug 11 16:24:59 PDT 2022                        *
+ *  Release Date    : Mon Oct 17 12:31:50 PDT 2022                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 1.2.9                                               *
+ *  Release Build   : 1.3.0                                               *
  *                                                                        *
  *  Copyright 2022 Siemens                                                *
  *                                                                        *
@@ -63,7 +63,7 @@ public:
     async_reset_signal_is(rst_bar, false);
 
     for (int i=0; i < sz; i++) { 
-      array[i] = i * cfg::bytesPerBeat; 
+      array[i] = i * cfg::bytesPerBeat;  // initialize RAM contents with known, non-zero pattern
     }
   }
 
@@ -123,14 +123,14 @@ public:
         } else {
           decltype(w.wstrb) all_on{~0};
 
-          if (w.wstrb == all_on)
-          { array[aw.addr / cfg::bytesPerBeat] = w.data.to_uint64(); }
-          else {
+          if (w.wstrb == all_on) { 
+            array[aw.addr / cfg::bytesPerBeat] = w.data.to_uint64(); 
+          } else {
             CCS_LOG("write strobe enabled");
             arr_t orig  = array[aw.addr / cfg::bytesPerBeat];
             arr_t wdata = w.data.to_uint64();
 
-#pragma unroll
+            #pragma unroll
             for (int i=0; i<cfg::WSTRB_WIDTH; i++) {
               if (w.wstrb[i]) { 
                 orig = nvhls::set_slc(orig, nvhls::get_slc<8>(wdata, (i*8)), (i*8)); 

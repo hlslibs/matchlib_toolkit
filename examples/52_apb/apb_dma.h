@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 1.2                                                 *
+ *  Software Version: 1.3                                                 *
  *                                                                        *
- *  Release Date    : Thu Aug 11 16:24:59 PDT 2022                        *
+ *  Release Date    : Mon Oct 17 12:31:50 PDT 2022                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 1.2.9                                               *
+ *  Release Build   : 1.3.0                                               *
  *                                                                        *
  *  Copyright 2020 Siemens                                                *
  *                                                                        *
@@ -37,9 +37,9 @@
  *  * \brief Define struct for cmds sent to the DMA engine
 */
 struct dma_cmd {
-  NVUINTW(32) ar_addr {0};
-  NVUINTW(32) aw_addr {0};
-  NVUINTW(32) len {0};
+  ac_int<32, false> ar_addr {0};
+  ac_int<32, false> aw_addr {0};
+  ac_int<32, false> len {0};
 
   static const unsigned int width = 32 + 32 + 32;
   template <unsigned int Size> void Marshall(Marshaller<Size> &m) {

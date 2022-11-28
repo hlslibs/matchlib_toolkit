@@ -2,13 +2,13 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 1.2                                                 *
+ *  Software Version: 1.3                                                 *
  *                                                                        *
- *  Release Date    : Thu Aug 11 16:24:59 PDT 2022                        *
+ *  Release Date    : Mon Oct 17 12:31:50 PDT 2022                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 1.2.9                                               *
+ *  Release Build   : 1.3.0                                               *
  *                                                                        *
- *  Copyright  Siemens                                                *
+ *  Copyright 2022 Siemens                                                *
  *                                                                        *
  **************************************************************************
  *  Licensed under the Apache License, Version 2.0 (the "License");       *
@@ -34,7 +34,7 @@
 
 template <class T>
 T
-static convert_from_lv(sc_lv<Wrapped<T>::width> lv)
+static local_convert_from_lv(sc_lv<Wrapped<T>::width> lv)
 {
   Wrapped<T> result;
   Marshaller<Wrapped<T>::width> marshaller(lv);
@@ -44,7 +44,7 @@ static convert_from_lv(sc_lv<Wrapped<T>::width> lv)
 
 template <class T>
 sc_lv<Wrapped<T>::width>
-static convert_to_lv(T v)
+static local_convert_to_lv(T v)
 {
   Marshaller<Wrapped<T>::width> marshaller;
   Wrapped<T> wm(v);
@@ -80,7 +80,7 @@ public:
 
   void drive_dat_vld() {
     vld = in1.vld;
-    T t = convert_from_lv<T>(in1.dat);
+    T t = local_convert_from_lv<T>(in1.dat);
     dat = t;
   }
 };
@@ -109,16 +109,16 @@ public:
 
   void test_rdy() {
     #ifdef CONNECTIONS_SIM_ONLY
-    if (sc_time_stamp() > sc_time(100, SC_PS)) {
+    if (!out1.rdy.read() && (sc_time_stamp() > sc_time(100, SC_PS))) {
       CCS_LOG("InFromDatVld rdy is: " << out1.rdy);
-      sc_assert(0);
+      SC_REPORT_ERROR("InFromDatVld-01", "rdy signal is false");
     }
     #endif
   }
 
   void drive_dat_vld() {
     out1.vld = vld;
-    out1.dat.write(convert_to_lv(dat.read()));
+    out1.dat.write(local_convert_to_lv(dat.read()));
   }
 };
 

@@ -13,7 +13,7 @@
 #    ./sysclocal
 #    ./matchlib_connections
 #    ./matchlib
-#    ./preprocessor
+#    ./boost_home
 #    ./rapidjson
 #    ./ac_types
 #    ./ac_math
@@ -67,10 +67,15 @@ export MATCHLIB_HOME
 
 # Configure Boost Preprocessor
 if [ ! -d /Xusr/include/boost/preprocessor/arithmetic ]; then
-  if [ ! -d ./preprocessor/include/boost ]; then
+  if [ ! -d ./boost_home/include/boost ]; then
     git clone http://github.com/boostorg/preprocessor
+    git clone http://github.com/boostorg/static_assert
+    mkdir -p boost_home/include/boost
+    mv preprocessor/include/boost/* boost_home/include/boost
+    mv static_assert/include/boost/* boost_home/include/boost
+    rm -rf preprocessor static_assert
   fi
-  BOOST_HOME=`pwd`/preprocessor
+  BOOST_HOME=`pwd`/boost_home
 else
   BOOST_HOME=/usr
 fi

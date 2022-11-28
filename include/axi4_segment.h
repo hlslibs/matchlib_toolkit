@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 1.2                                                 *
+ *  Software Version: 1.3                                                 *
  *                                                                        *
- *  Release Date    : Thu Aug 11 16:24:59 PDT 2022                        *
+ *  Release Date    : Mon Oct 17 12:31:50 PDT 2022                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 1.2.9                                               *
+ *  Release Build   : 1.3.0                                               *
  *                                                                        *
  *  Copyright 2020 Siemens                                                *
  *                                                                        *
@@ -101,15 +101,18 @@ namespace axi
     typedef Cfg axi_cfg;
     typedef AXI4_Encoding Enc;
 
-    // Create typedefs for describing payload types
+    // Create helper typedefs for accessing payload types
     typedef typename axi::axi4<Cfg>::AddrPayload   ar_payload;
     typedef typename axi::axi4<Cfg>::AddrPayload   aw_payload;
     typedef typename axi::axi4<Cfg>::ReadPayload   r_payload;
     typedef typename axi::axi4<Cfg>::WritePayload  w_payload;
     typedef typename axi::axi4<Cfg>::WRespPayload  b_payload;
 
+    // Create alias to channel type (not used) - TBD delete it?
     template <Connections::connections_port_t PortType = AUTO_PORT>
     using r_chan = typename axi::axi4<Cfg>::read::template chan<PortType>;
+
+    // Create alias to channel type
     template <Connections::connections_port_t PortType = AUTO_PORT>
     using w_chan = typename axi::axi4<Cfg>::write::template chan<PortType>;
 
@@ -169,8 +172,13 @@ namespace axi
     //----------------------------------------------------------------------------------
     // w_master - write master channel
     template <Connections::connections_port_t PortType = AUTO_PORT>
-    struct w_master : public axi::axi4<Cfg>::write::template master<PortType> {
+    class w_master : public axi::axi4<Cfg>::write::template master<PortType> 
+    {
+    public:
+      // Helper typedef to base class
       typedef typename axi::axi4<Cfg>::write::template master<PortType> base;
+
+      // Constructor
       w_master(sc_module_name nm) : base(nm) {}
 
       b_payload single_write(uint32 addr, uint32 data) {
@@ -220,8 +228,13 @@ namespace axi
     //----------------------------------------------------------------------------------
     // r_master - read master channel
     template <Connections::connections_port_t PortType = AUTO_PORT>
-    struct r_master : public axi::axi4<Cfg>::read::template master<PortType> {
+    class r_master : public axi::axi4<Cfg>::read::template master<PortType> 
+    {
+    public:
+      // Helper typedef to base class
       typedef typename axi::axi4<Cfg>::read::template master<PortType> base;
+
+      // Constructor
       r_master(sc_module_name nm) : base(nm) {}
 
       r_payload single_read(uint32 addr) {
@@ -263,8 +276,13 @@ namespace axi
     //----------------------------------------------------------------------------------
     // w_slave - write slave channel
     template <Connections::connections_port_t PortType = AUTO_PORT>
-    struct w_slave : public axi::axi4<Cfg>::write::template slave<PortType> {
+    class w_slave : public axi::axi4<Cfg>::write::template slave<PortType> 
+    {
+    public:
+      // Helper typedef to base class
       typedef typename axi::axi4<Cfg>::write::template slave<PortType> base;
+
+      // Constructor
       w_slave(sc_module_name nm) : base(nm) {}
 
       void reset() {
@@ -274,33 +292,33 @@ namespace axi
       }
 
       bool get_single_write(aw_payload &ret_aw, w_payload &ret_w, b_payload &ret_b) {
-        ret_aw = base::aw.Pop();
-        ret_w = base::w.Pop();
-        ret_b.id = ret_aw.id;
+        ret_aw = base::aw.Pop();  // blocking read of Address Write channel of this
+        ret_w = base::w.Pop();    // blocking read of WriteData channel of this
+        ret_b.id = ret_aw.id;     // preserve transaction ID
 
-        if (ret_aw.len == 0) { return true; }
+        if (ret_aw.len == 0) { return true; }  // single write - TBD there is no BRESP returned
 
-        while (ret_aw.len-- > 0) { ret_w = base::w.Pop(); }
+        while (ret_aw.len-- > 0) { ret_w = base::w.Pop(); } // flush additional writes
 
-        ret_b.resp = Enc::XRESP::SLVERR;
+        ret_b.resp = Enc::XRESP::SLVERR; // return error since multiple writes
         base::b.Push(ret_b);
         return false;
       }
 
       bool start_multi_write(aw_payload &ret_aw, b_payload &ret_b) {
-        ret_aw = base::aw.Pop();
-        ret_b.id = ret_aw.id;
+        ret_aw = base::aw.Pop();  // blocking read of Address Write channel of this
+        ret_b.id = ret_aw.id;     // preserve transaction ID
 
         return true;
       }
 
       bool next_multi_write(aw_payload &ret_aw) {
-        if (ret_aw.len == 0) { return false; }
+        if (ret_aw.len == 0) { return false; } // no more writes - return - TBD there is no BRESP returned
 
         --ret_aw.len;
 
         if ((axi::axi4<Cfg>::BURST_WIDTH == 0 ) || (ret_aw.burst.to_uint64() == Enc::AXBURST::INCR)) {
-          ret_aw.addr += bytesPerBeat;
+          ret_aw.addr += bytesPerBeat; // update incremented address
         }
         return true;
       }
@@ -309,18 +327,22 @@ namespace axi
     //----------------------------------------------------------------------------------
     // r_slave - read slave channel
     template <Connections::connections_port_t PortType = AUTO_PORT>
-    struct r_slave : public axi::axi4<Cfg>::read::template slave<PortType> {
+    class r_slave : public axi::axi4<Cfg>::read::template slave<PortType> 
+    {
+    public:
+      // Helper typedef to base class
       typedef typename axi::axi4<Cfg>::read::template slave<PortType> base;
 
+      // Constructor
       r_slave(sc_module_name nm) : base(nm) {}
 
       bool single_read(ar_payload &ret_ar, r_payload &ret_r) {
-        ret_ar = base::ar.Pop();
+        ret_ar = base::ar.Pop();   // blocking read of Address Read channel of this
 
-        ret_r.id = ret_ar.id;
-        ret_r.last = true;
+        ret_r.id = ret_ar.id;      // preserve transaction ID
+        ret_r.last = true;         // single read is always last
 
-        if (ret_ar.len == 0) { return true; }
+        if (ret_ar.len == 0) { return true; } //
 
         ret_r.resp = Enc::XRESP::SLVERR;
         ret_r.last = false;
@@ -335,12 +357,12 @@ namespace axi
       }
 
       bool start_multi_read(ar_payload &ret_ar) {
-        ret_ar = base::ar.Pop();
+        ret_ar = base::ar.Pop();   // blocking read of Address Read channel of this
         return true;
       }
 
       bool next_multi_read(ar_payload &ret_ar, r_payload &ret_r) {
-        ret_r.id = ret_ar.id;
+        ret_r.id = ret_ar.id;      // preserve transaction ID
 
         if (ret_ar.len == 0) { ret_r.last = true; }
 
@@ -356,7 +378,6 @@ namespace axi
         return true;
       }
     };
-
 
     SC_MODULE(w_segment) {
       sc_in<bool>                        CCS_INIT_S1(clk);
@@ -532,8 +553,6 @@ namespace axi
         }
       }
     };
-
-
 
     SC_MODULE(r_segment) {
       sc_in<bool>                    CCS_INIT_S1(clk);

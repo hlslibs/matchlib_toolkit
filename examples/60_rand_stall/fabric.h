@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 1.2                                                 *
+ *  Software Version: 1.3                                                 *
  *                                                                        *
- *  Release Date    : Thu Aug 11 16:24:59 PDT 2022                        *
+ *  Release Date    : Mon Oct 17 12:31:50 PDT 2022                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 1.2.9                                               *
+ *  Release Build   : 1.3.0                                               *
  *                                                                        *
  *  Copyright 2020 Siemens                                                *
  *                                                                        *
@@ -60,7 +60,7 @@ public:
 
   static const int numAddrBitsToInspect = 20;
   static const int numSlaves = 2;
-  sc_signal<NVUINTW(numAddrBitsToInspect)> addrBound[numSlaves][2];
+  sc_signal<ac_int<numAddrBitsToInspect, false>> addrBound[numSlaves][2];
   AxiSplitter<axi::cfg::standard, numSlaves, numAddrBitsToInspect, false, true> CCS_INIT_S1(input_router);
   AxiSplitter<axi::cfg::standard, numSlaves, numAddrBitsToInspect, false, true> CCS_INIT_S1(dma0_router);
   AxiSplitter<axi::cfg::standard, numSlaves, numAddrBitsToInspect, false, true> CCS_INIT_S1(dma1_router);

@@ -40,7 +40,7 @@ class BufferStatus : public sc_module {
  protected:
   typedef bool Bit;
   static const int AddrWidth = nvhls::index_width<NumEntries>::val;
-  typedef NVUINTW(AddrWidth) BuffIdx;
+  typedef ac_int<AddrWidth, false> BuffIdx;
 
   // Internal wires
   sc_signal<Bit> full_next;
@@ -246,7 +246,7 @@ class BufferStatus : public sc_module {
 
 typedef ac_int<16,true> STATUS_TYPE;
 
-template <class T, unsigned N, class STATUS_TYPE = ac_int<16,true>>
+template <class T, unsigned N, class STATUS_TYPE = ac_int<16,false>>
 class FifoChannelStatus : public sc_module {
 public:
   sc_in<bool>         CCS_INIT_S1(clk);

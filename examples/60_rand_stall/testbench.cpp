@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 1.2                                                 *
+ *  Software Version: 1.3                                                 *
  *                                                                        *
- *  Release Date    : Thu Aug 11 16:24:59 PDT 2022                        *
+ *  Release Date    : Mon Oct 17 12:31:50 PDT 2022                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 1.2.9                                               *
+ *  Release Build   : 1.3.0                                               *
  *                                                                        *
  *  Copyright 2020 Siemens                                                *
  *                                                                        *
@@ -68,7 +68,6 @@ public:
   Top(sc_module_name nm, int test_num_)
     :   clk("clk", 1, SC_NS, 0.5,0,SC_NS,true)
     ,   test_num(test_num_) {
-    Connections::set_sim_clk(&clk);
 
     tb_w_master(fabric_w_slave0);
     tb_r_master(fabric_r_slave0);

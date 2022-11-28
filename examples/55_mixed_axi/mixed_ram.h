@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 1.2                                                 *
+ *  Software Version: 1.3                                                 *
  *                                                                        *
- *  Release Date    : Thu Aug 11 16:24:59 PDT 2022                        *
+ *  Release Date    : Mon Oct 17 12:31:50 PDT 2022                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 1.2.9                                               *
+ *  Release Build   : 1.3.0                                               *
  *                                                                        *
  *  Copyright 2020 Siemens                                                *
  *                                                                        *
@@ -48,7 +48,7 @@ public:
 
   static const int sz = 0x10000; // size in cfg::DATA_WIDTH words
 
-  typedef NVUINTW(cfg::DATA_WIDTH) arr_t;
+  typedef ac_int<cfg::DATA_WIDTH, false> arr_t;
   arr_t *array {0};
 
   SC_CTOR(ram) {
@@ -67,7 +67,7 @@ public:
     }
   }
 
-  NVUINTW(cfg::DATA_WIDTH) debug_read_addr(uint32_t addr) {
+  ac_int<cfg::DATA_WIDTH, false> debug_read_addr(uint32_t addr) {
     if (addr >= (sz * cfg::bytesPerBeat)) {
       SC_REPORT_ERROR("ram", "invalid addr");
       return 0;

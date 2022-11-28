@@ -13,7 +13,7 @@
 #    ./sysclocal
 #    ./matchlib_connections
 #    ./matchlib
-#    ./preprocessor
+#    ./boost_home
 #    ./rapidjson
 #    ./ac_types
 #    ./ac_math
@@ -22,6 +22,9 @@
 # It also intentionally unsets CATAPULT_HOME and MGC_HOME
 unsetenv CATAPULT_HOME
 unsetenv MGC_HOME
+
+# Note: This file is part of the Matchlib Toolkit package from hlslibs.org.
+# To download: git clone http://github.com/hlslibs/matchlib_toolkit.git
 
 #================================================================
 
@@ -59,12 +62,18 @@ if (! -e ./matchlib ) then
 endif
 setenv MATCHLIB_HOME `pwd`/matchlib
 
-# Configure Boost Preprocessor
+# Configure Boost Preprocessor and Static Assert
+# (We can't depend on the linux install to have boost, so always download minimum)
 if (! -e /Xusr/include/boost/preprocessor/arithmetic ) then
-  if (! -e ./preprocessor/include/boost) then
+  if (! -e ./boost_home/include/boost) then
     git clone http://github.com/boostorg/preprocessor
+    git clone http://github.com/boostorg/static_assert
+    mkdir -p boost_home/include/boost
+    mv preprocessor/include/boost/* boost_home/include/boost
+    mv static_assert/include/boost/* boost_home/include/boost
+    rm -rf preprocessor static_assert
   endif
-  setenv BOOST_HOME `pwd`/preprocessor
+  setenv BOOST_HOME `pwd`/boost_home
 else
   setenv BOOST_HOME /usr
 endif

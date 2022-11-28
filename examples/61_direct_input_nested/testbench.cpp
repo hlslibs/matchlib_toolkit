@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 1.2                                                 *
+ *  Software Version: 1.3                                                 *
  *                                                                        *
- *  Release Date    : Thu Aug 11 16:24:59 PDT 2022                        *
+ *  Release Date    : Mon Oct 17 12:31:50 PDT 2022                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 1.2.9                                               *
+ *  Release Build   : 1.3.0                                               *
  *                                                                        *
  *  Copyright 2020 Siemens                                                *
  *                                                                        *
@@ -167,8 +167,9 @@ int sc_main(int argc, char **argv)
   std::string trace_file = "trace";
   std::string resp_log = "resp.log";
   std::string run_logs = "run_logs";
+  std::string compare_log = "pre_hls.log";
   if (argc > 1) { trace_file = argv[1]; }
-  if (argc > 2) { resp_log = argv[2]; }
+  if (argc > 2) { compare_log = argv[2]; }
   if (argc > 3) { run_logs = argv[3]; }
 
   sc_trace_file *trace_file_ptr = sc_trace_static::setup_trace_file(trace_file.c_str());
@@ -181,7 +182,7 @@ int sc_main(int argc, char **argv)
 
   sc_start();
   std::string diff_cmd;
-  diff_cmd += "diff " + resp_log + " " + run_logs + "/" + resp_log;
+  diff_cmd += "diff " + resp_log + " " + run_logs + "/" + compare_log;
   std::cout << "Comparing against reference file: " << diff_cmd << std::endl;
   retcode = system(diff_cmd.c_str());
   if (retcode || sc_report_handler::get_count(SC_ERROR) > 0) {

@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 1.2                                                 *
+ *  Software Version: 1.3                                                 *
  *                                                                        *
- *  Release Date    : Thu Aug 11 16:24:59 PDT 2022                        *
+ *  Release Date    : Mon Oct 17 12:31:50 PDT 2022                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 1.2.9                                               *
+ *  Release Build   : 1.3.0                                               *
  *                                                                        *
  *  Copyright 2020 Siemens                                                *
  *                                                                        *
@@ -213,6 +213,7 @@ public:
 int sc_main(int argc, char **argv)
 {
   sc_report_handler::set_actions("/IEEE_Std_1666/deprecated", SC_DO_NOTHING);
+  sc_report_handler::set_actions("current kernel time is not representable in VCD time units", SC_DO_NOTHING);
   sc_report_handler::set_actions(SC_ERROR, SC_DISPLAY);
   sc_trace_file *trace_file_ptr = sc_trace_static::setup_trace_file("trace");
   trace_file_ptr->set_time_unit(0.1, SC_SEC);

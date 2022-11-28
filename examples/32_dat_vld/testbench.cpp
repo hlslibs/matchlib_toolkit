@@ -2,13 +2,13 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 1.2                                                 *
+ *  Software Version: 1.3                                                 *
  *                                                                        *
- *  Release Date    : Thu Aug 11 16:24:59 PDT 2022                        *
+ *  Release Date    : Mon Oct 17 12:31:50 PDT 2022                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 1.2.9                                               *
+ *  Release Build   : 1.3.0                                               *
  *                                                                        *
- *  Copyright  Siemens                                                *
+ *  Copyright 2022 Siemens                                                *
  *                                                                        *
  **************************************************************************
  *  Licensed under the Apache License, Version 2.0 (the "License");       *
@@ -28,6 +28,7 @@
  *  The most recent version of this package is available at github.       *
  *                                                                        *
  *************************************************************************/
+
 
 #include "dut.h"
 #include <mc_scverify.h>

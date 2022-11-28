@@ -14,14 +14,14 @@ The toolkit examples require numerous open-source packages including:
 - SystemC
 - MatchLib Connections
 - MatchLib
-- Boost Preprocessor
+- Boost Preprocessor and Static Assert (required by nVidia's Matchlib)
 - RapidJSON
 - AC Dataypes
 - AC Math
 - AC SimUtils
 - BMP IO
 
-All of these packages are already available in a Catapult install tree and will be properly located by the toolkit Makefiles if your CATAPULT_HOME environment variable is set properly. 
+All of these packages are already available in a Catapult install tree (or your standard RedHat install) and will be properly located by the toolkit Makefiles if your CATAPULT_HOME environment variable is set properly. 
 However, if you do not have Catapult you can always download all of the required packages using the set_vars.csh (or set_vars.sh) script contained in this repository.
 
 For a complete, standalone environment, do the following

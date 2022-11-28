@@ -8,7 +8,7 @@
  *  Release Type    : Production Release                                  *
  *  Release Build   : 1.3.0                                               *
  *                                                                        *
- *  Copyright 2020 Siemens                                                *
+ *  Copyright 2022 Siemens                                                *
  *                                                                        *
  **************************************************************************
  *  Licensed under the Apache License, Version 2.0 (the "License");       *
@@ -29,94 +29,54 @@
  *                                                                        *
  *************************************************************************/
 
-#include "dut.h"
-#include <mc_scverify.h>
+#pragma once
 
-class testbench : public sc_module
-{
-public:
-  CCS_DESIGN(dut) CCS_INIT_S1(dut1);
+#include <ac_int.h>
+#include <mc_connections.h>
 
-  sc_clock clk1;
-  sc_clock clk2;
-  SC_SIG(bool, rst_bar);
+/**
+ *  * \brief dma command sent to the DMA engine
+ *  * (Note the transfered memory contents are in a 32bit address space)
+*/
+struct dma_cmd {
+  // Three fields comprise a dma "command"
+  ac_int<32, false> src_addr;   // source address to read from
+  ac_int<32, false> dst_addr;   // destination address to write to
+  ac_int<32, false> len;        // number of elements to transfer
 
-  Connections::Combinational<uint32_t>        CCS_INIT_S1(out1);
-  Connections::Combinational<uint32_t>        CCS_INIT_S1(in1);
-
-  SC_CTOR(testbench)
-    :   clk1("clk1", 3, SC_NS, 0.5,0,SC_NS,true)
-    ,   clk2("clk2", 1, SC_NS, 0.5,0,SC_NS,true)
-    {
-    sc_object_tracer<sc_clock> trace_clk1(clk1);
-    sc_object_tracer<sc_clock> trace_clk2(clk2);
-
-    dut1.clk1(clk1);
-    dut1.clk2(clk2);
-    dut1.rst_bar(rst_bar);
-    dut1.out1(out1);
-    dut1.in1(in1);
-
-    SC_CTHREAD(reset, clk1);
-
-    SC_THREAD(stim);
-    sensitive << clk1.posedge_event();
-    async_reset_signal_is(rst_bar, false);
-
-    SC_THREAD(resp);
-    sensitive << clk2.posedge_event();
-    async_reset_signal_is(rst_bar, false);
+  // Code required to support marshalling this new data type
+  static const unsigned int width = 32 + 32 + 32;  // must be sum of above three fields
+  template <unsigned int Size> void Marshall(Marshaller<Size> &m) {
+    m &src_addr;
+    m &dst_addr;
+    m &len;
   }
 
-
-  void stim() {
-    CCS_LOG("Stimulus started");
-    in1.ResetWrite();
-    wait();
-
-    for (int i = 0; i < 10; i++) {
-      in1.Push(i);
-    }
-
-    wait(50);
-    sc_stop();
-    wait();
+  // Code to support tracing and general I/O
+  inline friend void sc_trace(sc_trace_file *tf, const dma_cmd &v, const std::string &NAME ) {
+    sc_trace(tf,v.src_addr,  NAME + ".src_addr");
+    sc_trace(tf,v.dst_addr,  NAME + ".dst_addr");
+    sc_trace(tf,v.len,       NAME + ".len");
   }
-
-  void resp() {
-    out1.ResetRead();
-    wait();
-
-    while (1) {
-      CCS_LOG("TB resp sees: " << std::hex << out1.Pop());
-    }
+  inline friend std::ostream &operator<<(ostream &os, const dma_cmd &rhs) {
+    os << rhs.src_addr << " " << rhs.dst_addr << " " << rhs.len;
+    return os;
   }
-
-  void reset() {
-    rst_bar.write(0);
-    wait();
-    rst_bar.write(1);
-    wait();
-  }
+  inline bool operator==(const dma_cmd &other) { return ((src_addr == other.src_addr) && (dst_addr == other.dst_addr) && (len == other.len)); }
 };
 
-int sc_main(int argc, char *argv[])
-{
-  sc_report_handler::set_actions("/IEEE_Std_1666/deprecated", SC_DO_NOTHING);
-  sc_report_handler::set_actions(SC_ERROR, SC_DISPLAY);
-  sc_trace_file *trace_file_ptr = sc_trace_static::setup_trace_file("trace");
-
-  testbench top("top");
-  channel_logs logs;
-  logs.enable("chan_logs", true);
-  logs.log_hierarchy(top);
-  trace_hierarchy(&top, trace_file_ptr);
-  sc_start();
-  if (sc_report_handler::get_count(SC_ERROR) > 0) {
-    std::cout << "Simulation FAILED" << std::endl;
-    return -1;
-  }
-  std::cout << "Simulation PASSED" << std::endl;
-  return 0;
-}
+/**
+ *  * \brief dma address map as seen by the CPU (32bit address space)
+ *  *     Address    Register
+ *  *     0x0000     src_addr
+ *  *     0x0004     dst_addr
+ *  *     0x0008     len
+ *  *     0x000C     start
+*/
+struct dma_address_map {
+  uint32_t  src_addr;
+  uint32_t  dst_addr;
+  uint32_t  len;
+  uint32_t  start;
+};
 

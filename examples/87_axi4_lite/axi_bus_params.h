@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 1.2                                                 *
+ *  Software Version: 1.3                                                 *
  *                                                                        *
- *  Release Date    : Thu Aug 11 16:24:59 PDT 2022                        *
+ *  Release Date    : Mon Oct 17 12:31:50 PDT 2022                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 1.2.9                                               *
+ *  Release Build   : 1.3.0                                               *
  *                                                                        *
  *  Copyright 2020 Siemens                                                *
  *                                                                        *
@@ -35,5 +35,5 @@
 
 // Create a typedef to describe an AXI4 segment object using the standard AXI4 bus parameters.
 typedef axi::axi4_segment<axi::cfg::standard> local_axi_64;
-typedef axi::axi4_segment<axi::cfg::lite> local_axi_lite;
+typedef axi::axi4_segment<axi::cfg::lite>     local_axi_lite;
 

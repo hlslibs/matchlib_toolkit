@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 1.2                                                 *
+ *  Software Version: 1.3                                                 *
  *                                                                        *
- *  Release Date    : Thu Aug 11 16:24:59 PDT 2022                        *
+ *  Release Date    : Mon Oct 17 12:31:50 PDT 2022                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 1.2.9                                               *
+ *  Release Build   : 1.3.0                                               *
  *                                                                        *
  *  Copyright 2022 Siemens                                                *
  *                                                                        *
@@ -244,8 +244,7 @@ public:
         aw.addr = addr;
         aw.ex_len = (len / axi_cfg::bytesPerBeat) - 1;
 
-        if (((aw.ex_len + 1) * axi_cfg::bytesPerBeat) != len)
-        { sc_assert(0); }
+        if (((aw.ex_len + 1) * axi_cfg::bytesPerBeat) != len) { sc_assert(0); }
 
         w_segment0_ex_aw_chan.Push(aw);
 
@@ -256,8 +255,9 @@ public:
         } while (aw.ex_len--);
 
         b = w_segment0_b_chan.Pop();
-        if (b.resp != axi_cfg::Enc::XRESP::OKAY)
-        { current_trans->set_response_status(TLM_GENERIC_ERROR_RESPONSE); }
+        if (b.resp != axi_cfg::Enc::XRESP::OKAY) {
+          current_trans->set_response_status(TLM_GENERIC_ERROR_RESPONSE);
+        }
       }
 
       if (cmd == TLM_READ_COMMAND) {
@@ -265,8 +265,7 @@ public:
         ar.addr = addr;
         ar.ex_len = (len / axi_cfg::bytesPerBeat) - 1;
 
-        if (((ar.ex_len + 1) * axi_cfg::bytesPerBeat) != len)
-        { sc_assert(0); }
+        if (((ar.ex_len + 1) * axi_cfg::bytesPerBeat) != len) { sc_assert(0); }
 
         r_segment0_ex_ar_chan.Push(ar);
 
@@ -274,8 +273,9 @@ public:
           typename axi_cfg::r_payload r;
           r = r_master0.r.Pop();
           *beat_ptr++ = r.data;
-          if (r.resp != axi_cfg::Enc::XRESP::OKAY)
-          { current_trans->set_response_status(TLM_GENERIC_ERROR_RESPONSE); }
+          if (r.resp != axi_cfg::Enc::XRESP::OKAY) {
+            current_trans->set_response_status(TLM_GENERIC_ERROR_RESPONSE);
+          }
         } while (ar.ex_len--);
       }
 
@@ -283,3 +283,4 @@ public:
     }
   }
 };
+
