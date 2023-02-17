@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 1.3                                                 *
+ *  Software Version: 1.4                                                 *
  *                                                                        *
- *  Release Date    : Mon Oct 17 12:31:50 PDT 2022                        *
+ *  Release Date    : Fri Feb  3 14:36:10 PST 2023                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 1.3.0                                               *
+ *  Release Build   : 1.4.0                                               *
  *                                                                        *
  *  Copyright 2020 Siemens                                                *
  *                                                                        *
@@ -96,7 +96,7 @@ private:
       // Note that we leave inner loop rolled. This will stall the pipeline for several cycles,
       // and this will cause the RTL to drop input packets as compared to the SC DUT.
       // This is to be expected, since the data/valid protocol is time-sensitive and may drop data.
-      // #pragma unroll yes
+      // #pragma hls_unroll yes
       for (int i=0; i < packet::data_len; i++) {
         p.data[i] *= p.coeff;
       }

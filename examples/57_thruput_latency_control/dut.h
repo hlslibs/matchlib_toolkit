@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 1.3                                                 *
+ *  Software Version: 1.4                                                 *
  *                                                                        *
- *  Release Date    : Mon Oct 17 12:31:50 PDT 2022                        *
+ *  Release Date    : Fri Feb  3 14:36:10 PST 2023                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 1.3.0                                               *
+ *  Release Build   : 1.4.0                                               *
  *                                                                        *
  *  Copyright 2020 Siemens                                                *
  *                                                                        *
@@ -110,7 +110,7 @@ private:
     #pragma pipeline_stall_mode flush
     while (1) {
       packet p = in1.Pop();
-      #pragma unroll yes
+      #pragma hls_unroll yes
       for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
       out1.Push(p);
     }
@@ -120,7 +120,7 @@ private:
     #pragma pipeline_stall_mode flush
     while (1) {
       packet p = in1.Pop();
-      #pragma unroll yes
+      #pragma hls_unroll yes
       for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
       out1.Push(p);
     }
@@ -130,10 +130,10 @@ private:
       packet p = in1.Pop();
 
       if (p.coeff == 0) {
-        #pragma unroll yes
+        #pragma hls_unroll yes
         for (int i=0; i < packet::data_len; i++) { p.data[i] = 0; }
       } else if (p.coeff != 1) {
-        #pragma unroll yes
+        #pragma hls_unroll yes
         for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
       }
       out1.Push(p);
@@ -144,7 +144,7 @@ private:
     while (1) {
       packet p = in1.Pop();
       if (p.coeff == 0) {
-        #pragma unroll yes
+        #pragma hls_unroll yes
         for (int i=0; i < packet::data_len; i++) { p.data[i] = 0; }
       } else if (p.coeff != 1) {
         for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
@@ -158,12 +158,12 @@ private:
 
       if (p.coeff == 0) {
         LATENCY_CONTROL_BEGIN()
-        #pragma unroll yes
+        #pragma hls_unroll yes
         for (int i=0; i < packet::data_len; i++) { p.data[i] = 0; }
         LATENCY_CONTROL_END()
       } else if (p.coeff != 1) {
         LATENCY_CONTROL_BEGIN()
-        #pragma unroll yes
+        #pragma hls_unroll yes
         for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
         LATENCY_CONTROL_END()
       }
@@ -177,7 +177,7 @@ private:
       packet p = in1.Pop();
 
       if (p.coeff == 0) {
-        #pragma unroll yes
+        #pragma hls_unroll yes
         for (int i=0; i < packet::data_len; i++) { p.data[i] = 0; }
       } else if (p.coeff != 1) {
         for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
@@ -190,7 +190,7 @@ private:
     #pragma pipeline_stall_mode flush
     while (1) {
       packet p = in1.Pop();
-        #pragma unroll 5
+        #pragma hls_unroll 5
       for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
       out1.Push(p);
     }
