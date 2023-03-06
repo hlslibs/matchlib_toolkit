@@ -54,7 +54,7 @@ You should see:<br>
 ## Documentation
 It is recommended that you browse all of the documents in matchlib_toolkit/doc
 
-#Waveform Viewing
+## Waveform Viewing
 You can use Questa (vsim), VCS, or similar simulators to view the trace.vcd files produced from the SystemC simulations in the examples. Alternatively you can download the open source gtkwave waveform viewer (google gtkwave).
 
 ## Cleanup
