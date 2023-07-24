@@ -1,0 +1,90 @@
+
+APB_DMA and General Guidelines for Transactor Modeling
+Stuart Swan
+Platform Architect
+Siemens EDA
+1 June 2023
+
+
+The APB DMA has an apb_slave interface (for the testbench to program the DMA) and an apb_master
+interface (for performing the DMA copy operations to the RAM).
+
+The apb_slave interface uses the apb_slave_xactor model, which is a separate SC_THREAD
+using Matchlib connections interfaces with the main process. Modeling this using pragma modulario
+is not possible, since the slave transactor needs to send requests to the DMA slave process,
+and receive responses from the DMA slave process.  So using a separate SC_THREAD
+is the only possible way to model such a slave transactor.
+
+The apb_master interface has several different implementation options:
+
+1) apb_master_rw(...) : This is a simple function that performs the APB protocol
+which is inlined into the calling process.
+It does not use pragma modulario.  
+The DMA inner loop cannot be pipelined with this approach (would result in scheduling failure).
+This modeling approach gives best QOR, including best final thruput:
+
+Area: 3673
+Thruput: 8 ns
+
+2A) apb_master_rw(...) using pragma modulario: Same as above, but apply the modulario pragma:
+The DMA inner loop is NOT pipelined.
+
+Area: 3865
+Thruput: 9 ns
+
+2B) apb_master_rw(...) using pragma modulario: Same as above, but apply the modulario pragma:
+The DMA inner loop is pipelined with II=2 and stall_mode=stall
+
+Area: 3916
+Thruput: 8 ns
+
+3) apb_master_xactor() : This is a separate SC_THREAD that uses Matchlib Connections
+to communicate with the DMA process.
+The DMA inner loop is NOT pipelined. Pipelining is possible but provides no benefit in this case.
+
+Area: 4292
+Thruput: 12 ns
+
+
+----
+
+General Guidelines for Transactor Modeling
+
+1. To achieve best QOR in Catapult, transactor models must only have a single wait() statement.
+In apb_master_rw() we see the single wait() statement within a simple while() loop.
+In apb_slave_xactor we see the single wait() statement within a while() loop that has a switch statement
+modeling the state of the transactor FSM. This is known as the "explicit FSM" modeling style.
+
+2. When choosing a transactor modeling style,
+you should pick the first approach that works for your case from this list:
+
+  1. Inline  (case 1 above)
+      - does not allow pipelining of the caller
+      - does not enable parallel execution of more than one transactor call in the RTL
+  2. Modulario (cases 2A and 2B above)
+      - allows pipelining of the caller
+      - enables parallel execution of more than one transactor call in the RTL
+      - does not support thruput accurate pre-HLS simulation
+  3. Separate SC_THREAD (case 3 above)
+      - allows pipelining of the caller
+      - enables parallel execution of more than one transactor call in the RTL
+      - does support thruput accurate pre-HLS simulation
+      - likely has area + thruput + latency cost compared to other two approaches
+
+If you want to use the modulario approach for QOR benefits, but also want
+throughput accurate modeling in your pre-HLS simulation, you can implement
+transactors for both the modulario and SC_THREAD approaches and use 
+  #ifdef __SYNTHESIS__
+  #else
+  #endif
+to select the modulario version for HLS and the SC_THREAD version for pre-HLS simulation.
+
+3. To model a slave transactor that sends a request and receives a response 
+from the user's main process, you must use the separate SC_THREAD modeling 
+approach (as in apb_slave_xactor).
+
+4. Sometimes design "stuttering" problems can arise when using transactors due
+to communication paths external to the process that have latency.  See example
+73_stutter_fix for a discussion of this topic.
+
+

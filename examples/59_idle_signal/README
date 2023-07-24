@@ -1,0 +1,86 @@
+
+This example shows how to generate an "idle" signal for a model in HLS that uses SystemC and Matchlib.
+
+Note that this example shows how a small amount of code added to the model can generate
+an idle signal. Catapult HLS may also be enhanced in the future to enable the generation
+of an idle signal without any need for such code to be added by the user.
+
+The main purpose of generating an "idle" signal for a process that will be synthesized thru HLS
+is to know if the process can be manually clock gated in the RTL while it is idle.
+(This is sometimes also called "coarse-grain clock gating".).
+The basic idea is that if the process has no work to do, the clock can be disabled and then
+re-enabled when there is work available, potentially resulting in considerable power savings.
+In general, the goal of the idle signal generation and the clock gating methodology should be that the exact timing behavior
+(ie cycle level waveforms) of the same clock-gated and non-clock-gated RTL should be identical for all possible stimulus.
+This implies that it is required that when the "idle" signal is true, the process really is truly idle.
+
+But what does it mean for a process to be idle?
+Some possible answers are:
+
+1. When the process is waiting for some inputs to become available.
+
+2. When the process is waiting for all inputs to become available.
+
+3. When the pipeline in the RTL for the process is fully flushed of all transactions.
+
+4. When the process is blocked waiting to write one or more outputs.
+
+All of these are valid conditions which might indicate that a process is idle.
+In practice, the precise definition for a particular process depends on the model
+characteristics of the process, but the designer is likely to know what the correct definition is.
+
+In practice, the most common definition of idle seems to be the "AND" of items #1 and #3 above.
+
+It should also be noted that in certain situations it may be desireable to gate the clock
+to a process even if it has "work to be done", but perhaps not enough work justify keeping
+the clock on. For example, for a block with a long pipeline (e.g. 20 stages), it may make
+sense to gate the clock to the block if there are less than 3 transactions "in flight" thru
+the pipeline and any of the block's inputs are stalled waiting for inputs.
+The modeling approach shown in the example allows for this level of flexibility.
+
+This example shows how to generate an idle signal for a process that is pipelined during HLS.
+(The process in the DUT is pipelined with an II=1, and it has about 4 pipeline stages in the RTL due to the ac_sqrt operation).
+Counters are used to track the number of transactions entering and leaving the pipeline, when the counters match,
+we know the pipeline is empty. In addition, the idle signal depends on whether the process is stalled waiting
+for inputs to become available.
+
+The idle signal is used to gate the clock. The gated clock is generated in the testbench, so the gated clock
+model here does not need to be synthesizeable. The assumption is that most ASIC library clock gating cells
+operate by forcing the output clock signal high when it is to be idle, in other words:
+
+   gated_clock = non_gated_clock | idle;
+
+In the pre-HLS and post-HLS RTL simulations, it is critical to insure that the rising edge of the gated clock occurs in exactly
+the same simulation delta cycle of the non-gated clock. The clock gating model here insures that this is the case.
+
+The testbench is constructed so that it the DUT can use either the gated or non-gated clock as its input.
+The log files for the two scenarios are generated and can be compared, and it can be seen that the introduction
+of clock gating introduces no timing or functional differences between the two scenarios either in the pre-HLS or post-HLS models.
+
+Steps:
+
+1. Make pre-HLS systemc simulation:
+   make build
+
+2. Run pre-HLS systemc simulation
+   ./sim_sc
+
+3. View the waveforms generated from the SC simulation:
+   make view_wave
+
+4. Run Catapult HLS to generate Verilog RTL for DUT:
+   catapult -f go_hls.tcl
+
+5. Launch SCVerify / QuestaSim with generated RTL by typing in Catapult command line:
+   dofile scverify.tcl
+
+6. Run RTL Sim by typing in QuestaSim command line:
+   run -all
+   wave zoom full
+
+7. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+
+8. Delete all generated files
+    make clean
+
+

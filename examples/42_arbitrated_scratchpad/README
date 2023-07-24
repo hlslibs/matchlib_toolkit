@@ -1,0 +1,57 @@
+
+See ../../doc/matchlib_memory_modeling_methodology.pdf
+
+This is a simple example and testcase for ArbitratedScratchpad, which
+is a banked memory with arbitration and queuing of requests.
+Because there is arbitration and queueing of requests,
+addresses within a incoming requests presented to the ArbitratedScratchpad memory may have conflicts 
+between the banks. 
+
+Because there can be bank conflicts, 
+there sometimes can be "backpressure" on incoming requests.
+The memory may not be able to accept new requests on each iteration, and it may return
+read responses with variations in delay.
+
+Due to the various arbitration and queuing delays, it is possible that there are WRITE/WRITE
+and READ/WRITE "hazards" or "races" in the memory for certain scenarios.
+READ responses for a given input lane are always returned in order for that lane.
+But,
+ - Writes to the same address coming from different lanes may not occur in the order they were given.
+ - Reads after writes to the same address coming from different lanes may not preserve order.
+
+Generally, you should be aware of the potential races that might occur with this memory
+and insure that they do not result in undesired behavior in your design, e.g. by providing
+appropriate synchronization in higher level parts of your design.
+
+Note that the low-order bits in the addresses within the request transaction are used
+for the bank selection. In the Catapult HLS tool, this is similar to the INTERLEAVE directive,
+which also builds a banked memory that is based on the low order bits.
+
+See ArbitratedScratchpad.h for more information on this class.
+
+
+Steps:
+
+1. Build the SystemC simulation executable by typing:
+   make build
+
+2. Run the SC simulation by typing:
+   ./sim_sc
+
+3. View the waveforms generated from the SC simulation:
+   make view_wave
+
+4. Run Catapult HLS to generate Verilog RTL for DUT:
+   catapult -f go_hls.tcl
+
+5. Launch SCVerify / QuestaSim with generated RTL by typing in Catapult command line:
+   dofile scverify.tcl
+
+6. Run RTL Sim by typing in QuestaSim command line:
+   run -all
+   wave zoom full
+
+7. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+
+8. Delete all generated files
+    make clean

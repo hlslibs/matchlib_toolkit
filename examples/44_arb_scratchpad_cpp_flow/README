@@ -1,0 +1,8 @@
+
+See ../../doc/matchlib_memory_modeling_methodology.pdf
+
+This example is the same as ../42_arbitrated_scratchpad except that
+it uses the Catapult "C++ flow" rather than the Catapult "SystemC flow".
+
+See ../42_arbitrated_scratchpad/README for further information.
+

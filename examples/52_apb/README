@@ -1,0 +1,53 @@
+
+This simple example demonstrates an ARM APB DMA model using NVidia Matchlib and Catapult HLS
+using a configurable, general purpose synthesizeable APB transactor model.
+
+For a description of the ARM APB protocol implemented in this model, see:
+
+https://developer.arm.com/documentation/ihi0024/c
+
+or search for "AMBA APB Protocol Specification Version 2.0"
+
+See ./transactor_modeling.txt for guidelines on writing transactor models.
+
+The files in this example are:
+
+apb_dma.h               - example DMA module (the DUT for HLS)
+apb_ram.h               - example APB RAM (part of testbench)
+apb_transactor.h        - ARM APB transactor
+testbench.cpp           - example testbench for pre-HLS and post-HLS models
+go_hls.tcl              - Catapult HLS synthesis script
+Makefile                - Makefile to compile/run
+wrappers/dma_wrap.cpp
+wrappers/dma_wrap.h
+wrappers/dma_wrap.v     - Verilog wrapper around SystemC DUT
+
+Steps:
+
+
+1. Build SystemC model:
+   make build
+
+2. Run SystemC model:
+   ./sim_sc
+
+3. View VCD waveforms from SystemC model before HLS:
+
+   make view_wave
+
+4. Run catapult HLS:
+   catapult -file go_hls.tcl
+
+5. Launch ModelSim on generated RTL:
+   Verification->
+      ModelSim->
+        RTL Verilog   (Double click)
+
+6. In ModelSim GUI, at command prompt:
+     run -all
+
+7. If desired, delete generated files:
+   make clean
+
+8. To generate the Verilog wrapper around the SystemC DUT, use this command:
+../bin/wrapper_gen.py sim_sc --clock_period 10 --clock_name clk top.dma_inst

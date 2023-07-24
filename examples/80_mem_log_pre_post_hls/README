@@ -1,0 +1,48 @@
+
+
+
+This is an example showing the "memory logging" feature in which the pre-HLS
+and post-HLS memory logs are used to debug a problem in the design
+involving the incorrect usage of the "ignore_memory_precedences" Catapult directive.
+
+See ../../doc/memory_logging_and_debug.pdf  for a detailed description
+of the memory logging and debug methodology and of this particular example.
+
+Note that this example uses a locally patched version of mc_transactors.h to
+enable monitoring of the memory in the post-HLS model.  This approach to 
+memory monitoring is not the most general approach, and it is not a currently
+supported feature of Catapult.
+
+The most general way to generate memory logs for memories in RTL models is
+to write a monitor in Verilog or VHDL. The monitor "snoops" the ports to the
+memory of interest, converts the pin wiggles to read/write operations, and generates
+the logs in the same format demonstrated here. If the memory is internal to the DUT,
+the Verilog "dotted name" syntax (e.g. dut1.blk1.my_mem.raddr ) can be used to
+gain access to memories within the DUT.
+
+
+Steps:
+
+1. Build the SystemC simulation executable by typing:
+   make build
+
+2. Run the SC simulation by typing:
+   ./sim_sc
+
+3. View the waveforms generated from the SC simulation:
+   make view_wave
+
+4. Run Catapult HLS to generate Verilog RTL for DUT:
+   catapult -f go_hls.tcl
+
+5. Launch SCVerify / QuestaSim with generated RTL by typing in Catapult command line:
+   dofile scverify.tcl
+
+6. Run RTL Sim by typing in QuestaSim command line:
+   run -all
+   wave zoom full
+
+7. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+
+8. Delete all generated files
+    make clean

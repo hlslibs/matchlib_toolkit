@@ -1,0 +1,44 @@
+--- /wv/hlsb/CATAPULT/2022.2_1/CURRENT/aol/Mgc_home//shared/include/mc_transactors.h	2022-11-21 20:05:34.734177000 -0800
++++ mc_transactors.h	2023-01-27 15:54:37.255915000 -0800
+@@ -1393,8 +1393,10 @@
+ //   class holding the bit-vector data corresponding to a resource block
+ ////////////////////////////////////////////////////////////////////////////////
+ 
++#include "block_data_abs.h"
++
+ template <int Twidth, int Trows>
+-class mc_rsc_block_data
++class mc_rsc_block_data : public block_data_abs
+ {
+ protected:
+   typedef mc_rsc_block_data_traits<Twidth>      traits;
+@@ -1403,11 +1405,14 @@
+   enum { COLS = traits::width };
+ 
+ public:
+-  void set_value(int row, int idx_lhs, int width, sc_lv_base& rhs, int idx_rhs)
++  void set_value(int row, int idx_lhs, int width, sc_lv_base& rhs, int idx_rhs, bool silent = false)
+   {
+     sc_assert(0 <= row && row < Trows);
+     _data.range(row*COLS + idx_lhs + width-1, row*COLS + idx_lhs) =
+       rhs.range(idx_rhs + width-1, idx_rhs);
++    if (!silent)
++     for (unsigned i=0; i < observers.size(); i++)
++      observers[i]->write_cb(rsc_num, row, rhs);
+   }
+ 
+   void get_value(int row, int idx_rhs, int width, sc_lv_base& lhs, int idx_lhs)
+@@ -1415,6 +1420,13 @@
+     sc_assert(0 <= row && row < Trows);
+     lhs.range(idx_lhs + width-1, idx_lhs) =
+       _data.range(row*COLS + idx_rhs + width-1, row*COLS + idx_rhs);
++    for (unsigned i=0; i < observers.size(); i++)
++      observers[i]->read_cb(rsc_num, row, lhs.range(idx_lhs + width-1, idx_lhs));
++  }
++
++  void get_dimensions(int& rows, int& width) {
++      rows = Trows;
++      width = Twidth;
+   }
+ 
+ protected:
