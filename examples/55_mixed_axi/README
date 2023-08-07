@@ -44,13 +44,16 @@ Steps:
       ModelSim->
         RTL Verilog   (Double click)
 
+6. In ModelSim GUI, at command prompt:
+     run -all
+
   Note in Modelsim transcript log :
  90 ns sc_main/Top/testbench beat rate: 1078 ps
  90 ns sc_main/Top/testbench clock period: 1 ns
 
   Note in the waveforms the concurrent burst read and writes from the DMA fully utilize the AXI4 bus.
 
-6. If desired, delete generated files:
+7. If desired, delete generated files:
    make clean
 
 

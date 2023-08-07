@@ -1,33 +1,4 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 1.5                                                 *
- *                                                                        *
- *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 1.5.0                                               *
- *                                                                        *
- *  Copyright 2020 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
+// INSERT_EULA_COPYRIGHT: 2020-2022
 
 #pragma once
 
@@ -38,54 +9,6 @@
 #undef CONNECTIONS_SIM_ONLY_ASSERT_MSG
 
 #include "axi/axi4.h"
-
-// These macros are needed until Catapult supports sc_export,
-// which will allow pushing the fifos into the segment module
-//
-#define AXI4_W_SEGMENT(n) \
-  w_segment                                       CCS_INIT_S1(n); \
-  Connections::Combinational<ex_aw_payload>       CCS_INIT_S1(n ## _ex_aw_chan); \
-  Connections::Combinational<w_payload>           CCS_INIT_S1(n ## _w_chan); \
-  Connections::Combinational<b_payload>           CCS_INIT_S1(n ## _b_chan);
-
-#define AXI4_W_SEGMENT_CFG(cfg, n) \
-  typename cfg::w_segment                                  CCS_INIT_S1(n); \
-  Connections::Combinational<typename cfg::ex_aw_payload>  CCS_INIT_S1(n ## _ex_aw_chan); \
-  Connections::Combinational<typename cfg::w_payload>      CCS_INIT_S1(n ## _w_chan); \
-  Connections::Combinational<typename cfg::b_payload>      CCS_INIT_S1(n ## _b_chan);
-
-#define AXI4_W_SEGMENT_BIND(n, _clk, _rst_bar, _w_master) \
-    n .clk(_clk); \
-    n .rst_bar(_rst_bar); \
-    n .aw_out(_w_master.aw); \
-    n .w_out(_w_master.w); \
-    n .b_in(_w_master.b); \
-    n .ex_aw_chan(n ## _ex_aw_chan ); \
-    n .w_chan(n ## _w_chan ); \
-    n .b_chan(n ## _b_chan );
-
-#define AXI4_W_SEGMENT_RESET(n, _w_master) \
-    n ## _ex_aw_chan.ResetWrite(); \
-    n ## _w_chan.ResetWrite(); \
-    n ## _b_chan.ResetRead();
-
-#define AXI4_R_SEGMENT(n) \
-  r_segment                                       CCS_INIT_S1(n); \
-  Connections::Combinational<ex_ar_payload>       CCS_INIT_S1(n ## _ex_ar_chan);
-
-#define AXI4_R_SEGMENT_CFG(cfg, n) \
-  typename cfg::r_segment                                  CCS_INIT_S1(n); \
-  Connections::Combinational<typename cfg::ex_ar_payload>  CCS_INIT_S1(n ## _ex_ar_chan);
-
-#define AXI4_R_SEGMENT_BIND(n, _clk, _rst_bar, _r_master) \
-    n .clk(_clk); \
-    n .rst_bar(_rst_bar); \
-    n .ar_out(_r_master .ar); \
-    n .ex_ar_chan(n ## _ex_ar_chan);
-
-#define AXI4_R_SEGMENT_RESET(n, _r_master) \
-    n ## _ex_ar_chan.ResetWrite(); \
-    _r_master . r.Reset();
 
 namespace axi
 {
@@ -101,18 +24,14 @@ namespace axi
     typedef Cfg axi_cfg;
     typedef AXI4_Encoding Enc;
 
-    // Create helper typedefs for accessing payload types
-    typedef typename axi::axi4<Cfg>::AddrPayload   ar_payload;
-    typedef typename axi::axi4<Cfg>::AddrPayload   aw_payload;
-    typedef typename axi::axi4<Cfg>::ReadPayload   r_payload;
-    typedef typename axi::axi4<Cfg>::WritePayload  w_payload;
-    typedef typename axi::axi4<Cfg>::WRespPayload  b_payload;
+    typedef typename axi::axi4<Cfg>::AddrPayload ar_payload;
+    typedef typename axi::axi4<Cfg>::AddrPayload aw_payload;
+    typedef typename axi::axi4<Cfg>::ReadPayload r_payload;
+    typedef typename axi::axi4<Cfg>::WritePayload w_payload;
+    typedef typename axi::axi4<Cfg>::WRespPayload b_payload;
 
-    // Create alias to channel type (not used) - TBD delete it?
     template <Connections::connections_port_t PortType = AUTO_PORT>
     using r_chan = typename axi::axi4<Cfg>::read::template chan<PortType>;
-
-    // Create alias to channel type
     template <Connections::connections_port_t PortType = AUTO_PORT>
     using w_chan = typename axi::axi4<Cfg>::write::template chan<PortType>;
 
@@ -123,12 +42,10 @@ namespace axi
     static const int segmentBurstSize = Cfg::maxBurstSize;
 #endif
 
-    static const int page_size = 4096;       // axi4 requires segmentation at 4k boundaries
-    static const int page_adr_bits = 12;     // 2^12 = 4096 ; number of bits in a page address
+    static const int page_size = 4096;  // axi4 requires segmentation at 4k boundaries
+    static const int page_adr_bits = 12; // 2^12 = 4096 ; number of bits in a page address
     static const int bytesPerBeat = axi::axi4<Cfg>::DATA_WIDTH >> 3;
 
-    //----------------------------------------------------------------------------------
-    // Derive from the basic payloads to create payloads of unlimited length
     struct ex_ar_payload : public ar_payload {
       // this payload enables burst reads of unlimited length - it extends from ar_payload
       NVUINTW(32) ex_len{0};
@@ -169,16 +86,9 @@ namespace axi
       }
     };
 
-    //----------------------------------------------------------------------------------
-    // w_master - write master channel
     template <Connections::connections_port_t PortType = AUTO_PORT>
-    class w_master : public axi::axi4<Cfg>::write::template master<PortType> 
-    {
-    public:
-      // Helper typedef to base class
+    struct w_master: public axi::axi4<Cfg>::write::template master<PortType> {
       typedef typename axi::axi4<Cfg>::write::template master<PortType> base;
-
-      // Constructor
       w_master(sc_module_name nm) : base(nm) {}
 
       b_payload single_write(uint32 addr, uint32 data) {
@@ -225,16 +135,9 @@ namespace axi
       }
     };
 
-    //----------------------------------------------------------------------------------
-    // r_master - read master channel
     template <Connections::connections_port_t PortType = AUTO_PORT>
-    class r_master : public axi::axi4<Cfg>::read::template master<PortType> 
-    {
-    public:
-      // Helper typedef to base class
+    struct r_master: public axi::axi4<Cfg>::read::template master<PortType> {
       typedef typename axi::axi4<Cfg>::read::template master<PortType> base;
-
-      // Constructor
       r_master(sc_module_name nm) : base(nm) {}
 
       r_payload single_read(uint32 addr) {
@@ -273,76 +176,19 @@ namespace axi
       }
     };
 
-    //----------------------------------------------------------------------------------
-    // w_slave - write slave channel
     template <Connections::connections_port_t PortType = AUTO_PORT>
-    class w_slave : public axi::axi4<Cfg>::write::template slave<PortType> 
-    {
-    public:
-      // Helper typedef to base class
-      typedef typename axi::axi4<Cfg>::write::template slave<PortType> base;
-
-      // Constructor
-      w_slave(sc_module_name nm) : base(nm) {}
-
-      void reset() {
-        base::aw.Reset();
-        base::w.Reset();
-        base::b.Reset();
-      }
-
-      bool get_single_write(aw_payload &ret_aw, w_payload &ret_w, b_payload &ret_b) {
-        ret_aw = base::aw.Pop();  // blocking read of Address Write channel of this
-        ret_w = base::w.Pop();    // blocking read of WriteData channel of this
-        ret_b.id = ret_aw.id;     // preserve transaction ID
-
-        if (ret_aw.len == 0) { return true; }  // single write - TBD there is no BRESP returned
-
-        while (ret_aw.len-- > 0) { ret_w = base::w.Pop(); } // flush additional writes
-
-        ret_b.resp = Enc::XRESP::SLVERR; // return error since multiple writes
-        base::b.Push(ret_b);
-        return false;
-      }
-
-      bool start_multi_write(aw_payload &ret_aw, b_payload &ret_b) {
-        ret_aw = base::aw.Pop();  // blocking read of Address Write channel of this
-        ret_b.id = ret_aw.id;     // preserve transaction ID
-
-        return true;
-      }
-
-      bool next_multi_write(aw_payload &ret_aw) {
-        if (ret_aw.len == 0) { return false; } // no more writes - return - TBD there is no BRESP returned
-
-        --ret_aw.len;
-
-        if ((axi::axi4<Cfg>::BURST_WIDTH == 0 ) || (ret_aw.burst.to_uint64() == Enc::AXBURST::INCR)) {
-          ret_aw.addr += bytesPerBeat; // update incremented address
-        }
-        return true;
-      }
-    };
-
-    //----------------------------------------------------------------------------------
-    // r_slave - read slave channel
-    template <Connections::connections_port_t PortType = AUTO_PORT>
-    class r_slave : public axi::axi4<Cfg>::read::template slave<PortType> 
-    {
-    public:
-      // Helper typedef to base class
+    struct r_slave : public axi::axi4<Cfg>::read::template slave<PortType> {
       typedef typename axi::axi4<Cfg>::read::template slave<PortType> base;
 
-      // Constructor
       r_slave(sc_module_name nm) : base(nm) {}
 
       bool single_read(ar_payload &ret_ar, r_payload &ret_r) {
-        ret_ar = base::ar.Pop();   // blocking read of Address Read channel of this
+        ret_ar = base::ar.Pop();
 
-        ret_r.id = ret_ar.id;      // preserve transaction ID
-        ret_r.last = true;         // single read is always last
+        ret_r.id = ret_ar.id;
+        ret_r.last = true;
 
-        if (ret_ar.len == 0) { return true; } //
+        if (ret_ar.len == 0) { return true; }
 
         ret_r.resp = Enc::XRESP::SLVERR;
         ret_r.last = false;
@@ -357,12 +203,12 @@ namespace axi
       }
 
       bool start_multi_read(ar_payload &ret_ar) {
-        ret_ar = base::ar.Pop();   // blocking read of Address Read channel of this
+        ret_ar = base::ar.Pop();
         return true;
       }
 
       bool next_multi_read(ar_payload &ret_ar, r_payload &ret_r) {
-        ret_r.id = ret_ar.id;      // preserve transaction ID
+        ret_r.id = ret_ar.id;
 
         if (ret_ar.len == 0) { ret_r.last = true; }
 
@@ -379,27 +225,97 @@ namespace axi
       }
     };
 
+    template <Connections::connections_port_t PortType = AUTO_PORT>
+    struct w_slave : public axi::axi4<Cfg>::write::template slave<PortType> {
+      typedef typename axi::axi4<Cfg>::write::template slave<PortType> base;
+      w_slave(sc_module_name nm) : base(nm) {}
+
+      void reset() {
+        base::aw.Reset();
+        base::w.Reset();
+        base::b.Reset();
+      }
+
+      bool get_single_write(aw_payload &ret_aw, w_payload &ret_w, b_payload &ret_b) {
+        ret_aw = base::aw.Pop();
+        ret_w = base::w.Pop();
+        ret_b.id = ret_aw.id;
+
+        if (ret_aw.len == 0) { return true; }
+
+        while (ret_aw.len-- > 0)
+        { ret_w = base::w.Pop(); }
+
+        ret_b.resp = Enc::XRESP::SLVERR;
+        base::b.Push(ret_b);
+        return false;
+      }
+
+      bool start_multi_write(aw_payload &ret_aw, b_payload &ret_b) {
+        ret_aw = base::aw.Pop();
+        ret_b.id = ret_aw.id;
+
+        return true;
+      }
+
+      bool next_multi_write(aw_payload &ret_aw) {
+        if (ret_aw.len == 0) { return false; }
+
+        --ret_aw.len;
+
+        if ((axi::axi4<Cfg>::BURST_WIDTH == 0 ) || (ret_aw.burst.to_uint64() == Enc::AXBURST::INCR)) {
+          ret_aw.addr += bytesPerBeat;
+        }
+        return true;
+      }
+    };
+
+// These macros are needed until Catapult supports sc_export,
+// which will allow pushing the fifos into the segment module
+//
+#define AXI4_W_SEGMENT(n) \
+  w_segment CCS_INIT_S1(n); \
+  Connections::Combinational<ex_aw_payload> CCS_INIT_S1(n ## _ex_aw_chan); \
+  Connections::Combinational<w_payload>     CCS_INIT_S1(n ## _w_chan); \
+  Connections::Combinational<b_payload> CCS_INIT_S1(n ## _b_chan);
+
+#define AXI4_W_SEGMENT_BIND(n, _clk, _rst_bar, _w_master) \
+    n .clk(_clk); \
+    n .rst_bar(_rst_bar); \
+    n .aw_out(_w_master.aw); \
+    n .w_out(_w_master.w); \
+    n .b_in(_w_master.b); \
+    n .ex_aw_chan(n ## _ex_aw_chan ); \
+    n .w_chan(n ## _w_chan ); \
+    n .b_chan(n ## _b_chan );
+
+#define AXI4_W_SEGMENT_RESET(n, _w_master) \
+    n ## _ex_aw_chan.ResetWrite(); \
+    n ## _w_chan.ResetWrite(); \
+    n ## _b_chan.ResetRead();
+
+
     SC_MODULE(w_segment) {
-      sc_in<bool>                        CCS_INIT_S1(clk);
-      sc_in<bool>                        CCS_INIT_S1(rst_bar);
-      Connections::Out<aw_payload>       CCS_INIT_S1(aw_out);
-      Connections::Out<w_payload>        CCS_INIT_S1(w_out);
-      Connections::In<b_payload>         CCS_INIT_S1(b_in);
+      sc_in<bool> CCS_INIT_S1(clk);
+      sc_in<bool> CCS_INIT_S1(rst_bar);
+      Connections::Out<aw_payload>   CCS_INIT_S1(aw_out);
+      Connections::Out<w_payload>    CCS_INIT_S1(w_out);
+      Connections::In<b_payload> CCS_INIT_S1(b_in);
 
       // queue incoming ex_aw_payload items
-      Connections::In<ex_aw_payload>     CCS_INIT_S1(ex_aw_chan);
+      Connections::In<ex_aw_payload> CCS_INIT_S1(ex_aw_chan);
 
       // queue incoming w_payload items
-      Connections::In<w_payload>         CCS_INIT_S1(w_chan);
+      Connections::In<w_payload>     CCS_INIT_S1(w_chan);
 
       // queue outgoing (combined) b items
-      Connections::Out<b_payload>        CCS_INIT_S1(b_chan);
+      Connections::Out<b_payload> CCS_INIT_S1(b_chan);
 
       // sets last bit for w_payload item
-      Connections::Combinational<bool>   CCS_INIT_S1(last_bit_chan);
+      Connections::Combinational<bool>          CCS_INIT_S1(last_bit_chan);
 
       // one bit per each aw_payload item, true iff it is last burst in overall segmented burst
-      Connections::Combinational<bool>   CCS_INIT_S1(last_burst_chan);
+      Connections::Combinational<bool>          CCS_INIT_S1(last_burst_chan);
 
       SC_CTOR(w_segment) {
         SC_THREAD(ex_aw_process);
@@ -554,9 +470,27 @@ namespace axi
       }
     };
 
+// These macros are needed until Catapult supports sc_export,
+// which will allow pushing the fifo into the segment module
+//
+#define AXI4_R_SEGMENT(n) \
+  r_segment CCS_INIT_S1(n); \
+  Connections::Combinational<ex_ar_payload> CCS_INIT_S1(n ## _ex_ar_chan);
+
+#define AXI4_R_SEGMENT_BIND(n, _clk, _rst_bar, _r_master) \
+    n .clk(_clk); \
+    n .rst_bar(_rst_bar); \
+    n .ar_out(_r_master .ar); \
+    n .ex_ar_chan(n ## _ex_ar_chan);
+
+#define AXI4_R_SEGMENT_RESET(n, _r_master) \
+    n ## _ex_ar_chan.ResetWrite(); \
+    _r_master . r.Reset();
+
+
     SC_MODULE(r_segment) {
-      sc_in<bool>                    CCS_INIT_S1(clk);
-      sc_in<bool>                    CCS_INIT_S1(rst_bar);
+      sc_in<bool> CCS_INIT_S1(clk);
+      sc_in<bool> CCS_INIT_S1(rst_bar);
       Connections::Out<ar_payload>   CCS_INIT_S1(ar_out);
       Connections::In<ex_ar_payload> CCS_INIT_S1(ex_ar_chan);
 

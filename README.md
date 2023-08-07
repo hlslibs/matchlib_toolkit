@@ -22,17 +22,20 @@ The toolkit examples require numerous open-source packages including:
 - BMP IO
 
 All of these packages are already available in a Catapult install tree (or your standard RedHat install) and will be properly located by the toolkit Makefiles if your CATAPULT_HOME environment variable is set properly. 
-However, if you do not have Catapult you can always download all of the required packages using the set_vars.csh (or set_vars.sh) script contained in this repository.
 
-For a complete, standalone environment, do the following
-> shell> cd MCToolkit/matchlib_toolkit<br>
-> shell> source examples/set_vars.csh<br>
-    OR<br>
-> shell> . examples/set_vars.sh<br>
-
-The first time the set_vars.* script is sourced it will download into your current directory all of the required open-source packages. It will also compile the OSCI SystemC simulator.
-Subsequent sourcing of set_vars.* from the same working directory will just point to the downloaded packages.
-You will need to source this script in each new shell when you want to run an example.
+If you do not have a Catapult installation you can do one of the following:
+1) Download the fully self-contained Matchlib examples kit at:
+   https://forums.accellera.org/files/file/126-matchlib-examples-kit-for-accellera-systemc-evolution-day-2020-presentation/
+   
+2) Use the set_vars.csh (or set_vars.sh) script contained in this repository to download the additional needed packages from github:
+    > shell> cd MCToolkit/matchlib_toolkit<br>
+    > shell> source examples/set_vars.csh<br>
+        OR<br>
+    > shell> . examples/set_vars.sh<br>
+    
+    The first time the set_vars.* script is sourced it will download into your current directory all of the required open-source packages. It will also compile the OSCI SystemC simulator.
+    Subsequent sourcing of set_vars.* from the same working directory will just point to the downloaded packages.
+    You will need to source this script in each new shell when you want to run an example.
 
 
 ## Running an example to test the environment
@@ -57,8 +60,5 @@ It is recommended that you browse all of the documents in matchlib_toolkit/doc
 ## Waveform Viewing
 You can use Questa (vsim), VCS, or similar simulators to view the trace.vcd files produced from the SystemC simulations in the examples. Alternatively you can download the open source gtkwave waveform viewer (google gtkwave).
 
-## Cleanup
-You can clean up the results from all runs using:<br>
-> shell> cd MCToolkit/matchlib_toolkit/examples<br>
-> shell> sh clean_all.sh<br>
+
 

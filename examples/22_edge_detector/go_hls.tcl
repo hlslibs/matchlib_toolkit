@@ -3,7 +3,7 @@ set sfd [file dir [info script]]
 options defaults
 
 options set /Input/CppStandard c++11
-options set /Input/CompilerFlags {-DCONNECTIONS_ACCURATE_SIM -DNO_DISPLAY -DCONNECTIONS_NAMING_ORIGINAL}
+options set /Input/CompilerFlags {-DCONNECTIONS_ACCURATE_SIM -DNO_DISPLAY }
 options set /Input/SearchPath $sfd -append
 options set /Input/SearchPath $sfd/../../include -append
 

@@ -1,33 +1,4 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 1.5                                                 *
- *                                                                        *
- *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 1.5.0                                               *
- *                                                                        *
- *  Copyright 2020 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
+// INSERT_EULA_COPYRIGHT: 2020-2022
 
 #pragma once
 
@@ -38,6 +9,7 @@
 #include <ac_int.h>
 #include <ac_fixed.h>
 #include <mc_connections.h>
+#include "auto_gen_fields.h"
 
 // ----------------------------------------------------------------------------------------------
 //  Data types
@@ -59,22 +31,11 @@ struct codes_t {
     code=c;
   }
 
-  static const unsigned int width = 6  + 32;
-  template <unsigned int Size> void Marshall(Marshaller<Size> &m) {
-    m &size;
-    m &code;
-  }
-  inline friend void sc_trace(sc_trace_file *tf, const codes_t &v, const std::string &NAME ) {
-    sc_trace(tf,v.size,  NAME + ".size");
-    sc_trace(tf,v.code,  NAME + ".code");
-  }
-
-  inline friend std::ostream &operator<<(ostream &os, const codes_t &rhs) {
-    os << std::hex << rhs.size << " ";
-    os << std::hex << rhs.code << " ";
-    return os;
-  }
-
+  AUTO_GEN_FIELD_METHODS(codes_t, ( \
+     size \
+   , code \
+  ) )
+  //
 };
 
 template <> struct mc_typedef_T_traits< codes_t > {
@@ -102,24 +63,13 @@ struct rgb_t {
   uint8 g;
   uint8 b;
 
-  static const unsigned int width = 3 * 8;
-  template <unsigned int Size> void Marshall(Marshaller<Size> &m) {
-    m &r;
-    m &g;
-    m &b;
-  }
-  inline friend void sc_trace(sc_trace_file *tf, const rgb_t &v, const std::string &NAME ) {
-    sc_trace(tf,v.r,  NAME + ".r");
-    sc_trace(tf,v.g,  NAME + ".g");
-    sc_trace(tf,v.b,  NAME + ".b");
-  }
 
-  inline friend std::ostream &operator<<(ostream &os, const rgb_t &rhs) {
-    os << std::hex << rhs.r << " ";
-    os << std::hex << rhs.g << " ";
-    os << std::hex << rhs.b << " ";
-    return os;
-  }
+  AUTO_GEN_FIELD_METHODS(rgb_t, (\
+     r \
+   , g \
+   , b \
+  ) )
+  //
 };
 
 template <> struct mc_typedef_T_traits< rgb_t > {

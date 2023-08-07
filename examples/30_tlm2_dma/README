@@ -16,6 +16,10 @@ any functional issues.
 
 The intent of this example is to provide a simple demonstration of how Matchlib connections models and that use synthesizeable bus interfaces such as AXI4 can be easily wrapped and instantiated in larger TLM2 virtual platform models.
 
+A video presentation and larger example that uses similar techniques is presented here:
+http://vimeo.com/showcase/9676742?page=3
+It is titled "System Verification with Matchlib"
+
 See ../../docs/matchlib_intro_dac2019.pdf for a description of this example.
 
 See also ./wrapping*tlm2*.pdf for a description of this example.

@@ -1,58 +1,25 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 1.5                                                 *
- *                                                                        *
- *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 1.5.0                                               *
- *                                                                        *
- *  Copyright 2020 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
+// INSERT_EULA_COPYRIGHT: 2020-2022
 
 #pragma once
 
 #include "apb_transactor.h"
 
+typedef apb::apb_transactor<axi::cfg::lite> local_apb;
 
-class ram : public sc_module
+class ram : public sc_module, public local_apb
 {
-public:
-  // This RAM module has one AXI4 connection - from the DMA (an interface to a master).
-  // It is configured as AXI4-Lite.
-  // Create some typedefs to simplify the SystemC declarations below.
-  typedef apb::apb_transactor<axi::cfg::lite> from_dma_trans;
 public:
   sc_in<bool> CCS_INIT_S1(clk);
   sc_in<bool> CCS_INIT_S1(rst_bar);
 
-  from_dma_trans::apb_slave_xactor<>   CCS_INIT_S1(slave0_xactor);
-  from_dma_trans::apb_slave_ports<>    CCS_INIT_S1(slave0_ports);
-  from_dma_trans::apb_req_chan         CCS_INIT_S1(req_chan);
-  from_dma_trans::apb_rsp_chan         CCS_INIT_S1(rsp_chan);
+  apb_slave_xactor<>   CCS_INIT_S1(slave0_xactor);
+  apb_slave_ports<> CCS_INIT_S1(slave0_ports);
+  apb_req_chan CCS_INIT_S1(req_chan);
+  apb_rsp_chan CCS_INIT_S1(rsp_chan);
 
-  static const int sz = 0x10000; // size in axi::cfg::lite::dataWidth words
+  static const int sz = 0x10000; // size in axi_cfg::dataWidth words
 
-  typedef ac_int<axi::cfg::lite::dataWidth, false> arr_t;
+  typedef ac_int<axi_cfg::dataWidth, false> arr_t;
   arr_t *array {0};
 
   SC_CTOR(ram) {
@@ -63,7 +30,7 @@ public:
     async_reset_signal_is(rst_bar, false);
 
     for (int i=0; i < sz; i++) {
-      array[i] = i * from_dma_trans::bytesPerBeat;
+      array[i] = i * bytesPerBeat;
     }
 
     slave0_xactor.clk(clk);
@@ -73,13 +40,13 @@ public:
     slave0_xactor(slave0_ports);
   }
 
-  ac_int<axi::cfg::lite::dataWidth, false> debug_read_addr(uint32_t addr) {
-    if (addr >= (sz * from_dma_trans::bytesPerBeat)) {
+  ac_int<axi_cfg::dataWidth, false> debug_read_addr(uint32_t addr) {
+    if (addr >= (sz * bytesPerBeat)) {
       SC_REPORT_ERROR("ram", "invalid addr");
       return 0;
     }
 
-    return (array[addr / from_dma_trans::bytesPerBeat]);
+    return (array[addr / bytesPerBeat]);
   }
 
   void slave_process() {
@@ -89,36 +56,36 @@ public:
     wait();
 
     while (1) {
-      from_dma_trans::apb_req req = req_chan.Pop();
+      apb_req req = req_chan.Pop();
 
       // CCS_LOG("ram addr: " << std::hex << req.addr.addr << " is_write: " << req.is_write);
 
-      from_dma_trans::apb_rsp rsp;
+      apb_rsp rsp;
 
-      if (req.addr.addr >= (sz * from_dma_trans::bytesPerBeat)) {
+      if (req.addr.addr >= (sz * bytesPerBeat)) {
         SC_REPORT_ERROR("ram", "invalid addr");
-        rsp.r.resp = from_dma_trans::Enc::XRESP::SLVERR;
+        rsp.r.resp = Enc::XRESP::SLVERR;
       } else if (!req.is_write) {
-        rsp.r.data = array[req.addr.addr / from_dma_trans::bytesPerBeat];
+        rsp.r.data = array[req.addr.addr / bytesPerBeat];
         // CCS_LOG("read data: " << std::hex << rsp.r.data);
       } else if  (req.is_write) {
         decltype(req.w.wstrb) all_on{~0};
 
         if (req.w.wstrb == all_on) {
-          array[req.addr.addr / from_dma_trans::bytesPerBeat] = req.w.data.to_uint64();
+          array[req.addr.addr / bytesPerBeat] = req.w.data.to_uint64();
           // CCS_LOG("write data: " << std::hex << req.w.data.to_uint64());
         } else {
           CCS_LOG("write strobe enabled");
-          arr_t orig  = array[req.addr.addr / from_dma_trans::bytesPerBeat];
+          arr_t orig  = array[req.addr.addr / bytesPerBeat];
           arr_t data = req.w.data.to_uint64();
 
-#pragma hls_unroll
-          for (int i=0; i<from_dma_trans::WSTRB_WIDTH; i++)
+#pragma unroll
+          for (int i=0; i<WSTRB_WIDTH; i++)
             if (req.w.wstrb[i]) {
               orig = nvhls::set_slc(orig, nvhls::get_slc<8>(data, (i*8)), (i*8));
             }
 
-          array[req.addr.addr / from_dma_trans::bytesPerBeat] = orig;
+          array[req.addr.addr / bytesPerBeat] = orig;
         }
       }
 

@@ -1,39 +1,28 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 1.5                                                 *
- *                                                                        *
- *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 1.5.0                                               *
- *                                                                        *
- *  Copyright 2022 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
+// INSERT_EULA_COPYRIGHT: 2020-2022
 
 #pragma once
 
 // These adapters convert to/from Matchlib axi4 masters/slaves to TLM2 targets/initiators
 
+
 #include "axi4_segment.h"
+
+
+// These two defines should be moved into axi4_segment.h eventually
+#ifndef AXI4_W_SEGMENT_T
+#define AXI4_W_SEGMENT_T(n, cfg_t) \
+  typename cfg_t::w_segment CCS_INIT_S1(n); \
+  Connections::Combinational<typename cfg_t::ex_aw_payload> CCS_INIT_S1(n ## _ex_aw_chan); \
+  Connections::Combinational<typename cfg_t::w_payload>     CCS_INIT_S1(n ## _w_chan); \
+  Connections::Combinational<typename cfg_t::b_payload> CCS_INIT_S1(n ## _b_chan);
+#endif
+
+#ifndef AXI4_R_SEGMENT_T
+#define AXI4_R_SEGMENT_T(n, cfg_t) \
+  typename cfg_t::r_segment CCS_INIT_S1(n); \
+  Connections::Combinational<typename cfg_t::ex_ar_payload> CCS_INIT_S1(n ## _ex_ar_chan);
+#endif
+
 
 #include "tlm.h"
 #include "tlm_utils/simple_initiator_socket.h"
@@ -44,7 +33,7 @@
 using namespace tlm;
 
 template <class axi_cfg>
-class axi4_slave_to_tlm2_initiator
+class axi4_slave_to_tlm2_initiator 
   : public sc_module
   , public axi_cfg
 {
@@ -68,7 +57,8 @@ public:
   SC_HAS_PROCESS(axi4_slave_to_tlm2_initiator);
 
   axi4_slave_to_tlm2_initiator(sc_module_name nm)
-    : sc_module(nm) {
+   : sc_module(nm)
+  {
     SC_THREAD(slave_r_process);
     sensitive << clk.pos();
     async_reset_signal_is(rst_bar, false);
@@ -98,7 +88,7 @@ public:
 
       trans.set_read();
       trans.set_address(start_addr);
-      trans.set_data_ptr((unsigned char *)&read_buf);
+      trans.set_data_ptr((unsigned char*)&read_buf);
       trans.set_data_length(data_len);
       trans.set_byte_enable_ptr(0);
       trans.set_byte_enable_length(0);
@@ -106,8 +96,8 @@ public:
 
       tlm2_initiator->b_transport(trans, zero_time);
 
-      bool resp  = (trans.get_response_status() == TLM_OK_RESPONSE) ?
-                   axi_cfg::Enc::XRESP::OKAY : axi_cfg::Enc::XRESP::SLVERR;
+      bool resp  = (trans.get_response_status() == TLM_OK_RESPONSE) ?  
+         axi_cfg::Enc::XRESP::OKAY : axi_cfg::Enc::XRESP::SLVERR;
 
       while (1) {
         typename axi_cfg::r_payload r;
@@ -151,7 +141,7 @@ public:
 
       trans.set_write();
       trans.set_address(start_addr);
-      trans.set_data_ptr((unsigned char *)&write_buf);
+      trans.set_data_ptr((unsigned char*)&write_buf);
       trans.set_data_length(data_len);
       trans.set_byte_enable_ptr(0);
       trans.set_byte_enable_length(0);
@@ -159,8 +149,8 @@ public:
 
       tlm2_initiator->b_transport(trans, zero_time);
 
-      b.resp  = (trans.get_response_status() == TLM_OK_RESPONSE) ?
-                axi_cfg::Enc::XRESP::OKAY : axi_cfg::Enc::XRESP::SLVERR;
+      b.resp  = (trans.get_response_status() == TLM_OK_RESPONSE) ?  
+         axi_cfg::Enc::XRESP::OKAY : axi_cfg::Enc::XRESP::SLVERR;
 
       w_slave0.b.Push(b);
     }
@@ -186,16 +176,17 @@ public:
   // approach is to allocate new buffers with needed padding, copy data, and emit axi4
   // bursts that are fully aligned and use full buswidth. If needed, use wstrb to precisely
   // control what is written.
-  // For read bursts with unaligned addresses or data_lens, do axi4 read bursts with fully
+  // For read bursts with unaligned addresses or data_lens, do axi4 read bursts with fully 
   // aligned addresses using full buswidth then copy data back to tlm2 to reflect selected data.
 
-  tlm_generic_payload *current_trans{0};
+  tlm_generic_payload* current_trans{0};
   tlm_fifo<bool> start_fifo, done_fifo;
 
   SC_HAS_PROCESS(tlm2_target_to_axi4_master);
 
   tlm2_target_to_axi4_master(sc_module_name nm)
-    : sc_module(nm) {
+   : sc_module(nm)
+  {
     tlm2_target.register_b_transport(this, &tlm2_target_to_axi4_master::b_transport);
 
     SC_THREAD(master_thread);
@@ -206,81 +197,80 @@ public:
     AXI4_R_SEGMENT_BIND(r_segment0, clk, rst_bar, r_master0);
   }
 
-  AXI4_W_SEGMENT_CFG(axi_cfg, w_segment0)
-  AXI4_R_SEGMENT_CFG(axi_cfg, r_segment0)
+  AXI4_W_SEGMENT_T(w_segment0, axi_cfg)
+  AXI4_R_SEGMENT_T(r_segment0, axi_cfg)
 
-  virtual void b_transport(int tag, tlm_generic_payload &trans, sc_time &tm) {
+  virtual void b_transport(int tag, tlm_generic_payload& trans, sc_time& tm) {
     sc_assert(tag == 0);
     current_trans = &trans;
     // separate thread used here is needed for proper handling of reset calls for Matchlib
     // not properly handling "dynamic resets" here, would need to clear the fifos in that case
-
+    
     start_fifo.put(1);
     (void)done_fifo.get();
   }
 
   void master_thread() {
-    AXI4_W_SEGMENT_RESET(w_segment0, w_master0);
-    AXI4_R_SEGMENT_RESET(r_segment0, r_master0);
-    wait();
+   AXI4_W_SEGMENT_RESET(w_segment0, w_master0);
+   AXI4_R_SEGMENT_RESET(r_segment0, r_master0);
+   wait();
 
-    while (1) {
-      start_fifo.get();
+   while (1) {
+    start_fifo.get();
 
-      tlm_command cmd = current_trans->get_command();
-      uint64_t addr   = current_trans->get_address();
-      uint64_t len    = current_trans->get_data_length();
-      unsigned char *data_ptr = current_trans->get_data_ptr();
-      typedef ac_int<axi_cfg::bytesPerBeat*8, false> beat_t;
-      beat_t *beat_ptr = (beat_t *)data_ptr;
+    tlm_command cmd = current_trans->get_command();
+    uint64_t addr   = current_trans->get_address();
+    uint64_t len    = current_trans->get_data_length();
+    unsigned char* data_ptr = current_trans->get_data_ptr();
+    typedef ac_int<axi_cfg::bytesPerBeat*8, false> beat_t;
+    beat_t* beat_ptr = (beat_t*)data_ptr;
 
-      current_trans->set_response_status(TLM_OK_RESPONSE);
+    current_trans->set_response_status(TLM_OK_RESPONSE);
 
-      sc_assert((addr % axi_cfg::bytesPerBeat) == 0);
+    sc_assert((addr % axi_cfg::bytesPerBeat) == 0);
 
-      if (cmd == TLM_WRITE_COMMAND) {
-        typename axi_cfg::ex_aw_payload aw;
-        typename axi_cfg::b_payload b;
-        aw.addr = addr;
-        aw.ex_len = (len / axi_cfg::bytesPerBeat) - 1;
+    if (cmd == TLM_WRITE_COMMAND) {
+      typename axi_cfg::ex_aw_payload aw;
+      typename axi_cfg::b_payload b;
+      aw.addr = addr;
+      aw.ex_len = (len / axi_cfg::bytesPerBeat) - 1;
 
-        if (((aw.ex_len + 1) * axi_cfg::bytesPerBeat) != len) { sc_assert(0); }
+      if (((aw.ex_len + 1) * axi_cfg::bytesPerBeat) != len)
+        sc_assert(0);
 
-        w_segment0_ex_aw_chan.Push(aw);
+      w_segment0_ex_aw_chan.Push(aw);
 
-        do {
-          typename axi_cfg::w_payload w;
-          w.data = *beat_ptr++;
-          w_segment0_w_chan.Push(w);
-        } while (aw.ex_len--);
+      do {
+        typename axi_cfg::w_payload w;
+        w.data = *beat_ptr++;
+        w_segment0_w_chan.Push(w);
+      } while (aw.ex_len--);
 
-        b = w_segment0_b_chan.Pop();
-        if (b.resp != axi_cfg::Enc::XRESP::OKAY) {
-          current_trans->set_response_status(TLM_GENERIC_ERROR_RESPONSE);
-        }
-      }
-
-      if (cmd == TLM_READ_COMMAND) {
-        typename axi_cfg::ex_ar_payload ar;
-        ar.addr = addr;
-        ar.ex_len = (len / axi_cfg::bytesPerBeat) - 1;
-
-        if (((ar.ex_len + 1) * axi_cfg::bytesPerBeat) != len) { sc_assert(0); }
-
-        r_segment0_ex_ar_chan.Push(ar);
-
-        do {
-          typename axi_cfg::r_payload r;
-          r = r_master0.r.Pop();
-          *beat_ptr++ = r.data;
-          if (r.resp != axi_cfg::Enc::XRESP::OKAY) {
-            current_trans->set_response_status(TLM_GENERIC_ERROR_RESPONSE);
-          }
-        } while (ar.ex_len--);
-      }
-
-      done_fifo.put(1);
+      b = w_segment0_b_chan.Pop();
+      if (b.resp != axi_cfg::Enc::XRESP::OKAY)
+        current_trans->set_response_status(TLM_GENERIC_ERROR_RESPONSE);
     }
+
+    if (cmd == TLM_READ_COMMAND) {
+      typename axi_cfg::ex_ar_payload ar;
+      ar.addr = addr;
+      ar.ex_len = (len / axi_cfg::bytesPerBeat) - 1;
+
+      if (((ar.ex_len + 1) * axi_cfg::bytesPerBeat) != len)
+        sc_assert(0);
+
+      r_segment0_ex_ar_chan.Push(ar);
+
+      do {
+        typename axi_cfg::r_payload r;
+        r = r_master0.r.Pop();
+        *beat_ptr++ = r.data;
+        if (r.resp != axi_cfg::Enc::XRESP::OKAY)
+          current_trans->set_response_status(TLM_GENERIC_ERROR_RESPONSE);
+      } while (ar.ex_len--);
+    }
+
+    done_fifo.put(1);
+   }
   }
 };
-

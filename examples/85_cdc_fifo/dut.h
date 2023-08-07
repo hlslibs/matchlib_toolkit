@@ -1,37 +1,12 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 1.5                                                 *
- *                                                                        *
- *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 1.5.0                                               *
- *                                                                        *
- *  Copyright 2020 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
+// INSERT_EULA_COPYRIGHT: 2020-2022
 
 #pragma once
 
 #include <mc_connections.h>
+
+#ifndef CONNECTIONS_SIM_ONLY
+#include "ac_blackbox.h"
+#endif
 
 class block1 : public sc_module
 {
@@ -100,24 +75,14 @@ public:
   Connections::Out<uint32_t> CCS_INIT_S1(out1);
   Connections::In <uint32_t> CCS_INIT_S1(in1);
 
-#ifdef __SYNTHESIS__
-  static void hls_blackbox_module(const char *entity="cdc_fifo",
-                                  const char *architecture="cdc_fifo",
-                                  const char *library="work",
-                                  const char *vhdl_files="",
-                                  const char *verilog_files="cdc_fifo.v");
-
-  SC_CTOR(cdc_fifo) {}
-
-#else
-
+#ifdef CONNECTIONS_SIM_ONLY
   tlm::tlm_fifo<uint32_t>    CCS_INIT_S1(fifo1);
+#endif
 
   SC_CTOR(cdc_fifo) {
-    #ifdef CONNECTIONS_SIM_ONLY
+#ifdef CONNECTIONS_SIM_ONLY
     out1.disable_spawn();
     in1.disable_spawn();
-    #endif
 
     SC_THREAD(thread1);
     sensitive << clk1.pos();
@@ -126,8 +91,18 @@ public:
     SC_THREAD(thread2);
     sensitive << clk2.pos();
     async_reset_signal_is(rst_bar2, false);
+#else
+       ac_blackbox()
+           .entity("cdc_fifo")
+           .architecture("cdc_fifo")
+           .library("work")
+           .verilog_files("cdc_fifo.v")
+           .end();
+
+#endif
   }
 
+#ifdef CONNECTIONS_SIM_ONLY
   void thread1() {
     // in1.Reset();
     wait();
@@ -154,7 +129,6 @@ public:
       out1.vld = false;
     }
   }
-
 #endif
 };
 

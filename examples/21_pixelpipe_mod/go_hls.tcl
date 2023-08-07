@@ -3,8 +3,8 @@ set sfd [file normalize [file join [file dir [info script]] ../20_DCT_sysc]]
 options defaults
 
 options set /Input/CppStandard c++11
-options set /Input/CompilerFlags {-DCONNECTIONS_NAMING_ORIGINAL -DCONNECTIONS_ACCURATE_SIM -DTOP_PIXELPIPE_MOD}
-options set /Input/SearchPath {$MGC_HOME/shared/examples/matchlib/toolkit/include} -append
+options set /Input/CompilerFlags {-DCONNECTIONS_ACCURATE_SIM -DTOP_PIXELPIPE_MOD}
+options set /Input/SearchPath {../../include} -append
 options set /Input/SearchPath {$MGC_HOME/shared/pkgs/matchlib/cmod/include} -append
 options set /Input/SearchPath "$sfd/RAM_lib" -append
 options set /ComponentLibs/SearchPath "$sfd/RAM_lib" -append
@@ -55,7 +55,6 @@ directive set /pixelpipe_mod/dct/dct_v/COPY_ROW1 -UNROLL yes
 directive set /pixelpipe_mod/dct/dct_v/ROW1 -UNROLL yes
 directive set /pixelpipe_mod/dct/dct_v/PRE_ADD -UNROLL yes
 directive set /pixelpipe_mod/dct/dct_v/MAC -UNROLL yes
-directive set /pixelpipe_mod/quantize_exec -DESIGN_GOAL latency
 
 go architect
 go allocate

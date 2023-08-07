@@ -179,7 +179,7 @@ help: checkvars
 	-@echo ""
 
 clean: sim_clean
-	@rm -rf *.vcd *.wlf
+	@rm -rf *.vcd *.wlf *atapul*
 
 
 

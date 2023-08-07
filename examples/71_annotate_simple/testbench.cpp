@@ -1,33 +1,4 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 1.5                                                 *
- *                                                                        *
- *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 1.5.0                                               *
- *                                                                        *
- *  Copyright 2020 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
+// INSERT_EULA_COPYRIGHT: 2020-2022
 
 #include "dut.h"
 #include <mc_scverify.h>
@@ -73,7 +44,10 @@ public:
     in1.ResetWrite();
     wait();
 
-    for (int i = 0; i < 10; i++) { in1.Push(i); }
+    for (int i = 0; i < 10; i++) { 
+      in1.Push(i); 
+      CCS_LOG("STIM Pushed: " << std::hex << i);
+    }
 
     wait(100);
     sc_stop();
@@ -84,7 +58,10 @@ public:
     out1.ResetRead();
     wait();
 
-    while (1) { CCS_LOG("TB resp sees: " << std::hex << out1.Pop()); }
+    while (1) { 
+      int i = out1.Pop();
+      CCS_LOG("RESP Popped: " << std::hex << i);
+    }
   }
 
   void reset() {
@@ -106,6 +83,11 @@ int sc_main(int argc, char **argv)
 
   Top top("top");
   trace_hierarchy(&top, trace_file_ptr);
+
+  // Enable data logging
+  channel_logs logs;
+  logs.enable("my_log",true);
+  logs.log_hierarchy(top);
 #ifndef __SYNTHESIS__
   Connections::annotate_design(top);
 #endif

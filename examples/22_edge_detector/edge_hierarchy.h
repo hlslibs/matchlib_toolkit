@@ -1,38 +1,8 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 1.5                                                 *
- *                                                                        *
- *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 1.5.0                                               *
- *                                                                        *
- *  Copyright 2020 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
+// INSERT_EULA_COPYRIGHT: 2020-2022
 
 #pragma once
 
 #include <mc_connections.h>
-#include <mc_fifo.h>
 #include "types.h"
 
 #pragma hls_design top
@@ -59,9 +29,9 @@ public: // Interface
     reset_signal_is(rst_bar,false);
 
     dy_chan.clk(clk);
-    dy_chan.rst_bar(rst_bar);
-    dy_chan.in1(dy_chan_in);
-    dy_chan.out1(dy_chan_out);
+    dy_chan.rst(rst_bar);
+    dy_chan.enq(dy_chan_in);
+    dy_chan.deq(dy_chan_out);
   }
 
   void VerticalGradient() {
@@ -187,7 +157,7 @@ public: // Interface
 
 private:
   // interconnect channels  between blocks
-  Connections::FifoModule<int9,3>   CCS_INIT_S1(dy_chan); // need fifo to balance latency
+  Connections::Fifo<int9,3>   CCS_INIT_S1(dy_chan); // need fifo to balance latency
   Connections::Combinational<int9>  CCS_INIT_S1(dy_chan_in);
   Connections::Combinational<int9>  CCS_INIT_S1(dy_chan_out);
   Connections::Combinational<int9>  dx_chan;

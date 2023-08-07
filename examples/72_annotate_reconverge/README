@@ -1,4 +1,6 @@
 
+See ../../doc/matchlib_latency_capacity_annotation.pdf
+
 This example shows a simple design which exhibits "stuttering" behavior in the RTL after HLS.
 It consists of four blocks. All blocks are pipelined with II=1.
 The stuttering behavior exists because block0 has a latency and capacity of 7 after HLS,

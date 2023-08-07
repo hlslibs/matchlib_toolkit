@@ -1,6 +1,6 @@
 # Makefile for example 08_dma
 
-CXXFLAGS += -g -std=c++11 -Wall -Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-label -Wno-maybe-uninitialized
+CXXFLAGS += -g -O0 -std=c++11 -Wall -Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-label -Wno-maybe-uninitialized
 
 # =====================================================================
 # ENVIRONMENT VARIABLES
@@ -127,7 +127,7 @@ INCDIRS += -I$(AC_TYPES)/include
 INCDIRS += -I$(AC_SIMUTILS)/include
 
 CPPFLAGS += $(INCDIRS)
-CPPFLAGS += -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES -DCONNECTIONS_NAMING_ORIGINAL
+CPPFLAGS += -DSC_INCLUDE_DYNAMIC_PROCESSES 
 CPPFLAGS += -DSEGMENT_BURST_SIZE=16
 
 LIBS += -lsystemc -lpthread
@@ -145,6 +145,14 @@ trace.vcd: sim_sc
 
 sim_sc: $(wildcard $(SOURCE_DIR)*.h) $(wildcard $(SOURCE_DIR)*.cpp)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LIBDIRS) $(wildcard $(SOURCE_DIR)*.cpp) -o $@ $(LIBS)
+
+direct_port_sc: $(wildcard $(SOURCE_DIR)*.h) $(wildcard $(SOURCE_DIR)*.cpp)
+	$(CXX) -DFORCE_AUTO_PORT=Connections::DIRECT_PORT $(CXXFLAGS) \
+		$(CPPFLAGS) $(LIBDIRS) $(wildcard $(SOURCE_DIR)*.cpp) -o $@ $(LIBS)
+
+clang_sc: $(wildcard $(SOURCE_DIR)*.h) $(wildcard $(SOURCE_DIR)*.cpp)
+	clang++ -DFORCE_AUTO_PORT=Connections::DIRECT_PORT $(CXXFLAGS) \
+		$(CPPFLAGS) $(LIBDIRS) $(wildcard $(SOURCE_DIR)*.cpp) -o $@ $(LIBS)
 
 # These two targets assume that the QuestaSim utilities 'vcd2wlf' and 'vsim'
 # are found in your PATH
@@ -180,7 +188,7 @@ help: checkvars
 	-@echo ""
 
 clean: sim_clean
-	@rm -rf *.vcd *.wlf
+	@rm -rf *.vcd *.wlf *atapu* wrapDir direct_port_sc
 
 
 

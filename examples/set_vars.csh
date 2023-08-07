@@ -13,7 +13,7 @@
 #    ./sysclocal
 #    ./matchlib_connections
 #    ./matchlib
-#    ./boost_home
+#    ./preprocessor
 #    ./rapidjson
 #    ./ac_types
 #    ./ac_math
@@ -22,9 +22,6 @@
 # It also intentionally unsets CATAPULT_HOME and MGC_HOME
 unsetenv CATAPULT_HOME
 unsetenv MGC_HOME
-
-# Note: This file is part of the Matchlib Toolkit package from hlslibs.org.
-# To download: git clone http://github.com/hlslibs/matchlib_toolkit.git
 
 #================================================================
 
@@ -62,18 +59,12 @@ if (! -e ./matchlib ) then
 endif
 setenv MATCHLIB_HOME `pwd`/matchlib
 
-# Configure Boost Preprocessor and Static Assert
-# (We can't depend on the linux install to have boost, so always download minimum)
+# Configure Boost Preprocessor
 if (! -e /Xusr/include/boost/preprocessor/arithmetic ) then
-  if (! -e ./boost_home/include/boost) then
+  if (! -e ./preprocessor/include/boost) then
     git clone http://github.com/boostorg/preprocessor
-    git clone http://github.com/boostorg/static_assert
-    mkdir -p boost_home/include/boost
-    mv preprocessor/include/boost/* boost_home/include/boost
-    mv static_assert/include/boost/* boost_home/include/boost
-    rm -rf preprocessor static_assert
   endif
-  setenv BOOST_HOME `pwd`/boost_home
+  setenv BOOST_HOME `pwd`/preprocessor
 else
   setenv BOOST_HOME /usr
 endif
@@ -104,14 +95,4 @@ if (! -e ./ac_simutils) then
   git clone http://github.com/hlslibs/ac_simutils.git
 endif
 setenv AC_SIMUTILS `pwd`/ac_simutils
-
-# Configure BMP IO
-if ( ! -e ./bmp_io ) then
-  mkdir ./bmp_io
-  cd ./bmp_io
-  wget --no-check-certificate https://people.math.sc.edu/Burkardt/cpp_src/bmp_io/bmp_io.cpp
-  wget --no-check-certificate https://people.math.sc.edu/Burkardt/cpp_src/bmp_io/bmp_io.hpp
-  cd ..
-endif
-setenv BMP_IO `pwd`/bmp_io
 

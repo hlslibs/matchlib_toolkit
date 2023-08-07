@@ -1,4 +1,5 @@
 
+See ../../doc/matchlib_latency_capacity_annotation.pdf
 
 This is a very simple example showing Matchlib Connections Latency and Capacity backannotation.
 The latency and capacity info is backannotated from the top.input.json file.
@@ -12,8 +13,8 @@ Interesting values to try are:
 L: 0, C: 0
 L: 1, C: 1
 L: 1, C: 2
-L: 5, C: 1
-L: 5, C: 2
+L: 10, C: 10
+L: 10, C: 2
 
 
 
@@ -25,6 +26,8 @@ Steps:
 
 2. Run the SC simulation by typing:
    make run
+
+   Note in particular the times reported for the STIM and RESP transactions.
 
 3. View the waveforms generated from the SC simulation:
    make view_wave

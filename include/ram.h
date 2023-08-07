@@ -1,39 +1,14 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 1.5                                                 *
- *                                                                        *
- *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 1.5.0                                               *
- *                                                                        *
- *  Copyright 2020 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
+// INSERT_EULA_COPYRIGHT: 2020-2022
 
 #pragma once
 
 #include "axi4_segment.h"
 
 typedef axi::axi4_segment<axi::cfg::standard> local_axi;
+
+#ifdef USE_EXTENDED_ARRAY
+#include <extended_array.h>
+#endif
 
 /**
  *  \brief A simple RAM module with 1 axi4 read slave and 1 axi4 write slave
@@ -50,10 +25,22 @@ public:
   static const int sz = 0x10000; // size in axi_cfg::dataWidth words
 
   typedef NVUINTW(axi_cfg::dataWidth) arr_t;
-  arr_t *array {0};
+#ifdef USE_EXTENDED_ARRAY
+  extended_array<arr_t, sz>* array{0};
+#else
+  std::array<arr_t, sz>* array{0};
+#endif
 
-  SC_CTOR(ram) {
-    array = new arr_t[sz];
+  SC_HAS_PROCESS(ram);
+  ram(sc_module_name _nm, std::string log_nm="", bool use_time_stamp=0) {
+#ifdef USE_EXTENDED_ARRAY
+    if (log_nm != "")
+      log_nm = std::string(this->name()) + "_" + log_nm;
+    
+    array = new extended_array<arr_t, sz>(log_nm, use_time_stamp);
+#else
+    array = new std::array<arr_t, sz>();
+#endif
 
     SC_THREAD(slave_r_process);
     sensitive << clk.pos();
@@ -64,7 +51,11 @@ public:
     async_reset_signal_is(rst_bar, false);
 
     for (int i=0; i < sz; i++)
-    { array[i] = i * bytesPerBeat; }
+    { (*array)[i] = arr_t(i * bytesPerBeat); }
+  }
+
+  ~ram() {
+    delete array;
   }
 
   NVUINTW(axi_cfg::dataWidth) debug_read_addr(uint32_t addr) {
@@ -73,7 +64,7 @@ public:
       return 0;
     }
 
-    return (array[addr / bytesPerBeat]);
+    return ((*array)[addr / bytesPerBeat]);
   }
 
   void slave_r_process() {
@@ -94,7 +85,7 @@ public:
           SC_REPORT_ERROR("ram", "invalid addr");
           r.resp = Enc::XRESP::SLVERR;
         } else {
-          r.data = array[ar.addr / bytesPerBeat];
+          r.data = (*array)[ar.addr / bytesPerBeat];
         }
 
         if (!r_slave0.next_multi_read(ar, r)) { break; }
@@ -124,19 +115,19 @@ public:
           decltype(w.wstrb) all_on{~0};
 
           if (w.wstrb == all_on) {
-            array[aw.addr / bytesPerBeat] = w.data.to_uint64();
+            (*array)[aw.addr / bytesPerBeat] = w.data.to_uint64();
           } else {
             CCS_LOG("write strobe enabled");
-            arr_t orig  = array[aw.addr / bytesPerBeat];
+            arr_t orig  = (*array)[aw.addr / bytesPerBeat];
             arr_t wdata = w.data.to_uint64();
 
-#pragma hls_unroll
+#pragma unroll
             for (int i=0; i<WSTRB_WIDTH; i++)
               if (w.wstrb[i]) {
                 orig = nvhls::set_slc(orig, nvhls::get_slc<8>(wdata, (i*8)), (i*8));
               }
 
-            array[aw.addr / bytesPerBeat] = orig;
+            (*array)[aw.addr / bytesPerBeat] = orig;
           }
         }
 

@@ -1,71 +1,40 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 1.5                                                 *
- *                                                                        *
- *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 1.5.0                                               *
- *                                                                        *
- *  Copyright 2020 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
+// INSERT_EULA_COPYRIGHT: 2020-2022
 
+#include "mc_connections.h"
+#include "auto_gen_fields.h"
 #include "apb_ram.h"
 #include "apb_dma.h"
 #include <mc_scverify.h>
 
-class Top : public sc_module
-{
-public:
-  // This top module instantiates the DMA and RAM instances along with a simple CPU.
-  // Since all of the AXI interconnect is for AXI4-Lite, we can reuse one typedef for
-  // all declarations below:
-  typedef apb::apb_transactor<axi::cfg::lite> my_axi_cfg;
+// Create a typedef for the configuration of this local APB bus
+typedef apb::apb_transactor<axi::cfg::lite> local_apb;
 
+class Top : public sc_module, public local_apb
+{
 public:
 
   // Hierarchy Instances
   CCS_DESIGN(dma)                         CCS_INIT_S1(dma_inst);   // the DUT
   ram                                     CCS_INIT_S1(ram_inst);   // slave RAM to talk to
-  my_axi_cfg::apb_master_xactor<>         CCS_INIT_S1(cpu_inst);   // simple "CPU"
+  apb_master_xactor<>                     CCS_INIT_S1(cpu_inst);   // simple "CPU"
 
   // Local signal/Connections Declarations
-  sc_clock                                         clk;
-  sc_signal<bool>                                  rst_bar;
+  sc_clock                                clk;
+  sc_signal<bool>                         rst_bar;
 
-  Connections::Combinational<bool>                 CCS_INIT_S1(dma_done);
-  Connections::Combinational<uint32_t>             CCS_INIT_S1(dma_dbg);
+  Connections::Combinational<bool>        CCS_INIT_S1(dma_done);
+  Connections::Combinational<uint32_t>    CCS_INIT_S1(dma_dbg);
 
-  my_axi_cfg::apb_signals_ifc                      CCS_INIT_S1(dma_master0_apb_signals);
-  my_axi_cfg::apb_signals_ifc                      CCS_INIT_S1(dma_slave0_apb_signals);
+  apb_signals_chan                        CCS_INIT_S1(dma_master0_apb_signals);
+  apb_signals_chan                        CCS_INIT_S1(dma_slave0_apb_signals);
 
-  my_axi_cfg::apb_master_ports<>                   CCS_INIT_S1(cpu_master_ports);
+  apb_master_ports<>                      CCS_INIT_S1(cpu_master_ports);
 
-  Connections::Combinational<my_axi_cfg::apb_req>  CCS_INIT_S1(cpu_master_req);  // Connections channel for the apb_req message
-  Connections::Combinational<my_axi_cfg::apb_rsp>  CCS_INIT_S1(cpu_master_rsp);  // Connections channel for the apb_rsp message
+  Connections::Combinational<apb_req>     CCS_INIT_S1(cpu_master_req);  // Connections channel for the apb_req message
+  Connections::Combinational<apb_rsp>     CCS_INIT_S1(cpu_master_rsp);  // Connections channel for the apb_rsp message
 
   SC_CTOR(Top)
     :   clk("clk", 1, SC_NS, 0.5,0,SC_NS,true) {
-    Connections::set_sim_clk(&clk);
 
     // Connect up the testbench master that will generate requests to the DUT "dma_inst"
     cpu_inst.clk(clk);
@@ -121,8 +90,8 @@ public:
     cpu_master_rsp.ResetRead();
     wait();
 
-    my_axi_cfg::apb_req req;
-    my_axi_cfg::apb_rsp rsp;
+    apb_req req;
+    apb_rsp rsp;
 
     // Program DMA ar_addr with source_addr
     req.is_write = true;
@@ -177,8 +146,8 @@ public:
       CCS_LOG("clock period: " << sc_time(1, SC_NS));
 
       for (int i=0; i < beats; i++) {
-        int s = ram_inst.debug_read_addr(source_addr + (i * axi::cfg::lite::dataWidth/8));
-        int t = ram_inst.debug_read_addr(target_addr + (i * axi::cfg::lite::dataWidth/8));
+        int s = ram_inst.debug_read_addr(source_addr + (i * axi_cfg::dataWidth/8));
+        int t = ram_inst.debug_read_addr(target_addr + (i * axi_cfg::dataWidth/8));
         if (s != t) {
           CCS_LOG("ram source and target data mismatch! Beat#: " << i << " " <<  std::hex << " s:" << s << " t: " << t);
         }

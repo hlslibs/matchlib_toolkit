@@ -1,33 +1,4 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 1.5                                                 *
- *                                                                        *
- *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 1.5.0                                               *
- *                                                                        *
- *  Copyright 2020 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
+// INSERT_EULA_COPYRIGHT: 2020-2022
 
 #pragma once
 
@@ -41,8 +12,8 @@ template <class cfg>
 class ram : public sc_module
 {
 public:
-  sc_in<bool>                                   CCS_INIT_S1(clk);
-  sc_in<bool>                                   CCS_INIT_S1(rst_bar);
+  sc_in<bool> CCS_INIT_S1(clk);
+  sc_in<bool> CCS_INIT_S1(rst_bar);
   typename cfg::template r_slave<AUTO_PORT>     CCS_INIT_S1(r_slave0);
   typename cfg::template w_slave<AUTO_PORT>     CCS_INIT_S1(w_slave0);
 
@@ -130,7 +101,7 @@ public:
             arr_t orig  = array[aw.addr / cfg::bytesPerBeat];
             arr_t wdata = w.data.to_uint64();
 
-#pragma hls_unroll
+#pragma unroll
             for (int i=0; i<cfg::WSTRB_WIDTH; i++) {
               if (w.wstrb[i]) {
                 orig = nvhls::set_slc(orig, nvhls::get_slc<8>(wdata, (i*8)), (i*8));

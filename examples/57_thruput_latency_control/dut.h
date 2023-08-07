@@ -1,37 +1,9 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 1.5                                                 *
- *                                                                        *
- *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 1.5.0                                               *
- *                                                                        *
- *  Copyright 2020 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
+// INSERT_EULA_COPYRIGHT: 2020-2022
 
 #pragma once
 
 #include <mc_connections.h>
+#include "auto_gen_fields.h"
 
 #define LATENCY_CONTROL_BEGIN() \
 	_Pragma("hls_preserve_loop yes") \
@@ -49,20 +21,11 @@ struct packet : public Connections::message {
   ac_int<32,false> coeff;
   ac_int<32,false> data[data_len];
 
-  static const unsigned int width = 32 + (32 * data_len);
-
-  template <unsigned int Size> void Marshall(Marshaller<Size> &m) {
-    m &coeff;
-    for (int i=0; i<data_len; i++) { m &data[i]; }
-  }
-  inline friend void sc_trace(sc_trace_file *tf, const packet &v, const std::string &NAME ) {
-    sc_trace(tf,v.coeff,  NAME + ".ar_addr");
-    for (int i=0; i<data_len; i++) {
-      std::ostringstream os;
-      os << NAME << ".data_" << i;
-      sc_trace(tf,v.data[i],  os.str());
-    }
-  }
+  AUTO_GEN_FIELD_METHODS(packet, ( \
+     coeff \
+   , data \
+  ) )
+  //
 };
 
 
@@ -88,7 +51,7 @@ private:
     out1.Reset();
     in1.Reset();
     wait();                                 // WAIT
-
+#define DESIGN_3 true
 #ifdef DESIGN_1
     while (1) {
       packet p = in1.Pop();
@@ -97,8 +60,8 @@ private:
     }
 
 #elif DESIGN_2
-    #pragma hls_pipeline_init_interval 1
-    #pragma pipeline_stall_mode flush
+#pragma hls_pipeline_init_interval 1
+#pragma pipeline_stall_mode flush
     while (1) {
       packet p = in1.Pop();
       for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
@@ -106,21 +69,21 @@ private:
     }
 
 #elif DESIGN_3
-    #pragma hls_pipeline_init_interval 1
-    #pragma pipeline_stall_mode flush
+#pragma hls_pipeline_init_interval 1
+#pragma pipeline_stall_mode flush
     while (1) {
       packet p = in1.Pop();
-      #pragma hls_unroll yes
+#pragma unroll yes
       for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
       out1.Push(p);
     }
 
 #elif DESIGN_4
-    #pragma hls_pipeline_init_interval 2
-    #pragma pipeline_stall_mode flush
+#pragma hls_pipeline_init_interval 2
+#pragma pipeline_stall_mode flush
     while (1) {
       packet p = in1.Pop();
-      #pragma hls_unroll yes
+#pragma unroll yes
       for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
       out1.Push(p);
     }
@@ -130,10 +93,10 @@ private:
       packet p = in1.Pop();
 
       if (p.coeff == 0) {
-        #pragma hls_unroll yes
+#pragma unroll yes
         for (int i=0; i < packet::data_len; i++) { p.data[i] = 0; }
       } else if (p.coeff != 1) {
-        #pragma hls_unroll yes
+#pragma unroll yes
         for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
       }
       out1.Push(p);
@@ -144,7 +107,7 @@ private:
     while (1) {
       packet p = in1.Pop();
       if (p.coeff == 0) {
-        #pragma hls_unroll yes
+#pragma unroll yes
         for (int i=0; i < packet::data_len; i++) { p.data[i] = 0; }
       } else if (p.coeff != 1) {
         for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
@@ -158,12 +121,12 @@ private:
 
       if (p.coeff == 0) {
         LATENCY_CONTROL_BEGIN()
-        #pragma hls_unroll yes
+#pragma unroll yes
         for (int i=0; i < packet::data_len; i++) { p.data[i] = 0; }
         LATENCY_CONTROL_END()
       } else if (p.coeff != 1) {
         LATENCY_CONTROL_BEGIN()
-        #pragma hls_unroll yes
+#pragma unroll yes
         for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
         LATENCY_CONTROL_END()
       }
@@ -171,13 +134,14 @@ private:
     }
 
 #elif DESIGN_8
-    #pragma hls_pipeline_init_interval 1
-    #pragma pipeline_stall_mode flush
+
+#pragma hls_pipeline_init_interval 1
+#pragma pipeline_stall_mode flush
     while (1) {
       packet p = in1.Pop();
 
       if (p.coeff == 0) {
-        #pragma hls_unroll yes
+#pragma unroll yes
         for (int i=0; i < packet::data_len; i++) { p.data[i] = 0; }
       } else if (p.coeff != 1) {
         for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
@@ -185,12 +149,13 @@ private:
       out1.Push(p);
     }
 
+
 #elif DESIGN_9
-    #pragma hls_pipeline_init_interval 1
-    #pragma pipeline_stall_mode flush
+#pragma hls_pipeline_init_interval 1
+#pragma pipeline_stall_mode flush
     while (1) {
       packet p = in1.Pop();
-        #pragma hls_unroll 5
+#pragma unroll 5
       for (int i=0; i < packet::data_len; i++) { p.data[i] *= p.coeff; }
       out1.Push(p);
     }

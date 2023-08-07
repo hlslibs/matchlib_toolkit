@@ -1,6 +1,6 @@
 # Makefile for example 72_annotate_reconverge
 
-CXXFLAGS += -g -std=c++11 -Wall -Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-label
+CXXFLAGS += -g -std=c++11 -Wall -Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-label 
 
 # =====================================================================
 # ENVIRONMENT VARIABLES
@@ -128,7 +128,7 @@ INCDIRS += -I$(AC_SIMUTILS)/include
 
 CPPFLAGS += $(INCDIRS)
 CPPFLAGS += -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES
-#CPPFLAGS += -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES -DCONNECTIONS_NAMING_ORIGINAL
+#CPPFLAGS += -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES 
 
 LIBS += -lsystemc -lpthread
 

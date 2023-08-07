@@ -4,6 +4,12 @@ Very simple Matchlib model showing Pre-HLS and Post-HLS simulations
 
 This example shows how to model a "ping pong" memory.
 
+Note: this example uses ac_shared<> to model a RAM that
+is shared between two processes. 
+
+See ../../doc/memory_logging_and_debug.pdf  for a detailed description
+of the memory logging and debug methodology and of this particular example.
+
 
 Steps:
 
@@ -22,7 +28,10 @@ Steps:
 5. Launch SCVerify / QuestaSim with generated RTL by typing in Catapult command line:
    dofile scverify.tcl
 
-6. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+6. Run RTL Sim by typing in QuestaSim command line:
+   do run.do
 
-7. Delete all generated files
+7. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+
+8. Delete all generated files
     make clean

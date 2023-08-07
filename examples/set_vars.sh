@@ -13,7 +13,7 @@
 #    ./sysclocal
 #    ./matchlib_connections
 #    ./matchlib
-#    ./boost_home
+#    ./preprocessor
 #    ./rapidjson
 #    ./ac_types
 #    ./ac_math
@@ -67,15 +67,10 @@ export MATCHLIB_HOME
 
 # Configure Boost Preprocessor
 if [ ! -d /Xusr/include/boost/preprocessor/arithmetic ]; then
-  if [ ! -d ./boost_home/include/boost ]; then
+  if [ ! -d ./preprocessor/include/boost ]; then
     git clone http://github.com/boostorg/preprocessor
-    git clone http://github.com/boostorg/static_assert
-    mkdir -p boost_home/include/boost
-    mv preprocessor/include/boost/* boost_home/include/boost
-    mv static_assert/include/boost/* boost_home/include/boost
-    rm -rf preprocessor static_assert
   fi
-  BOOST_HOME=`pwd`/boost_home
+  BOOST_HOME=`pwd`/preprocessor
 else
   BOOST_HOME=/usr
 fi
@@ -84,7 +79,7 @@ export BOOST_HOME
 # Configure RapidJSON
 if [ ! -d ./rapidjson ]; then
  git clone http://github.com/Tencent/rapidjson
-fi
+endif
 RAPIDJSON_HOME=`pwd`/rapidjson
 export RAPIDJSON_HOME
 
@@ -101,7 +96,7 @@ if [ ! -d ./ac_math ]; then
   echo "Downloading AC_Math..."
   git clone http://github.com/hlslibs/ac_math.git
 fi
-AC_MATH=`pwd`/ac_math
+AC_TYPES=`pwd`/ac_math
 export AC_MATH
 
 # Configure AC Simutils
@@ -111,15 +106,4 @@ if [ ! -d ./ac_simutils ]; then
 fi
 AC_SIMUTILS=`pwd`/ac_simutils
 export AC_SIMUTILS
-
-# Configure BMP IO
-if [ ! -d ./bmp_io ]; then
-  mkdir ./bmp_io
-  cd ./bmp_io
-  wget --no-check-certificate https://people.math.sc.edu/Burkardt/cpp_src/bmp_io/bmp_io.cpp
-  wget --no-check-certificate https://people.math.sc.edu/Burkardt/cpp_src/bmp_io/bmp_io.hpp
-  cd ..
-fi
-BMP_IO=`pwd`/bmp_io
-export BMP_IO
 

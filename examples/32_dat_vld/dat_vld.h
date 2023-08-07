@@ -1,56 +1,6 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 1.5                                                 *
- *                                                                        *
- *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 1.5.0                                               *
- *                                                                        *
- *  Copyright 2022 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
-
+// INSERT_EULA_COPYRIGHT: 2020-2022
 
 #pragma once
-
-template <class T>
-T
-static local_convert_from_lv(sc_lv<Wrapped<T>::width> lv)
-{
-  Wrapped<T> result;
-  Marshaller<Wrapped<T>::width> marshaller(lv);
-  result.Marshall(marshaller);
-  return result.val;
-}
-
-template <class T>
-sc_lv<Wrapped<T>::width>
-static local_convert_to_lv(T v)
-{
-  Marshaller<Wrapped<T>::width> marshaller;
-  Wrapped<T> wm(v);
-  wm.Marshall(marshaller);
-  return marshaller.GetResult();
-}
 
 template <class T>
 class OutToDatVld : public sc_module
@@ -64,14 +14,14 @@ public:
   SC_CTOR(OutToDatVld) {
     SC_METHOD(drive_rdy);
     sensitive << in1.rdy;
-
+    
     SC_METHOD(drive_dat_vld);
     dont_initialize();
     sensitive << in1.dat << in1.vld;
 
-    #ifdef CONNECTIONS_SIM_ONLY
+#ifdef CONNECTIONS_SIM_ONLY
     in1.disable_spawn();
-    #endif
+#endif
   }
 
   void drive_rdy() {
@@ -80,7 +30,7 @@ public:
 
   void drive_dat_vld() {
     vld = in1.vld;
-    T t = local_convert_from_lv<T>(in1.dat);
+    T t = Connections::convert_from_lv<T>(in1.dat);
     dat = t;
   }
 };
@@ -97,28 +47,29 @@ public:
   SC_CTOR(InFromDatVld) {
     SC_METHOD(test_rdy);
     sensitive << out1.rdy;
-
+    
     SC_METHOD(drive_dat_vld);
     dont_initialize();
     sensitive << vld << dat;
 
-    #ifdef CONNECTIONS_SIM_ONLY
+#ifdef CONNECTIONS_SIM_ONLY
     out1.disable_spawn();
-    #endif
+#endif
   }
 
   void test_rdy() {
-    #ifdef CONNECTIONS_SIM_ONLY
-    if (!out1.rdy.read() && (sc_time_stamp() > sc_time(100, SC_PS))) {
+#ifdef CONNECTIONS_SIM_ONLY
+    if (!out1.rdy.read() && (sc_time_stamp() > sc_time(100, SC_PS)))
+    {
       CCS_LOG("InFromDatVld rdy is: " << out1.rdy);
       SC_REPORT_ERROR("InFromDatVld-01", "rdy signal is false");
     }
-    #endif
+#endif
   }
 
   void drive_dat_vld() {
     out1.vld = vld;
-    out1.dat.write(local_convert_to_lv(dat.read()));
+    out1.dat.write(Connections::convert_to_lv(dat.read()));
   }
 };
 
@@ -129,21 +80,21 @@ public:
 #define OUT_TO_DAT(n, T) \
   OutToDatVld<T> CCS_INIT_S1(n ## _mod); \
   sc_out<T>      CCS_INIT_S1(n ## _dat); \
-  Connections::Combinational<T> CCS_INIT_S1(n ## _out);
+  Connections::Combinational<T> CCS_INIT_S1(n ## _out); 
 
 #define IN_FROM_DAT(n, T) \
   InFromDatVld<T> CCS_INIT_S1(n ## _mod); \
   sc_in<T>        CCS_INIT_S1(n ## _dat); \
-  Connections::Combinational<T> CCS_INIT_S1(n ## _in);
+  Connections::Combinational<T> CCS_INIT_S1(n ## _in);  
 
 #define OUT_TO_VLD(n) \
-  sc_out<bool>   CCS_INIT_S1(n ## _vld);
+  sc_out<bool>   CCS_INIT_S1(n ## _vld); 
 
 #define IN_FROM_VLD(n) \
-  sc_in<bool>    CCS_INIT_S1(n ## _vld);
+  sc_in<bool>    CCS_INIT_S1(n ## _vld);  
 
 
-// Would like to combine above 2 IN/OUT macros together,
+// Would like to combine above 2 IN/OUT macros together, 
 // but cannot currently because would cause scverify compile error
 
 #define OUT_TO_DAT_VLD_BIND(n) \
@@ -154,5 +105,5 @@ public:
 #define IN_FROM_DAT_VLD_BIND(n) \
   n ## _mod .out1(n ## _in); \
   n ## _mod .dat(n ## _dat); \
-  n ## _mod .vld(n ## _vld);
+  n ## _mod .vld(n ## _vld); 
 

@@ -40,14 +40,8 @@ RAPIDJSON_HOME ?= $(CATAPULT_HOME)/shared
 # Pick up AC Datatypes via "AC_TYPES"
 AC_TYPES ?= $(CATAPULT_HOME)/shared
 
-# Pick up AC Datatypes via "AC_MATH"
-AC_MATH ?= $(CATAPULT_HOME)/shared
-
 # Pick up AC Simutils via "AC_SIMUTILS"
 AC_SIMUTILS ?= $(CATAPULT_HOME)/shared
-
-# Pick up bitmap sources via "BMP_IO"
-BMP_IO ?= $(CATAPULT_HOME)/shared/include/bmpUtil
 
 # Pick up C++ compiler
 CXX := $(CATAPULT_HOME)/bin/g++
@@ -77,14 +71,8 @@ endif
 ifndef AC_TYPES
 $(error - Environment variable AC_TYPES must be defined)
 endif
-ifndef AC_MATH
-$(error - Environment variable AC_MATH must be defined)
-endif
 ifndef AC_SIMUTILS
 $(error - Environment variable AC_SIMUTILS must be defined)
-endif
-ifndef BMP_IO
-$(error - Environment variable BMP_IO must be defined)
 endif
 
 # Default to the compiler installed on the machine
@@ -115,41 +103,35 @@ checkvar_RAPIDJSON_HOME: $(RAPIDJSON_HOME)/include/rapidjson/document.h
 # Check: $(AC_TYPES)/include/ac_int.h
 checkvar_AC_TYPES: $(AC_TYPES)/include/ac_int.h
 
-# Check: $(AC_MATH)/include/ac_math.h
-checkvar_AC_MATH: $(AC_MATH)/include/ac_math.h
-
 # Check: $(AC_SIMUTILS)/include/mc_scverify.h
 checkvar_AC_SIMUTILS: $(AC_SIMUTILS)/include/mc_scverify.h
 
-# Check: $(BMP_IO)/bmp_io.cpp
-checkvar_BMP_IO: $(BMP_IO)/bmp_io.cpp
-
 # Rule to check that environment variables are set correctly
-checkvars: checkvar_SYSTEMC_HOME checkvar_CONNECTIONS_HOME checkvar_MATCHLIB_HOME checkvar_BOOST_HOME checkvar_RAPIDJSON_HOME checkvar_AC_TYPES checkvar_AC_MATH checkvar_AC_SIMUTILS checkvar_BMP_IO
+checkvars: checkvar_SYSTEMC_HOME checkvar_CONNECTIONS_HOME checkvar_MATCHLIB_HOME checkvar_BOOST_HOME checkvar_RAPIDJSON_HOME checkvar_AC_TYPES checkvar_AC_SIMUTILS
 # =====================================================================
 
-export CATAPULT_HOME SYSTEMC_HOME CONNECTIONS_HOME MATCHLIB_HOME BOOST_HOME RAPIDJSON_HOME AC_TYPES AC_MATH AC_SIMUTILS
+export CATAPULT_HOME SYSTEMC_HOME CONNECTIONS_HOME MATCHLIB_HOME BOOST_HOME RAPIDJSON_HOME AC_TYPES AC_SIMUTILS
 
 # Determine the director containing the source files from the path to this Makefile
 PWD := $(shell pwd)
 SOURCE_DIR1 = $(dir $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
 SOURCE_DIR = $(if $(subst ./,,$(SOURCE_DIR1)),$(SOURCE_DIR1),$(PWD)/)
 
-BMP_SRC = $(BMP_IO)/bmp_io.cpp
+BMP_SRC = ./bmpUtil/bmp_io.cpp
 
 INCDIRS := -I$(SOURCE_DIR) -I$(SOURCE_DIR)/../../include
 INCDIRS += -I$(SYSTEMC_HOME)/include -I$(SYSTEMC_HOME)/src
 INCDIRS += -I$(CONNECTIONS_HOME)/include
 INCDIRS += -I$(MATCHLIB_HOME)/cmod/include
 INCDIRS += -I$(BOOST_HOME)/include
+INCDIRS += -I$(AC_MATH)/include
 INCDIRS += -I$(RAPIDJSON_HOME)/include
 INCDIRS += -I$(AC_TYPES)/include
-INCDIRS += -I$(AC_MATH)/include
 INCDIRS += -I$(AC_SIMUTILS)/include
-INCDIRS += -I$(BMP_IO)
+INCDIRS += -I./bmpUtil
 
 CPPFLAGS += $(INCDIRS)
-CPPFLAGS += -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES -DCONNECTIONS_NAMING_ORIGINAL
+CPPFLAGS += -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES 
 
 # Uncomment this flag if you want to see the input and output images displayed
 #CPPFLAGS += -DHAVE_DISPLAY
@@ -261,9 +243,7 @@ help: checkvars
 	-@echo "  BOOST_HOME         = $(BOOST_HOME)"
 	-@echo "  RAPIDJSON_HOME     = $(RAPIDJSON_HOME)"
 	-@echo "  AC_TYPES           = $(AC_TYPES)"
-	-@echo "  AC_MATH            = $(AC_MATH)"
 	-@echo "  AC_SIMUTILS        = $(AC_SIMUTILS)"
-	-@echo "  BMP_IO             = $(BMP_IO)"
 	-@echo "  CXX                = $(CXX)"
 	-@echo "  LIBDIRS            = $(LIBDIRS)"
 	-@echo "  LD_LIBRARY_PATH    = $(LD_LIBRARY_PATH)"

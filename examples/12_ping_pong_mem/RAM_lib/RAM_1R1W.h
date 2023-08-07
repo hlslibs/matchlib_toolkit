@@ -24,7 +24,7 @@
 #include <assert.h>
 #endif
 
-#pragma map_to_module RAM_1R1W
+#pragma map_to_operator RAM_1R1W
 template <
   int ram_id,
   int words,
@@ -525,7 +525,7 @@ private:
       WCSN.write(0);
       WA.write( temp_addr );
       D.write( temp_data );
-#pragma hls_unroll
+#pragma unroll
       for (int lcnt=0; lcnt<1; lcnt++) { wait(); }
 #if defined(CALYPTO_SC)
       wait(); // Account for unreg outputs for SLEC
@@ -610,7 +610,7 @@ private:
       type_to_vector(addr, (signedtype?true:false), temp_addr);
       RCSN.write(0);
       RA.write( temp_addr );
-#pragma hls_unroll
+#pragma unroll
       for (int lcnt=0; lcnt<1; lcnt++) { wait(); }
 #if defined(CALYPTO_SC)
       wait(); // Account for unreg outputs for SLEC
@@ -795,7 +795,7 @@ public:
       WCSN.write(0);
       WA.write( temp_addr );
       D.write( temp_data );
-#pragma hls_unroll
+#pragma unroll
       for (int lcnt=0; lcnt<1; lcnt++) { wait(); }
 #if defined(CALYPTO_SC)
       wait(); // Account for unreg outputs for SLEC
@@ -886,7 +886,7 @@ public:
       type_to_vector(addr, (signedtype?true:false), temp_addr);
       RCSN.write(0);
       RA.write( temp_addr );
-#pragma hls_unroll
+#pragma unroll
       for (int lcnt=0; lcnt<1; lcnt++) { wait(); }
 #if defined(CALYPTO_SC)
       wait(); // Account for unreg outputs for SLEC

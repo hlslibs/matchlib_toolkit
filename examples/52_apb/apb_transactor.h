@@ -1,33 +1,4 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 1.5                                                 *
- *                                                                        *
- *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 1.5.0                                               *
- *                                                                        *
- *  Copyright 2020 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
+// INSERT_EULA_COPYRIGHT: 2020-2022
 
 #pragma once
 
@@ -37,9 +8,10 @@
 #undef CONNECTIONS_ASSERT_MSG
 #undef CONNECTIONS_SIM_ONLY_ASSERT_MSG
 
-// Include matchlib/cmod/include/axi/axi4.h for
-// standard AXI4 bus configurations.
 #include "axi/axi4.h"
+#include "TypeToBits.h"
+
+#include "auto_gen_fields.h"
 
 namespace apb
 {
@@ -76,40 +48,22 @@ namespace apb
       addr_payload addr;
       w_payload    w;
 
-      static const unsigned int width = 1 + addr_payload::width + w_payload::width;
-      template <unsigned int Size> void Marshall(Marshaller<Size> &m) {
-        m &is_write;
-        m &addr;
-        m &w;
-      }
-      inline friend void sc_trace(sc_trace_file *tf, const apb_req &v, const std::string &NAME ) {
-        sc_trace(tf,v.is_write,  NAME + ".is_write");
-        sc_trace(tf,v.addr,  NAME + ".addr");
-        sc_trace(tf,v.w,  NAME + ".w");
-      }
-      inline friend std::ostream &operator<<(ostream &os, const apb_req &rhs) {
-        os << rhs.is_write << " ";
-        os << rhs.addr << " ";
-        os << rhs.w << " ";
-        return os;
-      }
+      AUTO_GEN_FIELD_METHODS(apb_req, ( \
+         is_write \
+       , addr \
+       , w \
+      ) )
+      //
     };
 
     // Define the "response" message
     struct apb_rsp : public nvhls_message {
       r_payload    r; // if req was a write, then write resp will be stored in r.resp
 
-      static const unsigned int width = r_payload::width;
-      template <unsigned int Size> void Marshall(Marshaller<Size> &m) {
-        m &r;
-      }
-      inline friend void sc_trace(sc_trace_file *tf, const apb_rsp &v, const std::string &NAME ) {
-        sc_trace(tf,v.r,  NAME + ".r");
-      }
-      inline friend std::ostream &operator<<(ostream &os, const apb_rsp &rhs) {
-        os << rhs.r << " ";
-        return os;
-      }
+      AUTO_GEN_FIELD_METHODS(apb_rsp, ( \
+         r \
+      ) )
+      //
     };
 
     // External typedefs - to simplify usage of these message types
@@ -117,8 +71,6 @@ namespace apb
     //   apb_req_chan                         CCS_INIT_S1(apb_msg_req_chan);  // Connections channel for the apb_req message
     //  Instead of the direct form
     //   Connections::Combinational<apb_req>  CCS_INIT_S1(apb_msg_req_chan);  // Connections channel for the apb_req message
-    //  But note that the direct form make the code similar to the C++ ac_channel style:
-    //   ac_channel<type>                     object
     //
     typedef Connections::Combinational<apb_req> apb_req_chan;
     typedef Connections::Combinational<apb_rsp> apb_rsp_chan;
@@ -126,9 +78,9 @@ namespace apb
     // --------------------------------------------------------------------------------
     // INTERFACES
 
-    // Define the signal interface for an APB connection channel (similar to a SystemVerilog Interface)
-    struct apb_signals_ifc {
-      apb_signals_ifc(const char *name)
+    // Define the signals for APB channel 
+    struct apb_signals_chan{
+      apb_signals_chan(const char *name)
         : PSEL(nvhls_concat(name, "_PSEL"))
         , PADDR(nvhls_concat(name, "_PADDR"))
         , PWRITE(nvhls_concat(name, "_PWRITE"))
@@ -264,6 +216,11 @@ namespace apb
         SC_THREAD(main);
         sensitive << clk.pos();
         async_reset_signal_is(rst_bar, false);
+
+#ifdef CONNECTIONS_SIM_ONLY
+        req_port.disable_spawn();
+        rsp_port.disable_spawn();
+#endif
       }
 
       template <class C>
@@ -281,8 +238,8 @@ namespace apb
       }
 
       void main() {
-        req_port.Reset();
-        rsp_port.Reset();
+        req_port.rdy = 0;
+        rsp_port.vld = 0;
         PADDR = 0;
         PWRITE = 0;
         PSTRB = 0;
@@ -292,79 +249,70 @@ namespace apb
         PSEL = 0;
         wait();
 
-        bool got_req = false;
-        bool got_rsp = false;
         apb_req req;
         apb_rsp rsp;
 
+        typedef enum {APB_IDLE, APB_GET_RSP} apb_state_t;
+        apb_state_t state = APB_IDLE;
+
+        req_port.rdy = 1;
+
         while (1) {
-          // See ARM APB spec for state description.
-          do {
-            // IDLE state
-            wait();
-            if (!got_req) {
-              got_req = req_port.PopNB(req);
-              /*
-              if (got_req)
-                CCS_LOG("master pop req: " << std::hex << req.addr.addr << " " << req.is_write << " " << req.w.data);
-              */
-            }
+         wait();
 
-            if (got_rsp)
-              if (rsp_port.PushNB(rsp)) {
-                got_rsp = 0;
-                // CCS_LOG("master pushed resp: " << std::hex << rsp.r.data);
-              }
-
-          } while (got_rsp || !got_req);
-
-          do {
-            wait();
-            if (!got_req) {
-              got_req = req_port.PopNB(req);
-              /*
-              if (got_req)
-                CCS_LOG("master pop req: " << std::hex << req.addr.addr << " " << req.is_write << " " << req.w.data);
-              */
-            }
-
-            if (got_rsp) {
-              if (rsp_port.PushNB(rsp)) {
-                got_rsp = 0;
-                // CCS_LOG("master pushed resp: " << std::hex << rsp.r.data);
-              }
-            }
-            // SETUP state
-            PSEL = 1;
-            PENABLE = 0;
-            PADDR = req.addr.addr.to_uint64();
-            PWRITE = req.is_write;
-            if (req.is_write) {
-              PWDATA = req.w.data.to_uint64();
-              PSTRB = req.w.wstrb.to_uint64();
-            } else {
-              PWDATA = 0;
-              PSTRB = 0;
-            }
-
-            wait();
-
-            got_req = 0;
-            PSEL = 1;
-            PENABLE = 1;
-
-            do {
-              wait();
-            } while (PREADY == 0);
-            // ACCESS state
-
-            rsp.r.data = PRDATA.read().to_uint64();
-            rsp.r.resp = PSLVERR.read();
-            got_rsp = 1;
+         switch (state) {
+          case APB_IDLE:
+            state = APB_IDLE;
             PSEL = 0;
             PENABLE = 0;
-          } while (!got_rsp && got_req);
+            if (rsp_port.rdy) {
+             rsp_port.vld = 0;
+            }
+            if (req_port.vld) {
+              req_port.rdy = 0;
+              state = APB_GET_RSP;
+#ifdef FORCE_AUTO_PORT
+              req = req_port.dat;
+#else
+              req = BitsToType<apb_req>(req_port.dat);
+#endif
+              // SETUP state
+              PSEL = 1;
+              PENABLE = 0;
+              PADDR = req.addr.addr.to_uint64();
+              PWRITE = req.is_write;
+              if (req.is_write) {
+                PWDATA = req.w.data.to_uint64();
+                PSTRB = req.w.wstrb.to_uint64();
+              } else {
+                PWDATA = 0;
+                PSTRB = 0;
+              }
+            }
+            break;
+
+          case APB_GET_RSP:
+            state = APB_GET_RSP;
+            PENABLE = 1;
+
+            if (PREADY == 1) {
+              state = APB_IDLE;
+              rsp.r.data = PRDATA.read().to_uint64();
+              rsp.r.resp = PSLVERR.read();
+              PSEL = 0;
+              PENABLE = 0;
+              rsp_port.vld = 1;
+#ifdef FORCE_AUTO_PORT
+              rsp_port.dat = rsp;
+#else
+              rsp_port.dat = TypeToBits(rsp);
+#endif
+              req_port.rdy = 1;
+            } else {
+              state = APB_GET_RSP;
+            }
         }
+       }
       }
     };
 
@@ -406,80 +354,137 @@ namespace apb
       }
 
       SC_CTOR(apb_slave_xactor) {
+#ifdef CONNECTIONS_SIM_ONLY
+        req_port.disable_spawn();
+        rsp_port.disable_spawn();
+#endif
         SC_THREAD(main);
         sensitive << clk.pos();
         async_reset_signal_is(rst_bar, false);
       }
 
+//  #pragma hls_implicit_fsm true
       void main() {
-        req_port.Reset();
-        rsp_port.Reset();
         PRDATA = 0;
         PSLVERR = 0;
         PREADY = 0;
+        req_port.vld = 0;
+        rsp_port.rdy = 0;
 
-        bool got_req = false;
-        bool got_rsp = false;
         bool pending_read = false;
         apb_req req;
         apb_rsp rsp;
 
         wait();
 
+        typedef enum {APB_IDLE, APB_GET_RSP, APB_DONE} apb_state_t;
+        apb_state_t state = APB_IDLE;
+
         while (1) {
-          // See ARM APB spec for state description.
-
-          // State: apb_idle
-          do {
-            wait();
-          } while (PSEL == 0);
-
-          req.is_write = PWRITE.read();
-          req.w.data = PWDATA.read().to_uint64();
-          req.w.wstrb = PSTRB.read().to_uint64();
-          req.addr.addr = PADDR.read().to_uint64();
-          got_req = 1;
-
-          if (req.is_write) {
-            pending_read = false;
-          } else {
-            pending_read = true;
-          }
-
-          do {
-            if (got_req)
-              if (req_port.PushNB(req)) {
-                // CCS_LOG("slave push req " << std::hex << req.addr.addr << " " << req.is_write << " " << req.w.data);
-                got_req = 0;
-              }
-            wait();
-          } while (got_req);
-
-          // State: apb_setup
-          do {
-            wait();
-            if (!got_rsp) {
-              got_rsp = rsp_port.PopNB(rsp);
-              // if (got_rsp) CCS_LOG("slave pop rsp data " << std::hex << rsp.r.data);
-            }
-          } while ((PENABLE == 0) || !got_rsp);
-
-          // State: apb_access
-          PREADY = 1;
-          if (pending_read) {
-            PRDATA = rsp.r.data.to_uint64();
-            pending_read = false;
-          }
-
-          PSLVERR = rsp.r.resp;  // works for both reads and writes..
           wait();
-          PREADY = 0;
-          PSLVERR = 0;
-          got_rsp = 0;
+
+          switch (state) {
+          case APB_IDLE:
+           if (PSEL == 0)
+             state = APB_IDLE;
+           else {
+             req.is_write = PWRITE.read();
+             req.w.data = PWDATA.read().to_uint64();
+             req.w.wstrb = PSTRB.read().to_uint64();
+             req.addr.addr = PADDR.read().to_uint64();
+             if (req.is_write) {
+              pending_read = false;
+             } else {
+              pending_read = true;
+             }
+#ifdef FORCE_AUTO_PORT
+             req_port.dat = req;
+#else
+             req_port.dat = TypeToBits(req);
+#endif
+             req_port.vld = 1;
+             rsp_port.rdy = 1;
+             state = APB_GET_RSP;
+           }
+           break;
+ 
+          case APB_GET_RSP:
+            if (req_port.rdy)
+              req_port.vld = 0;
+
+            if (rsp_port.vld) {
+              rsp_port.rdy = 0;
+#ifdef FORCE_AUTO_PORT
+	      rsp = rsp_port.dat;
+#else
+              rsp = BitsToType<apb_rsp>(rsp_port.dat);
+#endif
+            }
+
+            if ((!rsp_port.vld) || (PENABLE == 0)) {
+              state = APB_GET_RSP;
+            } else {
+              state = APB_DONE;
+              PREADY = 1;
+              if (pending_read) {
+                PRDATA = rsp.r.data.to_uint64();
+                pending_read = false;
+              }
+              PSLVERR = rsp.r.resp;  // works for both reads and writes..
+            }
+            break;
+
+          case APB_DONE:
+           PREADY = 0;
+           PSLVERR = 0;
+           state = APB_IDLE;
+           break;
         }
+       }
       }
     };
 
+    template <class C>
+    static void apb_master_rw_reset(C& chan) {
+        chan.PADDR = 0;
+        chan.PWRITE = 0;
+        chan.PSTRB = 0;
+        chan.PPROT = 0;
+        chan.PENABLE = 0;
+        chan.PWDATA = 0;
+        chan.PSEL = 0;
+    }
+
+// #pragma design modulario <out> 
+    template <class C>
+    void apb_master_rw(C& chan, const apb_req& req, apb_rsp& rsp) {
+      apb_master_rw_reset(chan);
+
+      // SETUP state
+      chan.PSEL = 1; 
+      chan.PENABLE = 0;
+      chan.PADDR = req.addr.addr.to_uint64();
+      chan.PWRITE = req.is_write;
+      if (req.is_write) {
+        chan.PWDATA = req.w.data.to_uint64();
+        chan.PSTRB = req.w.wstrb.to_uint64();
+      } else {
+        chan.PWDATA = 0;
+        chan.PSTRB = 0;
+      }
+
+      while (1) {
+        wait();
+        chan.PENABLE = 1;
+
+        if (chan.PREADY == 1) {
+              rsp.r.data = chan.PRDATA.read().to_uint64();
+              rsp.r.resp = chan.PSLVERR.read();
+              chan.PSEL = 0; 
+              chan.PENABLE = 0;
+              break;
+        }
+      }
+    }
   };  // apb_transactor
 };  // namespace apb
-

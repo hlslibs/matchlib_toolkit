@@ -1,33 +1,4 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 1.5                                                 *
- *                                                                        *
- *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 1.5.0                                               *
- *                                                                        *
- *  Copyright 2020 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
+// INSERT_EULA_COPYRIGHT: 2020-2022
 
 #include <mc_connections.h>
 #include <ac_sysc_trace.h>
@@ -80,10 +51,10 @@ public:
     CCS_LOG("Stimulus reset started");
     din.ResetWrite();
     wait();
-    ac_int<16,false> aval=0;
 
-    for (int i = 0; i < 20; i++) {
-      din.Push(i+1);
+    for (int i = 1; i < 20; i++) {
+      din.Push(i);
+      CCS_LOG("STIM Pushed: " << std::hex << i);
     }
     wait(100);
   }
@@ -91,9 +62,9 @@ public:
   void resp() {
     dout.ResetRead();
     wait();
-    for (int i = 0; i < 20; i++) {
+    for (int i = 1; i < 20; i++) {
       ac_int<16,false> res = dout.Pop();
-      CCS_LOG("TB resp sees: " << res);
+      CCS_LOG("RESP Popped: " << std::hex << res);
     }
     sc_stop();
   }

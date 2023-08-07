@@ -128,8 +128,8 @@ INCDIRS += -I$(AC_TYPES)/include
 INCDIRS += -I$(AC_SIMUTILS)/include
 
 CPPFLAGS += $(INCDIRS)
-CPPFLAGS += -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES -DCONNECTIONS_NAMING_ORIGINAL
-CPPFLAGS += -DSEGMENT_BURST_SIZE=2
+CPPFLAGS += -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES 
+CPPFLAGS += -DSEGMENT_BURST_SIZE=2 -DUSE_EXTENDED_ARRAY
 
 LIBS += -lsystemc -lpthread
 
@@ -167,7 +167,7 @@ endef
 
 sim_clean:
 	@rm -f sim_no_stall sim_stall stall_log_data.txt stall_log_names.txt
-	@rm -rf stall_log no_stall_log
+	@rm -rf stall_log no_stall_log *.log trace.vcd *log*.txt
 
 clean: sim_clean
 

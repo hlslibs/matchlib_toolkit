@@ -1,4 +1,5 @@
 // INSERT_EULA_COPYRIGHT: 2020
+
 #pragma once
 
 #include <ac_sysc_macros.h>

@@ -1,33 +1,4 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 1.5                                                 *
- *                                                                        *
- *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 1.5.0                                               *
- *                                                                        *
- *  Copyright 2020 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
+// INSERT_EULA_COPYRIGHT: 2020-2022
 
 #pragma once
 
@@ -77,7 +48,7 @@ public:
     func* func_array[len/2];
 
     for (int i=1, k=0; i < len; i += 2, k++) {
-        func_array[k] = new func("");
+        func_array[k] = new func(sc_gen_unique_name("func_array"));
         func_array[k]->clk(clk);
         func_array[k]->rst_bar(rst_bar);
         func_array[k]->in0(in1[i-1]);
@@ -94,7 +65,7 @@ public:
     wait();
     while (true) {
       T t{0};
-      #pragma hls_unroll yes
+      #pragma unroll yes
       for (int k=0; k<(len/2); k++) {
         t = t + sig_array[k].read(); 
       }

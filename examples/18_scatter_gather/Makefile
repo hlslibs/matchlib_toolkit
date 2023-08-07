@@ -127,7 +127,7 @@ INCDIRS += -I$(AC_TYPES)/include
 INCDIRS += -I$(AC_SIMUTILS)/include
 
 CPPFLAGS += $(INCDIRS)
-CPPFLAGS += -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES -DSEGMENT_BURST_SIZE=16 -DCONNECTIONS_NAMING_ORIGINAL
+CPPFLAGS += -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES -DSEGMENT_BURST_SIZE=16
 
 LIBS += -lsystemc -lpthread
 
@@ -179,7 +179,7 @@ help: checkvars
 	-@echo ""
 
 clean: sim_clean
-	@rm -rf *.vcd *.wlf
+	@rm -rf *.vcd *.wlf chan_lo* *atapu*
 
 
 

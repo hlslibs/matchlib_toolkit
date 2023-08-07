@@ -1,6 +1,6 @@
 # Makefile for example 52_apb
 
-CXXFLAGS += -g -std=c++11 -Wall -Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-label
+CXXFLAGS += -g -O0 -std=c++11 -Wall -Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-label
 
 # =====================================================================
 # ENVIRONMENT VARIABLES
@@ -179,7 +179,7 @@ help: checkvars
 	-@echo ""
 
 clean: sim_clean
-	@rm -rf *.vcd *.wlf
+	@rm -rf *.vcd *.wlf chan_log* *atapu*
 
 
 

@@ -1,6 +1,10 @@
 # Makefile for example 45_vlog_tb_dma_dut
 
-CXXFLAGS += -g -std=c++11 -Wall -Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-label -Wno-maybe-uninitialized
+ifeq ($(MODEL_TECH),)
+	$(error Test requires MODEL_TECH for Questa simulation)
+endif
+
+CXXFLAGS += -g -std=c++11 -Wall -Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-label -Wno-maybe-uninitialized -DCONNECTIONS_NAMING_ORIGINAL
 
 # =====================================================================
 # ENVIRONMENT VARIABLES
@@ -131,33 +135,19 @@ INCDIRS += -I$(AC_TYPES)/include
 INCDIRS += -I$(AC_SIMUTILS)/include
 
 CPPFLAGS += $(INCDIRS)
-CPPFLAGS += -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES -DCONNECTIONS_NAMING_ORIGINAL
+CPPFLAGS += -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES 
 CPPFLAGS += -DSEGMENT_BURST_SIZE=16 -DSC_INCLUDE_MTI_AC
 
 LIBS += -lsystemc -lpthread
 
 .PHONY: all build run clean sim_clean
+build: sim_sc
 
-# build and run targets depend on simulator
-SIM_TARGET = vsim
-BUILD_TARGET = sim_sc
-ifeq ($(MODEL_TECH),)
-ifneq ($(VCS_HOME),)
-SIM_TARGET = vcs_sim
-BUILD_TARGET = simv
-endif
-endif
+all:
 
-build: $(BUILD_TARGET)
-
-run: $(SIM_TARGET)
-
-all: run
+run: vsim
 
 sim_sc: $(wildcard $(SOURCE_DIR)*.h) $(wildcard $(SOURCE_DIR)*.cpp)
-ifeq ($(MODEL_TECH),)
-	$(error Test requires MODEL_TECH for Questa simulation)
-endif
 	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $(LIBDIRS) $(wildcard $(SOURCE_DIR)*.cpp) $(LIBS) \
 	&& /bin/date > $@
 
@@ -165,7 +155,7 @@ help: checkvars
 	-@echo "Makefile targets:"
 	-@echo "  clean     - Clean up from previous make runs"
 	-@echo "  all       - Perform all of the targets below"
-	-@echo "  build     - Compile SystemC design"
+	-@echo "  sim_sc    - Compile SystemC design"
 	-@echo "  run       - Execute SystemC design and generate trace.vcd"
 	-@echo "  view_wave - Convert trace.vcd to QuestaSim wlf file and view in QuestaSim"
 	-@echo ""
@@ -216,13 +206,10 @@ simv:
 ifeq ($(VCS_HOME),)
 	$(error Test requires VCS_HOME for VCS-MX simulation)
 endif
-ifeq ($(VG_GNU_PACKAGE),)
-	$(error Test requires VG_GNU_PACKAGE for VCS-MX simulation)
-endif
-	@echo "Note: VCS-MX compilation will use the g++ compiler from VG_GNU_PACKAGE=$(VG_GNU_PACKAGE)"
-	. $(VG_GNU_PACKAGE)/source_me_64.sh; $(VCS_HOME)/bin/syscan -cpp g++ -cflags "$(CXXFLAGS) $(CPPFLAGS)"  $(SOURCE_DIR)dma_wrap.cpp:dma_wrap -debug_access+r
-	. $(VG_GNU_PACKAGE)/source_me_64.sh; $(VCS_HOME)/bin/syscan -cpp g++ -cflags "$(CXXFLAGS) $(CPPFLAGS)"  $(SOURCE_DIR)ram_wrap.cpp:ram_wrap -debug_access+r
-	. $(VG_GNU_PACKAGE)/source_me_64.sh; $(VCS_HOME)/bin/vcs -cpp g++ -sysc $(SOURCE_DIR)testbench.v -debug_access+r +vcs+lic+wait -licqueue -debug_all
+	@echo "Note: VCS-MX compilation will use the host g++ compiler"
+	$(VCS_HOME)/bin/syscan -cpp /usr/bin/g++ -cflags "$(CXXFLAGS) $(CPPFLAGS)"  $(SOURCE_DIR)dma_wrap.cpp:dma_wrap -debug_access+r
+	$(VCS_HOME)/bin/syscan -cpp /usr/bin/g++ -cflags "$(CXXFLAGS) $(CPPFLAGS)"  $(SOURCE_DIR)ram_wrap.cpp:ram_wrap -debug_access+r
+	$(VCS_HOME)/bin/vcs -cpp /usr/bin/g++ -sysc $(SOURCE_DIR)testbench.v -debug_access+r -debug_all
 
 .PHONY: vcs_sim
 vcs_sim: simv

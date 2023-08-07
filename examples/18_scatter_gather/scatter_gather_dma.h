@@ -1,38 +1,10 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 1.5                                                 *
- *                                                                        *
- *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 1.5.0                                               *
- *                                                                        *
- *  Copyright 2020 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
+// INSERT_EULA_COPYRIGHT: 2020-2022
 
 #pragma once
 
 #include <mc_connections.h>
 #include "axi4_segment.h"
+#include "auto_gen_fields.h"
 
 enum dma_mode_t {COPY=0, SCATTER=1, GATHER=2};
 
@@ -62,36 +34,16 @@ struct dma_cmd {
   ac_int<16, false> scatter_groups {0};
   ac_int<16, false> dma_mode {0};
 
-  static const unsigned int width = (4 * 32) + (3 * 16);
-  template <unsigned int Size> void Marshall(Marshaller<Size> &m) {
-    m &ar_addr;
-    m &aw_addr;
-    m &total_len;
-    m &scatter_stride;
-    m &scatter_len;
-    m &scatter_groups;
-    m &dma_mode;
-  }
-  inline friend void sc_trace(sc_trace_file *tf, const dma_cmd &v, const std::string &NAME ) {
-    sc_trace(tf,v.ar_addr,        NAME + ".ar_addr");
-    sc_trace(tf,v.aw_addr,        NAME + ".aw_addr");
-    sc_trace(tf,v.total_len,      NAME + ".total_len");
-    sc_trace(tf,v.scatter_stride, NAME + ".scatter_stride");
-    sc_trace(tf,v.scatter_len,    NAME + ".scatter_len");
-    sc_trace(tf,v.scatter_groups, NAME + ".scatter_groups");
-    sc_trace(tf,v.dma_mode,       NAME + ".dma_mode");
-  }
-
-  inline friend std::ostream &operator<<(ostream &os, const dma_cmd &rhs) {
-    os << rhs.ar_addr << " "
-       << rhs.aw_addr << " "
-       << rhs.total_len << " "
-       << rhs.scatter_stride << " "
-       << rhs.scatter_len << ""
-       << rhs.scatter_groups << " "
-       << rhs.dma_mode;
-    return os;
-  }
+  AUTO_GEN_FIELD_METHODS(dma_cmd, ( \
+     ar_addr \
+   , aw_addr \
+   , total_len \
+   , scatter_stride \
+   , scatter_len \
+   , scatter_groups \
+   , dma_mode \
+  ) )
+  //
 };
 
 typedef axi::axi4_segment<axi::cfg::standard> local_axi;

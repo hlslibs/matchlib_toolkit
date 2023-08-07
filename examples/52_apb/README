@@ -8,6 +8,8 @@ https://developer.arm.com/documentation/ihi0024/c
 
 or search for "AMBA APB Protocol Specification Version 2.0"
 
+See ./transactor_modeling.txt for guidelines on writing transactor models.
+
 The files in this example are:
 
 apb_dma.h               - example DMA module (the DUT for HLS)
@@ -41,9 +43,11 @@ Steps:
       ModelSim->
         RTL Verilog   (Double click)
 
-6. If desired, delete generated files:
+6. In ModelSim GUI, at command prompt:
+     run -all
+
+7. If desired, delete generated files:
    make clean
 
-7. To generate the Verilog wrapper around the SystemC DUT, use this command:
-./bin/wrapper_gen.py sim_sc --clock_period 10 --clock_name clk top.dma1
-
+8. To generate the Verilog wrapper around the SystemC DUT, use this command:
+../bin/wrapper_gen.py sim_sc --clock_period 10 --clock_name clk top.dma_inst

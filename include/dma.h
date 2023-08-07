@@ -1,63 +1,27 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 1.5                                                 *
- *                                                                        *
- *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 1.5.0                                               *
- *                                                                        *
- *  Copyright 2020 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
+// INSERT_EULA_COPYRIGHT: 2020-2022
 
 #pragma once
 
+#include "mc_connections.h"
+#include "auto_gen_fields.h"
 #include "axi4_segment.h"
 
 /**
  *  * \brief dma command sent to the DMA engine
 */
 struct dma_cmd {
-  NVUINTW(32) ar_addr {0};
-  NVUINTW(32) aw_addr {0};
-  NVUINTW(32) len {0};
+  ac_int<32, false> ar_addr {0};
+  ac_int<32, false> aw_addr {0};
+  ac_int<32, false> len {0};
 
-  static const unsigned int width = 32 + 32 + 32;
-  template <unsigned int Size> void Marshall(Marshaller<Size> &m) {
-    m &ar_addr;
-    m &aw_addr;
-    m &len;
-  }
-  inline friend void sc_trace(sc_trace_file *tf, const dma_cmd &v, const std::string &NAME ) {
-    sc_trace(tf,v.ar_addr,  NAME + ".ar_addr");
-    sc_trace(tf,v.aw_addr,  NAME + ".aw_addr");
-    sc_trace(tf,v.len,      NAME + ".len");
-  }
-
-  inline friend std::ostream &operator<<(ostream &os, const dma_cmd &rhs) {
-    os << rhs.ar_addr << " " << rhs.aw_addr << " " << rhs.len;
-    return os;
-  }
+  AUTO_GEN_FIELD_METHODS(dma_cmd, ( \
+     ar_addr \
+   , aw_addr \
+   , len \
+  ) )
+  //
 };
+
 
 /**
  *  * \brief dma address map as seen by the CPU

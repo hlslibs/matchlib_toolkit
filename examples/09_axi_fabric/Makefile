@@ -1,6 +1,5 @@
-# Makefile for example 09_axi_fabric
 
-CXXFLAGS += -g -std=c++11 -Wall -Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-label -Wno-maybe-uninitialized
+CXXFLAGS += -g -O0 -std=c++11 -Wall -Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-label -Wno-maybe-uninitialized
 
 # =====================================================================
 # ENVIRONMENT VARIABLES
@@ -127,7 +126,9 @@ INCDIRS += -I$(AC_TYPES)/include
 INCDIRS += -I$(AC_SIMUTILS)/include
 
 CPPFLAGS += $(INCDIRS)
-CPPFLAGS += -DSC_INCLUDE_DYNAMIC_PROCESSES -DCONNECTIONS_NAMING_ORIGINAL
+CPPFLAGS += -DSC_INCLUDE_DYNAMIC_PROCESSES 
+
+ASANCXXFLAGS = -O0 -fsanitize=address -fno-omit-frame-pointer 
 
 LIBS += -lsystemc -lpthread
 
@@ -143,11 +144,23 @@ trace.vcd: sim_sc
 	./$^
 
 sim_sc: $(wildcard $(SOURCE_DIR)*.h) $(wildcard $(SOURCE_DIR)*.cpp)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LIBDIRS) -DCONNECTIONS_ACCURATE_SIM $(wildcard $(SOURCE_DIR)*.cpp) -o $@ $(LIBS)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LIBDIRS) $(wildcard $(SOURCE_DIR)*.cpp) -o $@ $(LIBS)
+
+direct_port_sc: $(wildcard $(SOURCE_DIR)*.h) $(wildcard $(SOURCE_DIR)*.cpp)
+	$(CXX) -DFORCE_AUTO_PORT=Connections::DIRECT_PORT $(CXXFLAGS) \
+		$(CPPFLAGS) $(LIBDIRS) $(wildcard $(SOURCE_DIR)*.cpp) -o $@ $(LIBS)
+
+clang_sc: $(wildcard $(SOURCE_DIR)*.h) $(wildcard $(SOURCE_DIR)*.cpp)
+	clang++ -DFORCE_AUTO_PORT=Connections::DIRECT_PORT $(CXXFLAGS) \
+		$(CPPFLAGS) $(LIBDIRS) $(wildcard $(SOURCE_DIR)*.cpp) -o $@ $(LIBS)
+
+asan_sim_sc: $(wildcard $(SOURCE_DIR)*.h) $(wildcard $(SOURCE_DIR)*.cpp)
+	$(CXX) $(CXXFLAGS) $(ASANCXXFLAGS) $(CPPFLAGS) $(LIBDIRS) -DCONNECTIONS_ACCURATE_SIM $(wildcard $(SOURCE_DIR)*.cpp) -o $@ $(LIBS)
 
 fast_sim_sc: $(wildcard $(SOURCE_DIR)*.h) $(wildcard $(SOURCE_DIR)*.cpp)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -DCONNECTIONS_FAST_SIM $(LIBDIRS) $(wildcard $(SOURCE_DIR)*.cpp) -o $@ $(LIBS)
 
+# These two targets assume that the QuestaSim utilities 'vcd2wlf' and 'vsim'
 # These two targets assume that the QuestaSim utilities 'vcd2wlf' and 'vsim'
 # are found in your PATH
 %.wlf: %.vcd
@@ -157,7 +170,7 @@ view_wave: trace.wlf
 	vsim $< -nolog -do "add wave -r trace:/SystemC/*" -do "wave zoom full"
 
 sim_clean:
-	@rm -rf fast_sim_sc sim_* *_data.txt *_names.txt
+	@rm -rf sim_* *_data.txt *_names.txt
 
 help: checkvars
 	-@echo "Makefile targets:"
@@ -182,7 +195,7 @@ help: checkvars
 	-@echo ""
 
 clean: sim_clean
-	@rm -rf *.vcd *.wlf
+	@rm -rf *.vcd *.wlf *atapu* wrapDir direct_port_sc asan_sim_sc fast_sim_sc
 
 
 
