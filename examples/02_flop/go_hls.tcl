@@ -3,6 +3,7 @@ set sfd [file dir [info script]]
 options defaults
 
 options set /Input/CppStandard c++11
+options set /Input/CompilerFlags -DCONNECTIONS_NAMING_ORIGINAL
 project new
 
 flow package require /SCVerify
@@ -15,6 +16,7 @@ flow package require /SCVerify
 
 flow package require /QuestaSIM
 flow package option set /QuestaSIM/ENABLE_CODE_COVERAGE true
+flow package option set /QuestaSIM/MSIM_DOFILE $sfd/msim.do
 
 solution file add "$sfd/flop.h" -type CHEADER
 solution file add "$sfd/testbench.cpp" -type C++ -exclude true

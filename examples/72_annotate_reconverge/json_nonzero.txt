@@ -13,14 +13,14 @@
             "dest_name": "dut1.block1_inst.din_vld"
         },
         "dut1.bout0_comb_BA": {
-            "latency": 8,
+            "latency": 7,
             "capacity": 8,
             "src_name": "dut1.block0_inst.dout_vld",
             "dest_name": "dut1.reconvergence_inst.din0_vld"
         },
         "dut1.bout1_comb_BA": {
-            "latency": 0,
-            "capacity": 0,
+            "latency": 1,
+            "capacity": 2,
             "src_name": "dut1.block1_inst.dout_vld",
             "dest_name": "dut1.reconvergence_inst.din1_vld"
         },
@@ -38,4 +38,3 @@
         }
     }
 }
-

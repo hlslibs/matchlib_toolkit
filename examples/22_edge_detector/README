@@ -12,6 +12,6 @@ To see the input and output image results, compile with -DHAVE_DISPLAY
 4. Run Catapult:
   catapult -f go_hls.tcl
 
-5. Launch QuestaSim from Catapult GUI: Verfication->QuestaSim
+5. Launch ModelSim from Catapult GUI: Verfication->ModelSim
 
-6. Type "run -all" in QuestaSim command line. Let run for 10 minutes at least.
+6. Type "run -all" in Modelsim command line. Let run for 10 minutes at least.

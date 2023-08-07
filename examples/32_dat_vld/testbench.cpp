@@ -1,4 +1,34 @@
-// INSERT_EULA_COPYRIGHT: 2020-2022
+/**************************************************************************
+ *                                                                        *
+ *  Catapult(R) MatchLib Toolkit Example Design Library                   *
+ *                                                                        *
+ *  Software Version: 1.5                                                 *
+ *                                                                        *
+ *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
+ *  Release Type    : Production Release                                  *
+ *  Release Build   : 1.5.0                                               *
+ *                                                                        *
+ *  Copyright 2022 Siemens                                                *
+ *                                                                        *
+ **************************************************************************
+ *  Licensed under the Apache License, Version 2.0 (the "License");       *
+ *  you may not use this file except in compliance with the License.      * 
+ *  You may obtain a copy of the License at                               *
+ *                                                                        *
+ *      http://www.apache.org/licenses/LICENSE-2.0                        *
+ *                                                                        *
+ *  Unless required by applicable law or agreed to in writing, software   * 
+ *  distributed under the License is distributed on an "AS IS" BASIS,     * 
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
+ *  implied.                                                              * 
+ *  See the License for the specific language governing permissions and   * 
+ *  limitations under the License.                                        *
+ **************************************************************************
+ *                                                                        *
+ *  The most recent version of this package is available at github.       *
+ *                                                                        *
+ *************************************************************************/
+
 
 #include "dut.h"
 #include <mc_scverify.h>
@@ -17,8 +47,7 @@ public:
   SC_SIG(uint32, out_dat);
 
   SC_CTOR(Top)
-    :   clk ("clk",  1, SC_NS, 0.5,0,SC_NS,true) 
-  {
+    :   clk ("clk",  1, SC_NS, 0.5,0,SC_NS,true) {
     sc_object_tracer<sc_clock> trace_clk(clk);
 
     dut1.clk(clk);
@@ -65,8 +94,7 @@ public:
 
     while (1) {
       wait();
-      if (out_vld)
-        CCS_LOG("TB resp sees: " << std::hex << out_dat);
+      if (out_vld) { CCS_LOG("TB resp sees: " << std::hex << out_dat); }
     }
   }
 
@@ -86,11 +114,6 @@ int sc_main(int argc, char **argv)
 
   Top top("top");
   trace_hierarchy(&top, trace_file_ptr);
-
-  channel_logs logs;
-  logs.enable("chan_log");
-  logs.log_hierarchy(top);
-
   sc_start();
   if (sc_report_handler::get_count(SC_ERROR) > 0) {
     std::cout << "Simulation FAILED" << std::endl;

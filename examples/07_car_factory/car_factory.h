@@ -1,27 +1,67 @@
-// INSERT_EULA_COPYRIGHT: 2020-2022
+/**************************************************************************
+ *                                                                        *
+ *  Catapult(R) MatchLib Toolkit Example Design Library                   *
+ *                                                                        *
+ *  Software Version: 1.5                                                 *
+ *                                                                        *
+ *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
+ *  Release Type    : Production Release                                  *
+ *  Release Build   : 1.5.0                                               *
+ *                                                                        *
+ *  Copyright 2020 Siemens                                                *
+ *                                                                        *
+ **************************************************************************
+ *  Licensed under the Apache License, Version 2.0 (the "License");       *
+ *  you may not use this file except in compliance with the License.      * 
+ *  You may obtain a copy of the License at                               *
+ *                                                                        *
+ *      http://www.apache.org/licenses/LICENSE-2.0                        *
+ *                                                                        *
+ *  Unless required by applicable law or agreed to in writing, software   * 
+ *  distributed under the License is distributed on an "AS IS" BASIS,     * 
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
+ *  implied.                                                              * 
+ *  See the License for the specific language governing permissions and   * 
+ *  limitations under the License.                                        *
+ **************************************************************************
+ *                                                                        *
+ *  The most recent version of this package is available at github.       *
+ *                                                                        *
+ *************************************************************************/
 
 #pragma once
 
 #include <mc_connections.h>
 
-#include "auto_gen_fields.h"
-
 struct chassis_t {
   sc_uint<16> chassis;
-
-  AUTO_GEN_FIELD_METHODS(chassis_t, ( \
-   chassis \
-  ) )
-  //
+  static const unsigned int width = 16;
+  template <unsigned int Size> void Marshall(Marshaller<Size> &m) {
+    m &chassis;
+  }
+  inline friend void sc_trace(sc_trace_file *tf, const chassis_t &v, const std::string &NAME ) {
+    sc_trace(tf,v.chassis,  NAME + ".chassis");
+  }
+  inline friend std::ostream &operator<<(ostream &os, const chassis_t &rhs) {
+    os << rhs.chassis;
+    return os;
+  }
 };
 
 struct spark_plug_t {
   sc_uint<16> spark_plug;
 
-  AUTO_GEN_FIELD_METHODS(spark_plug_t, ( \
-    spark_plug \
-  ) )
-  //
+  static const unsigned int width = 16;
+  template <unsigned int Size> void Marshall(Marshaller<Size> &m) {
+    m &spark_plug;
+  }
+  inline friend void sc_trace(sc_trace_file *tf, const spark_plug_t &v, const std::string &NAME ) {
+    sc_trace(tf,v.spark_plug,  NAME + ".spark_plug");
+  }
+  inline friend std::ostream &operator<<(ostream &os, const spark_plug_t &rhs) {
+    os << rhs.spark_plug;
+    return os;
+  }
 };
 
 struct engine_t {
@@ -29,22 +69,41 @@ struct engine_t {
   sc_uint<16> engine;
   spark_plug_t spark_plugs[plugs];
 
-  AUTO_GEN_FIELD_METHODS(engine_t, ( \
-      engine \
-    , spark_plugs \
-  ) )
-  //
+  static const unsigned int width = 16 + (spark_plug_t::width *plugs);
+  template <unsigned int Size> void Marshall(Marshaller<Size> &m) {
+    m &engine;
+    for (int i=0; i<plugs; i++) { m &spark_plugs[i]; }
+  }
+  inline friend void sc_trace(sc_trace_file *tf, const engine_t &v, const std::string &NAME ) {
+    sc_trace(tf,v.engine,  NAME + ".engine");
+    for (int i=0; i<plugs; i++) {
+      sc_trace(tf,v.spark_plugs[i],  NAME + ".spark_plug" + std::to_string(i));
+    }
+  }
+  inline friend std::ostream &operator<<(ostream &os, const engine_t &rhs) {
+    os << rhs.engine << " ";
+    for (int i=0; i<plugs; i++) { os << rhs.spark_plugs[i] << " "; }
+    return os;
+  }
 };
 
 struct car_t {
   engine_t  engine;
   chassis_t chassis;
 
-  AUTO_GEN_FIELD_METHODS(car_t, ( \
-     engine \
-   , chassis \
-  ) )
-  //
+  static const unsigned int width = engine_t::width + 16;
+  template <unsigned int Size> void Marshall(Marshaller<Size> &m) {
+    m &chassis;
+    m &engine;
+  }
+  inline friend void sc_trace(sc_trace_file *tf, const car_t &v, const std::string &NAME ) {
+    sc_trace(tf,v.chassis,  NAME + ".chassis");
+    sc_trace(tf,v.engine,  NAME + ".engine");
+  }
+  inline friend std::ostream &operator<<(ostream &os, const car_t &rhs) {
+    os << rhs.engine << " " << rhs.chassis;
+    return os;
+  }
 };
 
 

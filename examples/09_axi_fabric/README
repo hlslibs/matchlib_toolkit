@@ -8,12 +8,6 @@ This example also demonstrates usage of the CONNECTIONS_FAST_SIM option for the 
 simulation. To use this option, instead of "make build", use "make fast_sim_sc" below. The resulting
 executable will then be named "fast_sim_sc".
 
-This example also demonstrates how to build Matchlib models with AddressSanitizer.
-(Google AddressSanitizer for more info). To use AddressSanitizer you must
-use a build of the SystemC simulator that uses pthreads. Use the "../../../pthreads_build_systemc.sh"
-script to build this simulator, then use "make asan_sim_sc" to build the
-example here with AddressSanitizer functionality.
-
 Steps:
 
 1. Build SystemC model:
@@ -45,21 +39,18 @@ Steps:
 4. Run catapult HLS:
    catapult -file go_hls.tcl
 
-5. Launch QuestaSim on generated RTL:
+5. Launch ModelSim on generated RTL:
    Verification->
-      QuestaSim->
+      ModelSim->
         RTL Verilog   (Double click)
 
-6. In QuestaSim GUI, at command prompt:
-     run -all
-
-  Note in Questasim transcript log :
+  Note in Modelsim transcript log :
  90 ns sc_main/Top/testbench beat rate: 1078 ps
  90 ns sc_main/Top/testbench clock period: 1 ns
 
   Note in the waveforms the concurrent burst read and writes from the DMA fully utilize the AXI4 bus.
 
-7. If desired, delete generated files:
+6. If desired, delete generated files:
    make clean
 
 

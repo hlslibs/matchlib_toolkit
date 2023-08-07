@@ -1,4 +1,33 @@
-// INSERT_EULA_COPYRIGHT: 2020-2022
+/**************************************************************************
+ *                                                                        *
+ *  Catapult(R) MatchLib Toolkit Example Design Library                   *
+ *                                                                        *
+ *  Software Version: 1.5                                                 *
+ *                                                                        *
+ *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
+ *  Release Type    : Production Release                                  *
+ *  Release Build   : 1.5.0                                               *
+ *                                                                        *
+ *  Copyright 2020 Siemens                                                *
+ *                                                                        *
+ **************************************************************************
+ *  Licensed under the Apache License, Version 2.0 (the "License");       *
+ *  you may not use this file except in compliance with the License.      * 
+ *  You may obtain a copy of the License at                               *
+ *                                                                        *
+ *      http://www.apache.org/licenses/LICENSE-2.0                        *
+ *                                                                        *
+ *  Unless required by applicable law or agreed to in writing, software   * 
+ *  distributed under the License is distributed on an "AS IS" BASIS,     * 
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
+ *  implied.                                                              * 
+ *  See the License for the specific language governing permissions and   * 
+ *  limitations under the License.                                        *
+ **************************************************************************
+ *                                                                        *
+ *  The most recent version of this package is available at github.       *
+ *                                                                        *
+ *************************************************************************/
 
 #include "fabric.h"
 #include "ram.h"
@@ -12,13 +41,8 @@ static const int scenarios = 4;
 class Top : public sc_module, public local_axi
 {
 public:
-#ifdef CONN_RAND_STALL
-  std::string log_nm{"stall"};
-#else
-  std::string log_nm{"no_stall"};
-#endif
-  ram               CCS_INIT_S2(ram0, log_nm);
-  ram               CCS_INIT_S2(ram1, log_nm);
+  ram               CCS_INIT_S1(ram0);
+  ram               CCS_INIT_S1(ram1);
   CCS_DESIGN(fabric) CCS_INIT_S1(fabric1);
 
   sc_clock clk;

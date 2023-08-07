@@ -1,4 +1,33 @@
-// INSERT_EULA_COPYRIGHT: 2020-2022
+/**************************************************************************
+ *                                                                        *
+ *  Catapult(R) MatchLib Toolkit Example Design Library                   *
+ *                                                                        *
+ *  Software Version: 1.5                                                 *
+ *                                                                        *
+ *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
+ *  Release Type    : Production Release                                  *
+ *  Release Build   : 1.5.0                                               *
+ *                                                                        *
+ *  Copyright 2022 Siemens                                                *
+ *                                                                        *
+ **************************************************************************
+ *  Licensed under the Apache License, Version 2.0 (the "License");       *
+ *  you may not use this file except in compliance with the License.      * 
+ *  You may obtain a copy of the License at                               *
+ *                                                                        *
+ *      http://www.apache.org/licenses/LICENSE-2.0                        *
+ *                                                                        *
+ *  Unless required by applicable law or agreed to in writing, software   * 
+ *  distributed under the License is distributed on an "AS IS" BASIS,     * 
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
+ *  implied.                                                              * 
+ *  See the License for the specific language governing permissions and   * 
+ *  limitations under the License.                                        *
+ **************************************************************************
+ *                                                                        *
+ *  The most recent version of this package is available at github.       *
+ *                                                                        *
+ *************************************************************************/
 
 #pragma once
 #include "ram.h"
@@ -6,7 +35,8 @@
 // This module wraps the RAM which uses Connections::In/Out interfaces to use signal port
 // interfaces where each AXI4 field is a separate port
 
-class wrap_ram_axi4_sigs : public sc_module , public local_axi_sig_cfg {
+class wrap_ram_axi4_sigs : public sc_module, public local_axi_sig_cfg
+{
 public:
   sc_in<bool> CCS_INIT_S1(clk);
   sc_in<bool> CCS_INIT_S1(rst_bar);
@@ -20,7 +50,7 @@ public:
 
   local_axi_sig_cfg::r_chan<> CCS_INIT_S1(ram_slave_r_chan);
   local_axi_sig_cfg::w_chan<> CCS_INIT_S1(ram_slave_w_chan);
-  
+
   SC_CTOR(wrap_ram_axi4_sigs) {
     ram1.clk(clk);
     ram1.rst_bar(rst_bar);

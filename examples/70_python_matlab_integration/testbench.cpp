@@ -1,4 +1,34 @@
-// INSERT_EULA_COPYRIGHT: 2020-2022
+/**************************************************************************
+ *                                                                        *
+ *  Catapult(R) MatchLib Toolkit Example Design Library                   *
+ *                                                                        *
+ *  Software Version: 1.5                                                 *
+ *                                                                        *
+ *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
+ *  Release Type    : Production Release                                  *
+ *  Release Build   : 1.5.0                                               *
+ *                                                                        *
+ *  Copyright 2022 Siemens                                                *
+ *                                                                        *
+ **************************************************************************
+ *  Licensed under the Apache License, Version 2.0 (the "License");       *
+ *  you may not use this file except in compliance with the License.      * 
+ *  You may obtain a copy of the License at                               *
+ *                                                                        *
+ *      http://www.apache.org/licenses/LICENSE-2.0                        *
+ *                                                                        *
+ *  Unless required by applicable law or agreed to in writing, software   * 
+ *  distributed under the License is distributed on an "AS IS" BASIS,     * 
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
+ *  implied.                                                              * 
+ *  See the License for the specific language governing permissions and   * 
+ *  limitations under the License.                                        *
+ **************************************************************************
+ *                                                                        *
+ *  The most recent version of this package is available at github.       *
+ *                                                                        *
+ *************************************************************************/
+
 
 #include <systemc.h>
 #include "dut.h"
@@ -48,17 +78,17 @@ public:
     int i1 = 0;
 
     while (1) {
-#ifdef EXTERNAL_TESTBENCH
+      #ifdef EXTERNAL_TESTBENCH
       if (matlab_input_valid) {
         in1.Push(matlab_input);
         matlab_input_valid = 0;
       } else {
         wait();
       }
-#else
+      #else
       in1.Push(i1++);
-      if (i1 > 10) sc_stop();
-#endif
+      if (i1 > 10) { sc_stop(); }
+      #endif
     }
   }
 
@@ -67,14 +97,14 @@ public:
     wait();
 
     while (1) {
-#ifdef EXTERNAL_TESTBENCH
+      #ifdef EXTERNAL_TESTBENCH
       matlab_output = out1.Pop();
       matlab_output_valid = 1;
       std::cout << "calling sc_pause()\n";
       sc_pause();
-#else
+      #else
       CCS_LOG("See: " << out1.Pop());
-#endif
+      #endif
     }
   }
 
@@ -100,37 +130,38 @@ int sc_main(int argc, char **argv)
   top_ptr = new Top("top");
   trace_hierarchy(top_ptr, trace_file_ptr);
 
-#ifndef EXTERNAL_TESTBENCH
+  #ifndef EXTERNAL_TESTBENCH
   sc_start();
-#endif
+  #endif
   return 0;
 }
 
 #ifdef EXTERNAL_TESTBENCH
 
 // This class represents the SC simulator to Python or Matlab Mex
-class sc_simulator {
+class sc_simulator
+{
 public:
-   sc_simulator() {
-     sc_elab_and_sim(0, 0);
-   }
+  sc_simulator() {
+    sc_elab_and_sim(0, 0);
+  }
 
 // This function represents the python or Matlab Mex function that would be called repeatedly
 // to process one (or more) data inputs and return one (or more) data outputs
-   int process_one_sample(int in1) {
-     top_ptr->matlab_input = in1;
-     top_ptr->matlab_input_valid = true;
-     std::cout << "calling sc_start()\n";
-     sc_start(); // This returns when sc_pause is called above
+  int process_one_sample(int in1) {
+    top_ptr->matlab_input = in1;
+    top_ptr->matlab_input_valid = true;
+    std::cout << "calling sc_start()\n";
+    sc_start(); // This returns when sc_pause is called above
 
-     return top_ptr->matlab_output;
-   }
+    return top_ptr->matlab_output;
+  }
 };
 
 // Python does not have a native C++ interface, so we export regular C functions to Python
 extern "C" {
-  sc_simulator* sc_simulator_new() { return new sc_simulator(); }
-  int process_one_sample(sc_simulator* sim, int in1) { return sim->process_one_sample(in1); }
+  sc_simulator *sc_simulator_new() { return new sc_simulator(); }
+  int process_one_sample(sc_simulator *sim, int in1) { return sim->process_one_sample(in1); }
 }
 
 #endif

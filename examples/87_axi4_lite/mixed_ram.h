@@ -1,6 +1,36 @@
-// INSERT_EULA_COPYRIGHT: 2020-2022
+/**************************************************************************
+ *                                                                        *
+ *  Catapult(R) MatchLib Toolkit Example Design Library                   *
+ *                                                                        *
+ *  Software Version: 1.5                                                 *
+ *                                                                        *
+ *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
+ *  Release Type    : Production Release                                  *
+ *  Release Build   : 1.5.0                                               *
+ *                                                                        *
+ *  Copyright 2022 Siemens                                                *
+ *                                                                        *
+ **************************************************************************
+ *  Licensed under the Apache License, Version 2.0 (the "License");       *
+ *  you may not use this file except in compliance with the License.      * 
+ *  You may obtain a copy of the License at                               *
+ *                                                                        *
+ *      http://www.apache.org/licenses/LICENSE-2.0                        *
+ *                                                                        *
+ *  Unless required by applicable law or agreed to in writing, software   * 
+ *  distributed under the License is distributed on an "AS IS" BASIS,     * 
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
+ *  implied.                                                              * 
+ *  See the License for the specific language governing permissions and   * 
+ *  limitations under the License.                                        *
+ **************************************************************************
+ *                                                                        *
+ *  The most recent version of this package is available at github.       *
+ *                                                                        *
+ *************************************************************************/
 
 #pragma once
+
 #include "axi4_segment.h"
 
 /**
@@ -8,7 +38,8 @@
 */
 
 template <class cfg>
-class ram : public sc_module {
+class ram : public sc_module
+{
 public:
   sc_in<bool> CCS_INIT_S1(clk);
   sc_in<bool> CCS_INIT_S1(rst_bar);
@@ -18,10 +49,9 @@ public:
   static const int sz = 0x10000; // size in cfg::DATA_WIDTH words
 
   typedef ac_int<cfg::DATA_WIDTH, false> arr_t;
-  arr_t* array {0};
+  arr_t *array {0};
 
-  SC_CTOR(ram)
-  {
+  SC_CTOR(ram) {
     array = new arr_t[sz];
 
     SC_THREAD(slave_r_process);
@@ -32,28 +62,26 @@ public:
     sensitive << clk.pos();
     async_reset_signal_is(rst_bar, false);
 
-    for (int i=0; i < sz; i++)
-     array[i] = i * cfg::bytesPerBeat;
+    for (int i=0; i < sz; i++) { 
+      array[i] = i * cfg::bytesPerBeat;  // initialize RAM contents with known, non-zero pattern
+    }
   }
 
-  ac_int<cfg::DATA_WIDTH, false> debug_read_addr(uint32_t addr)
-  {
-        if (addr >= (sz * cfg::bytesPerBeat))
-        {
-          SC_REPORT_ERROR("ram", "invalid addr");
-          return 0;
-        }
+  ac_int<cfg::DATA_WIDTH, false> debug_read_addr(uint32_t addr) {
+    if (addr >= (sz * cfg::bytesPerBeat)) {
+      SC_REPORT_ERROR("ram", "invalid addr");
+      return 0;
+    }
 
-        return(array[addr / cfg::bytesPerBeat]);
+    return (array[addr / cfg::bytesPerBeat]);
   }
 
   void slave_r_process() {
     r_slave0.reset();
 
-
     wait();
 
-    while(1) {
+    while (1) {
       typename cfg::ar_payload ar;
       r_slave0.start_multi_read(ar);
 
@@ -62,19 +90,15 @@ public:
       while (1) {
         typename cfg::r_payload r;
 
-        if (ar.addr >= (sz * cfg::bytesPerBeat))
-        {
+        if (ar.addr >= (sz * cfg::bytesPerBeat)) {
           SC_REPORT_ERROR("ram", "invalid addr");
           r.resp = cfg::Enc::XRESP::SLVERR;
-        }
-        else
-        {
+        } else {
           r.data = array[ar.addr / cfg::bytesPerBeat];
-	}
+        }
 
-        if (!r_slave0.next_multi_read(ar, r))
-          break;
-      } 
+        if (!r_slave0.next_multi_read(ar, r)) { break; }
+      }
     }
   }
 
@@ -82,7 +106,7 @@ public:
     w_slave0.reset();
     wait();
 
-    while(1) {
+    while (1) {
       typename cfg::aw_payload aw;
       typename cfg::b_payload b;
 
@@ -93,37 +117,35 @@ public:
       while (1) {
         typename cfg::w_payload w = w_slave0.w.Pop();
 
-        if (aw.addr >= (sz * cfg::bytesPerBeat))
-	{
+        if (aw.addr >= (sz * cfg::bytesPerBeat)) {
           SC_REPORT_ERROR("ram", "invalid addr");
           b.resp = cfg::Enc::XRESP::SLVERR;
-        }
-	else
-	{
+        } else {
           decltype(w.wstrb) all_on{~0};
 
-          if (w.wstrb == all_on)
-            array[aw.addr / cfg::bytesPerBeat] = w.data.to_uint64();
-          else
-          {
-	    CCS_LOG("write strobe enabled");
-	    arr_t orig  = array[aw.addr / cfg::bytesPerBeat];
-	    arr_t wdata = w.data.to_uint64();
+          if (w.wstrb == all_on) { 
+            array[aw.addr / cfg::bytesPerBeat] = w.data.to_uint64(); 
+          } else {
+            CCS_LOG("write strobe enabled");
+            arr_t orig  = array[aw.addr / cfg::bytesPerBeat];
+            arr_t wdata = w.data.to_uint64();
 
-	    #pragma unroll
-            for (int i=0; i<cfg::WSTRB_WIDTH; i++)
-              if (w.wstrb[i])
-                orig = nvhls::set_slc(orig, nvhls::get_slc<8>(wdata, (i*8)), (i*8));
+            #pragma hls_unroll
+            for (int i=0; i<cfg::WSTRB_WIDTH; i++) {
+              if (w.wstrb[i]) { 
+                orig = nvhls::set_slc(orig, nvhls::get_slc<8>(wdata, (i*8)), (i*8)); 
+              }
+            }
 
             array[aw.addr / cfg::bytesPerBeat] = orig;
           }
-	}
+        }
 
-        if (!w_slave0.next_multi_write(aw))
-          break;
-      } 
+        if (!w_slave0.next_multi_write(aw)) { break; }
+      }
 
       w_slave0.b.Push(b);
     }
   }
 };
+

@@ -8,7 +8,7 @@ crossing fifo would be substituted for cdc_fifo.v in real world usage.
 (Usually such models are provided by ASIC vendors.)
 
 This simple example demonstrates usage of multiple clocks in the SystemC DUT which is to 
-be synthesized by Catapult, as well as usage of the ac_blackbox directive to substitute
+be synthesized by Catapult, as well as usage of the hls_blackbox_module directive to substitute
 external Verilog models within Catapult generated RTL.
 
 Note that block1 in the DUT has a clock period of 3 ns and block2 has a clock period of 1 ns.

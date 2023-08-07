@@ -19,21 +19,17 @@ Steps:
 4. Run catapult HLS:
    catapult -file go_hls.tcl
 
-5. Launch QuestaSim on generated RTL:
+5. Launch ModelSim on generated RTL:
    Verification->
-      QuestaSim->
+      ModelSim->
         RTL Verilog   (Double click)
 
-6. In QuestaSim GUI, at command prompt:
-     run -all
-     wave zoom full
-
-  Note in Questasim transcript log :
+  Note in Modelsim transcript log :
  90 ns sc_main/Top/testbench beat rate: 1078 ps
  90 ns sc_main/Top/testbench clock period: 1 ns
 
   Note in the waveforms the concurrent burst read and writes from the DMA fully utilize the AXI4 bus.
 
-7. If desired, delete generated files:
+6. If desired, delete generated files:
    make clean
 

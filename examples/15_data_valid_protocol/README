@@ -1,0 +1,30 @@
+
+This example illustrates the recommended way to model data/valid protocols
+(which are different than ready/data/valid protocols normally used in Matchlib)
+
+Note that data/valid is a time-sensitive protocol (unlike ready/data/valid).
+This example shows that some packets are dropped in the RTL simulation because
+the RTL DUT has longer latency than the SC DUT. This is to be expected with this protocol.
+
+
+Steps:
+
+3. Build the SystemC simulation executable by typing:
+   make
+
+4. Run the SC simulation by typing:
+   ./sim_sc
+
+5. View the waveforms generated from the SC simulation:
+   ./vsim_vcd
+
+6. Run Catapult HLS to generate Verilog RTL for DUT:
+   catapult -f go_hls.tcl
+
+7. Launch SCVerify / QuestaSim with generated RTL by typing in Catapult command line:
+   dofile scverify.tcl
+
+8. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+
+9. Delete all generated files
+    make clean

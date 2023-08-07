@@ -1,8 +1,38 @@
-// INSERT_EULA_COPYRIGHT: 2020-2022
+/**************************************************************************
+ *                                                                        *
+ *  Catapult(R) MatchLib Toolkit Example Design Library                   *
+ *                                                                        *
+ *  Software Version: 1.5                                                 *
+ *                                                                        *
+ *  Release Date    : Wed Jul 19 09:26:27 PDT 2023                        *
+ *  Release Type    : Production Release                                  *
+ *  Release Build   : 1.5.0                                               *
+ *                                                                        *
+ *  Copyright 2020 Siemens                                                *
+ *                                                                        *
+ **************************************************************************
+ *  Licensed under the Apache License, Version 2.0 (the "License");       *
+ *  you may not use this file except in compliance with the License.      * 
+ *  You may obtain a copy of the License at                               *
+ *                                                                        *
+ *      http://www.apache.org/licenses/LICENSE-2.0                        *
+ *                                                                        *
+ *  Unless required by applicable law or agreed to in writing, software   * 
+ *  distributed under the License is distributed on an "AS IS" BASIS,     * 
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
+ *  implied.                                                              * 
+ *  See the License for the specific language governing permissions and   * 
+ *  limitations under the License.                                        *
+ **************************************************************************
+ *                                                                        *
+ *  The most recent version of this package is available at github.       *
+ *                                                                        *
+ *************************************************************************/
 
 #pragma once
 
 #include <mc_connections.h>
+#include "mc_fifo.h"
 
 template <class T>
 class copyio : public sc_module
@@ -48,7 +78,7 @@ public:
   copyio<T> CCS_INIT_S1(copy1);
   copyio<T> CCS_INIT_S1(copy2);
 
-  Connections::Fifo<T, N> CCS_INIT_S1(fifo1);
+  Connections::FifoModule<T, N> CCS_INIT_S1(fifo1);
   Connections::Combinational<T> CCS_INIT_S1(fifo1_in1);
   Connections::Combinational<T> CCS_INIT_S1(fifo1_out1);
 
@@ -60,9 +90,9 @@ public:
     copy1.out1(fifo1_in1);
 
     fifo1.clk(clk);
-    fifo1.rst(rst_bar);
-    fifo1.enq(fifo1_in1);
-    fifo1.deq(fifo1_out1);
+    fifo1.rst_bar(rst_bar);
+    fifo1.in1(fifo1_in1);
+    fifo1.out1(fifo1_out1);
 
     copy2.clk(clk);
     copy2.rst_bar(rst_bar);

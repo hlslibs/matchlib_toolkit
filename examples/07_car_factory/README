@@ -4,9 +4,6 @@ three different architectural approaches for the factory.
 
 See ../../docs/sc_hls_modeling_intro.pdf for a description of this example.
 
-For additional information on the AUTO_GEN_FIELDS macro see:
-../../doc/auto_gen_field_methods.pdf
-
 
 Steps:
 

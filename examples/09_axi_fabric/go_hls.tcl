@@ -1,17 +1,10 @@
-# enable struct field names to be preserved in the RTL
-set enable_preserve_fields 1
-
 set sfd [file dir [info script]]
 
 options defaults
 
 options set /Input/CppStandard c++11
-if {$enable_preserve_fields} {
-  options set /Input/CompilerFlags { "-DFORCE_AUTO_PORT=Connections::DIRECT_PORT" -DSEGMENT_BURST_SIZE=16}
-} else {
-  options set /Input/CompilerFlags { }
-}
-options set /Input/SearchPath {../../include} -append
+options set /Input/CompilerFlags "-DCONNECTIONS_ACCURATE_SIM -DCONNECTIONS_NAMING_ORIGINAL"
+options set /Input/SearchPath {$MGC_HOME/shared/examples/matchlib/toolkit/include} -append
 options set /Input/SearchPath {$MGC_HOME/shared/pkgs/matchlib/cmod/include} -append
 
 project new
@@ -26,15 +19,10 @@ flow package require /SCVerify
 
 flow package require /QuestaSIM
 flow package option set /QuestaSIM/ENABLE_CODE_COVERAGE true
+flow package option set /QuestaSIM/MSIM_DOFILE $sfd/msim.do
 
 solution file add "$sfd/fabric.h" -type CHEADER
 solution file add "$sfd/testbench.cpp" -type C++ -exclude true
-
-if {$enable_preserve_fields} {
-  directive set -STRUCT_LAYOUT c_style
-  directive set -PRESERVE_STRUCTS true
-  solution options set /Output/VerilogStructFormat packed
-}
 
 go analyze
 directive set -DESIGN_HIERARCHY fabric
