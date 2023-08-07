@@ -1,0 +1,46 @@
+
+
+Catapult C++ Flow Direct Inputs "Stress Test"
+
+
+This example is the same as the example in ../61_direct_input_sync, however 
+example 61* is for the Catapult SystemC flow while this example uses the Catapult C++ flow.
+
+For a description of this test see the section on "Direct Inputs" in:
+$MGC_HOME/shared/examples/matchlib/toolkit/doc/catapult_user_view_scheduling_rules.docx
+or
+../../doc/catapult_user_view_scheduling_rules.docx
+
+Note that run_logs dir contains pre-generated response logs for the cases below.
+These enable easy comparison of scenarios below just by using "diff".
+
+Note that the Catapult direct_input_sync and STRICT_IO_SCHEDULING=STRICT directives are 
+essential to proper operation of this modeling approach.
+
+Steps:
+
+1. Build pre-HLS C++ model:
+   make build
+
+2. Run pre-HLS C++ model:
+   ./sim_sc
+
+   Note that outputs will be written to "resp.log".
+   This can be compared with logs in run_logs/*
+
+3. Run Catapult:
+   catapult -f go_hls.tcl &
+
+4. Launch Questa on post-HLS RTL within Catapult GUI.
+
+5. In Questa, to run the simulation type:
+
+   run -all
+
+6. View waveforms.
+
+7. Type:
+   quit
+
+   Note that outputs will be written to "resp.log".
+   This can be compared with logs in run_logs/*

@@ -1,0 +1,58 @@
+
+This simple example demonstrates a "throughput accurate" DMA model using NVidia Matchlib and Catapult HLS.
+
+This particular example has a DMA with axi4_lite slave port and a regular axi4 master port.
+The intent is to show how multiple types of AXI4 interfaces can be handled in the same model.
+
+Steps:
+
+0. Set your shell environment variables:
+
+1. Build SystemC model:
+   make build
+
+2. Run SystemC model:
+   ./sim_sc
+
+   Note log output similar to following:
+85 ns Top.testbench start_time: 14 ns end_time: 85 ns
+85 ns Top.testbench axi beats (dec): 64
+85 ns Top.testbench elapsed time: 71 ns
+85 ns Top.testbench beat rate: 1109 ps
+85 ns Top.testbench clock period: 1 ns
+
+   The DMA is performing a concurrent 64 beat burst read and write to the ram.
+   The beat rate indicates that it is achieving nearly 1 beat per clock. 
+   (As the burst length increases, the beat rate converges to 1).
+
+
+3. View VCD waveforms from SystemC model before HLS:
+
+   make view_wave
+
+   Note in the waveforms the concurrent burst read and writes from the DMA fully utilize the AXI4 bus.
+   Note the automated burst segmentation (for easy visualization, this example segments every 8 beats
+     rather than the standard axi4 of 256 beats)
+
+4. Run catapult HLS:
+   catapult -file go_hls.tcl
+
+5. Launch ModelSim on generated RTL:
+   Verification->
+      ModelSim->
+        RTL Verilog   (Double click)
+
+6. In ModelSim GUI, at command prompt:
+     run -all
+
+  Note in Modelsim transcript log :
+ 90 ns sc_main/Top/testbench beat rate: 1078 ps
+ 90 ns sc_main/Top/testbench clock period: 1 ns
+
+  Note in the waveforms the concurrent burst read and writes from the DMA fully utilize the AXI4 bus.
+
+7. If desired, delete generated files:
+   make clean
+
+
+

@@ -1,0 +1,11 @@
+
+
+See ../../doc/matchlib_memory_modeling_methodology.pdf
+
+This example is the same as ../41_scratchpad_class, however it uses
+the Catapult "C++ flow" rather than the Catapult "SystemC flow".
+The intent is to show that the ScratchPadClass model can be used
+in the same way in both flows.
+
+See ../41*/README for more information.
+

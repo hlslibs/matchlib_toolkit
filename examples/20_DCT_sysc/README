@@ -1,0 +1,34 @@
+
+
+DCT block implemented with SystemC and Matchlib and synthesized thru Catapult HLS
+
+This example also demonstrates usage of the CONNECTIONS_FAST_SIM option for the pre-HLS SystemC
+simulation. To use this option, instead of "make build", use "make fast_sim_sc" below. The resulting
+executable will then be named "fast_sim_sc". To measure difference in simulation performance use:
+
+time ./fast_sim_sc sample.bmp
+time ./sim_sc sample.bmp
+
+Note that in this case we omit generation of the ".vcd" files so that it does not affect sim performance.
+
+Steps:
+
+1. Build the SystemC simulation executable by typing:
+   make build
+
+2. Run the SC simulation by typing:
+   ./sim_sc sample.bmp
+
+3. View the waveforms generated from the SC simulation:
+   make view_wave
+
+4. Run Catapult HLS to generate Verilog RTL for DUT:
+   catapult -f go_hls.tcl
+
+5. Launch SCVerify / QuestaSim with generated RTL by typing in Catapult command line:
+   dofile scverify.tcl
+
+6. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+
+7. Delete all generated files
+    make clean

@@ -1,0 +1,39 @@
+
+This simple example demonstrates a "throughput accurate" scatter-gather DMA model using NVidia Matchlib and Catapult HLS.
+
+
+Steps:
+
+1. Build SystemC model:
+   make build
+
+2. Run SystemC model:
+   ./sim_sc
+
+3. View VCD waveforms from SystemC model before HLS:
+
+   make view_wave
+
+   Note the automated burst segmentation (for easy visualization, this example segments every 16 beats rather than the standard axi4 of 256 beats)
+
+4. Run catapult HLS:
+   catapult -file go_hls.tcl
+
+5. Launch QuestaSim on generated RTL:
+   Verification->
+      QuestaSim->
+        RTL Verilog   (Double click)
+
+6. In QuestaSim GUI, at command prompt:
+     run -all
+     wave zoom full
+
+  Note in Questasim transcript log :
+ 90 ns sc_main/Top/testbench beat rate: 1078 ps
+ 90 ns sc_main/Top/testbench clock period: 1 ns
+
+  Note in the waveforms the concurrent burst read and writes from the DMA fully utilize the AXI4 bus.
+
+7. If desired, delete generated files:
+   make clean
+

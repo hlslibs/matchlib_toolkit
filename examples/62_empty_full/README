@@ -1,0 +1,42 @@
+
+
+Very simple Matchlib model showing Pre-HLS and Post-HLS simulations that demonstrates Matchlib Pop/Push operations.
+Note that the SystemC model and the HLS generated RTL have a thruput of 1 NS (1 NS clock).
+
+This particular example shows how the DUT that is going to be synthesized in HLS can
+access any of the "rdy" and "vld" signals on its connections ports. This can
+be used in both the pre-HLS and post-HLS models to determine whether specific ports
+are ready for IO at any particular point.
+
+Note that the signal level interface for Connections::Combinational<> only contains
+rdy/vld/dat signals. There is no "empty" or "full" signals, which sort of imply FIFO
+storage (which may or may not actually be present on the "other" side of the interface).
+However, the "rdy" and "vld" signals can be used as a proxy for "full" and "empty" as this 
+example shows.
+
+
+Steps:
+
+1. Build the SystemC simulation executable by typing:
+   make build
+
+2. Run the SC simulation by typing:
+   ./sim_sc
+
+3. View the waveforms generated from the SC simulation:
+   make view_wave
+
+4. Run Catapult HLS to generate Verilog RTL for DUT:
+   catapult -f go_hls.tcl
+
+5. Launch SCVerify / QuestaSim with generated RTL by typing in Catapult command line:
+   dofile scverify.tcl
+
+6. Run RTL Sim by typing in QuestaSim command line:
+   run -all
+   wave zoom full
+
+7. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+
+8. Delete all generated files
+    make clean

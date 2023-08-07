@@ -1,0 +1,11 @@
+
+This design is the same as ../20* however the DUT top level is changed to pixelpipe_mod
+
+Steps:
+
+1. To run the pre-HLS simulation, change directory to ../20* and read the README.
+
+2. To run Catapult, in this directory, type:
+  catapult -f go_hls.tcl
+
+3. Within the Catapult GUI, launch QuestaSim to run the RTL simulation.

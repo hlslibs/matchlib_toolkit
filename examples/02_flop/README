@@ -1,0 +1,39 @@
+
+This simple example demonstrates an "flop" that is modeled in SystemC and synthesized to RLT via Catapult HLS.
+The purpose of this example is show how a very simple sequential process in SystemC maps to Verilog RTL.
+
+
+Steps:
+
+1. View "flop.h" and note similarities/differences to a Verilog module.
+   view flop.h
+
+2. View testbench.h to see instantiation and stimulus of DUT.
+   view testbench.h
+
+3. Build the SystemC simulation executable by typing:
+   make build
+
+4. Run the SC simulation by typing:
+   ./sim_sc
+
+5. View the waveforms generated from the SC simulation:
+   make view_wave
+
+6. Run Catapult HLS to generate Verilog RTL for DUT:
+   catapult -f go_hls.tcl
+
+7. Launch SCVerify / QuestaSim with generated RTL by typing in Catapult command line:
+   dofile scverify.tcl
+
+8. Run RTL Sim by typing in QuestaSim command line:
+   run -all
+   wave zoom full
+
+9. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+
+10. View generated RTL and compare to SC model before HLS synthesis
+   view Catapult/flop.v1/rtl.v
+
+11. Delete all generated files
+    make clean

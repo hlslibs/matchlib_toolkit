@@ -1,0 +1,44 @@
+
+
+Very simple Matchlib model showing Pre-HLS and Post-HLS simulations that demonstrates Matchlib Pop/Push operations.
+Note that the SystemC model and the HLS generated RTL have a thruput of 1 NS (1 NS clock).
+
+This example is very similar to example ../63_peek_arbiter. 
+The difference is that this example implements the "peek" and "arbitration" functionality
+in combinational logic, so that the overall arbiter structure is simpler and
+also so that the arbiter has fewer ports than example 63*.
+
+This particular example shows a "peek arbiter". The function of the arbiter is to arbitrate
+between 2 inputs, and if both inputs are available, give priority to the input with the higher
+data value. This requires that the arbiter is able to "peek" at some of the input data before it
+consumes all of the data.
+
+The design can be pipelined with an II=1 while getting good QOR (in particular the area and power costs
+should be nearly optimal).
+
+
+Steps:
+
+1. Build the SystemC simulation executable by typing:
+   make build
+
+2. Run the SC simulation by typing:
+   ./sim_sc
+
+3. View the waveforms generated from the SC simulation:
+   make view_wave
+
+4. Run Catapult HLS to generate Verilog RTL for DUT:
+   catapult -f go_hls.tcl
+
+5. Launch SCVerify / QuestaSim with generated RTL by typing in Catapult command line:
+   dofile scverify.tcl
+
+6. Run RTL Sim by typing in QuestaSim command line:
+   run -all
+   wave zoom full
+
+7. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+
+8. Delete all generated files
+    make clean

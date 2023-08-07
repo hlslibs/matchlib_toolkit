@@ -1,0 +1,49 @@
+
+
+See ../../doc/matchlib_memory_modeling_methodology.pdf
+
+This is a simple example and testcase for Scratchpad, which
+is a banked memory without any arbitration or queuing of requests.
+Because there is no arbitration or queueing of requests,
+all addresses within a incoming requests presented to the Scratchpad memory must not have any conflicts
+between the banks. It is the _users_ responsibility to insure that this is always true.
+The crossbar model used within the ScratchpadClass memory will report in the pre-HLS
+simulation if there are any conflicts in the bank requests.
+
+Because there can never be any bank conflicts, 
+there can never be any "backpressure" on incoming requests.
+The memory is always able to accept new requests on each iteration, and it will return
+read responses in order without any variation in delay.
+
+Note that the low-order bits in the addresses within the request transaction are used
+for the bank selection. In the Catapult HLS tool, this is similar to the INTERLEAVE directive,
+which also builds a banked memory that is based on the low order bits.
+
+See Scratchpad.h for more information on this class.
+
+
+Steps:
+
+1. Build the SystemC simulation executable by typing:
+   make build
+
+2. Run the SC simulation by typing:
+   ./sim_sc
+
+3. View the waveforms generated from the SC simulation:
+   make view_wave
+
+4. Run Catapult HLS to generate Verilog RTL for DUT:
+   catapult -f go_hls.tcl
+
+5. Launch SCVerify / QuestaSim with generated RTL by typing in Catapult command line:
+   dofile scverify.tcl
+
+6. Run RTL Sim by typing in QuestaSim command line:
+   run -all
+   wave zoom full
+
+7. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+
+8. Delete all generated files
+    make clean

@@ -1,0 +1,34 @@
+
+This example illustrates a common design "stuttering" problem involving latency
+between different message passing interfaces, and shows how to resolve it.
+
+See the "fixing_stuttering_problems.pdf" document in this directory for more information
+about this example.
+
+
+Steps:
+
+
+1. Build SystemC model:
+   make build
+
+2. Run SystemC model:
+   ./sim_sc
+
+3. View VCD waveforms from SystemC model before HLS:
+
+   make view_wave
+
+4. Run catapult HLS:
+   catapult -file go_hls.tcl
+
+5. Launch ModelSim on generated RTL:
+   Verification->
+      ModelSim->
+        RTL Verilog   (Double click)
+
+6. In ModelSim GUI, at command prompt:
+     run -all
+
+7. If desired, delete generated files:
+   make clean

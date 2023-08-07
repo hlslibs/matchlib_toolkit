@@ -1,0 +1,65 @@
+
+
+Very simple Matchlib model showing Pre-HLS and Post-HLS simulations.
+
+This example demonstrates and tests the automatic generation of required field member functions
+for user defined structs and classes which are used as transaction types in Matchlib and SystemC models.
+
+For additional information on this example see:
+../../doc/auto_gen_field_methods.pdf
+
+The dut.h file shows how the statement:
+
+AUTO_GEN_FIELD_METHODS(...)
+
+is used to automatically generate the following required member functions for such user-defined
+transaction classes:
+
+1.  template <unsigned int Size> void Marshall(Marshaller<Size>& m);
+   - This function is needed for Matchlib connections.
+
+2.  inline friend void sc_trace(sc_trace_file *tf, const this_type &v, const std::string &NAME );
+   - This function is needed for SystemC standard waveform tracing support.
+
+3.  inline friend std::ostream &operator<<(ostream &os, const this_type &rhs);
+   - This function is needed for SystemC standard transaction streaming/printing support.
+
+4.  static const unsigned int width = ... ;
+   - This constant is needed for Matchlib connections.
+
+5.  bool operator==(const this_type & rhs) const ;
+   - This function is needed for transactions that are used with SystemC sc_signal<T>
+
+Note that these functions only need to be provided for user-defined transaction types
+(which is what the AUTO_GEN_FIELD_METHODS( ) macro does). All of the built in data types
+such as ac_int<> , sc_int<>, int, uint8, etc., have these capabilities provided by the libraries.
+
+
+Steps:
+
+1. Build the SystemC simulation executable by typing:
+   make build
+
+2. Run the SC simulation by typing:
+   ./sim_sc
+
+  Note the transaction results are automatically 
+  printed to stdout and also into the chan_log* files in readable form.
+
+3. View the waveforms generated from the SC simulation:
+   make view_wave
+
+4. Run Catapult HLS to generate Verilog RTL for DUT:
+   catapult -f go_hls.tcl
+
+5. Launch SCVerify / QuestaSim with generated RTL by typing in Catapult command line:
+   dofile scverify.tcl
+
+6. Run RTL Sim by typing in QuestaSim command line:
+   run -all
+   wave zoom full
+
+7. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+
+8. Delete all generated files
+    make clean
