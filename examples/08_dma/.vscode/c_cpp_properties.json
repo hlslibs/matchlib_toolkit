@@ -3,7 +3,7 @@
 		{
 			"name": "Linux",
 			"includePath": [
-				"$MGC_HOME/shared/examples/matchlib/toolkit/include",
+				"./../../include",
 				"$MGC_HOME/shared/pkgs/matchlib/cmod/include",
 				"/wv/hlsb/CATAPULT/TOT/CURRENT/aol/Mgc_home//shared/include"
 			],

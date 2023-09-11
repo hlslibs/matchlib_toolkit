@@ -1,10 +1,5 @@
 // INSERT_EULA_COPYRIGHT: 2020-2022
 
-#include "nvhls_assert.h"
-#ifdef __SYNTHESIS__
-#undef NVHLS_ASSERT_MSG
-#define NVHLS_ASSERT_MSG(x, y) // workaround for when using DIRECT_PORT
-#endif
 
 #include "fabric.h"
 #include "ram.h"

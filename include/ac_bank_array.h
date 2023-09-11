@@ -16,6 +16,9 @@
 
 #pragma once
 
+#include <cstddef>
+#include <cassert>
+
 //==========================================================================
 
 // local helper class for maximum power of 2 <= W

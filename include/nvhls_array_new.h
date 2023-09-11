@@ -20,6 +20,8 @@
 #ifndef NVHLS_ARRAY_BOOST
 
 #include "ac_bank_array.h"
+#include "systemc.h"
+
 namespace nvhls {
 
 template <typename Type, unsigned int VectorLength>

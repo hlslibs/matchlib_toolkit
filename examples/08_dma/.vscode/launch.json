@@ -25,7 +25,7 @@
 				}
 			],
 			"preLaunchTask": "g++ build",
-			"miDebuggerPath": "/wv/hlsb/CATAPULT/TOT/CURRENT/aol/Mgc_home//bin/gdb"
+			"miDebuggerPath": "/bin/gdb"
 		}
 	]
 }
