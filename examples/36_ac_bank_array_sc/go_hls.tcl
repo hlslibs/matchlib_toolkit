@@ -6,7 +6,7 @@ options defaults
 options set /Input/CppStandard c++11
 
 options set /Input/SearchPath {$MGC_HOME/shared/pkgs/matchlib/cmod/include} -append
-options set /Input/SearchPath {../../include} -append
+options set /Input/SearchPath {$MGC_HOME/shared/examples/matchlib/toolkit/include} -append
 options set /Input/SearchPath {.} -append
 
 project new

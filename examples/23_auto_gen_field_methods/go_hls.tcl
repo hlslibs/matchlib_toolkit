@@ -9,7 +9,7 @@ options set /Input/CppStandard c++11
 if {$enable_preserve_fields} {
   options set /Input/CompilerFlags { "-DFORCE_AUTO_PORT=Connections::DIRECT_PORT" }
 }
-options set /Input/SearchPath {../../include} -append
+options set /Input/SearchPath {$MGC_HOME/shared/examples/matchlib/toolkit/include} -append
 options set /Input/SearchPath {$MGC_HOME/shared/pkgs/matchlib/cmod/include} -append
 
 project new
