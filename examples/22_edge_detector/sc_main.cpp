@@ -1,4 +1,4 @@
-// INSERT_EULA_COPYRIGHT: 2020-2022
+// INSERT_EULA_COPYRIGHT: 2020
 
 #include "top.h"     // contains the DUT and testbench
 #include <iostream>

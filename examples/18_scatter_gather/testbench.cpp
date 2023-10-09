@@ -1,4 +1,4 @@
-// INSERT_EULA_COPYRIGHT: 2020-2022
+// INSERT_EULA_COPYRIGHT: 2020
 
 #include "scatter_gather_dma.h"
 #include "ram.h"

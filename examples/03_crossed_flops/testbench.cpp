@@ -1,4 +1,4 @@
-// INSERT_EULA_COPYRIGHT: 2020-2022
+// INSERT_EULA_COPYRIGHT: 2020
 
 #include "crossed_flops.h"
 #include <mc_scverify.h>

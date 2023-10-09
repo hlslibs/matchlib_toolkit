@@ -41,6 +41,7 @@ flow package require /UVM
 # ==========================
 flow package require /QuestaSIM
 flow package option set /QuestaSIM/ENABLE_CODE_COVERAGE true
+flow package option set /QuestaSIM/MSIM_DOFILE $sfd/msim.do
 
 # Compile Design
 # ==========================
