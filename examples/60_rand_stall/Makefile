@@ -133,7 +133,7 @@ CPPFLAGS += -DSEGMENT_BURST_SIZE=2 -DUSE_EXTENDED_ARRAY
 
 LIBS += -lsystemc -lpthread
 
-.PHONY: all build run clean sim_clean
+.PHONY: all build run clean
 build: sim_stall sim_no_stall
 
 all: build run diff
@@ -165,11 +165,12 @@ define runit
 	/bin/sh $(SOURCE_DIR)../bin/gen_logs.sh $@_log && mv $@*.* $@_log
 endef
 
-sim_clean:
-	@rm -f sim_no_stall sim_stall stall_log_data.txt stall_log_names.txt
-	@rm -rf stall_log no_stall_log *.log trace.vcd *log*.txt
-
-clean: sim_clean
+clean:
+	@rm -rf sim_sc trace.vcd trace.wlf stall_log_data.txt stall_log_names.txt no_stall_log_data.txt no_stall_log_names.txt
+	@rm -rf no_stall_log stall_log 
+	@rm -f sim_no_stall sim_stall
+	@rm -f top.ram0_no_stall_read.log top.ram0_no_stall_write.log top.ram0_stall_read.log top.ram0_stall_write.log 
+	@rm -f top.ram1_no_stall_read.log top.ram1_no_stall_write.log top.ram1_stall_read.log top.ram1_stall_write.log
 
 stall_wave: 
 	@/bin/sh $(SOURCE_DIR)../bin/vsim_vcd stall_log/trace.vcd

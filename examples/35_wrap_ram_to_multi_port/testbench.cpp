@@ -89,7 +89,7 @@ int sc_main(int argc, char **argv)
 
 /*
   channel_logs logs;
-  logs.enable("channel_logs");
+  logs.enable("chan_log");
   logs.log_hierarchy(top);
 */
 

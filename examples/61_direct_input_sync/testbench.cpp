@@ -146,7 +146,7 @@ int sc_main(int argc, char **argv)
 
   testbench top("top", resp_log);
   channel_logs logs;
-  logs.enable("chan_logs", true);
+  logs.enable("chan_log", true);
   logs.log_hierarchy(top);
   trace_hierarchy(&top, trace_file_ptr);
 

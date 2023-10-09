@@ -131,7 +131,7 @@ CPPFLAGS += -DSC_INCLUDE_DYNAMIC_PROCESSES
 
 LIBS += -lsystemc -lpthread
 
-.PHONY: all build run clean sim_clean
+.PHONY: all build run clean
 build: sim_sc
 
 all: run
@@ -156,9 +156,6 @@ fast_sim_sc: $(wildcard $(SOURCE_DIR)*.h) $(wildcard $(SOURCE_DIR)*.cpp)
 view_wave: trace.wlf
 	vsim $< -nolog -do "add wave -r trace:/SystemC/*" -do "wave zoom full"
 
-sim_clean:
-	@rm -rf fast_sim* sim_* *_data.txt *_names.txt
-
 help: checkvars
 	-@echo "Makefile targets:"
 	-@echo "  clean     - Clean up from previous make runs"
@@ -181,8 +178,6 @@ help: checkvars
 	-@echo "  LD_LIBRARY_PATH    = $(LD_LIBRARY_PATH)"
 	-@echo ""
 
-clean: sim_clean
-	@rm -rf *.vcd *.wlf
-
-
+clean:
+	@rm -rf sim_sc trace.vcd trace.wlf chan_log_data.txt chan_log_names.txt
 

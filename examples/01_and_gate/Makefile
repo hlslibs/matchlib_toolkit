@@ -131,7 +131,7 @@ CPPFLAGS += -DSC_INCLUDE_DYNAMIC_PROCESSES
 
 LIBS += -lsystemc -lpthread
 
-.PHONY: all build run clean sim_clean
+.PHONY: all build run clean
 build: sim_sc
 
 all: run
@@ -152,9 +152,6 @@ sim_sc: $(wildcard $(SOURCE_DIR)*.h) $(wildcard $(SOURCE_DIR)*.cpp)
 
 view_wave: trace.wlf
 	vsim $< -nolog -do "add wave -r trace:/SystemC/*" -do "wave zoom full"
-
-sim_clean:
-	@rm -rf sim_*
 
 help: checkvars
 	-@echo "Makefile targets:"
@@ -182,8 +179,8 @@ help: checkvars
 	-@echo "  LD_LIBRARY_PATH    = $(LD_LIBRARY_PATH)"
 	-@echo ""
 
-clean: sim_clean
-	@rm -rf *.vcd *.wlf
+clean:
+	@rm -rf sim_sc trace.vcd trace.wlf
 
 
 

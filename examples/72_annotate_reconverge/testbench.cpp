@@ -93,7 +93,7 @@ int sc_main(int argc, char **argv)
 
   // Enable data logging
   channel_logs logs;
-  logs.enable("my_log",true);
+  logs.enable("chan_log",true);
   logs.log_hierarchy(testbench);
 
   #ifndef __SYNTHESIS__

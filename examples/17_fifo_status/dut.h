@@ -72,6 +72,9 @@ class BufferStatus : public sc_module {
     sensitive << deq.rdy << full << head << tail;
 #else
     sensitive << tail;
+    for(int i = 0; i < NumEntries; i++){
+      sensitive << buffer[i].msg;
+    }
 #endif
 
     SC_METHOD(FilledFree);

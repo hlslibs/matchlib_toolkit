@@ -140,7 +140,7 @@ CPPFLAGS += -DSEGMENT_BURST_SIZE=16 -DSC_INCLUDE_MTI_AC
 
 LIBS += -lsystemc -lpthread
 
-.PHONY: all build run clean sim_clean
+.PHONY: all build run clean
 build: sim_sc
 
 all:
@@ -176,11 +176,8 @@ help: checkvars
 	-@echo "  VG_GNU_PACKAGE     = $(VG_GNU_PACKAGE)"
 	-@echo ""
 
-sim_clean:
-	@rm -rf sim_* work DVEfiles inter.vpd AN.DB simv simv.daidir ucli.key vcs_command.tcl csrc
-
-clean: sim_clean
-	@rm -rf *.vcd *.wlf transcript 
+clean:
+	@rm -rf sim_sc trace.vcd trace.wlf chan_log_data.txt chan_log_names.txt
 
 %.wlf:
 	/bin/sh ../bin/vsim_vcd trace.vcd

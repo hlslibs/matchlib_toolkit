@@ -131,7 +131,7 @@ CPPFLAGS += -DUSE_EXT_ARRAY -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROC
 
 LIBS += -lsystemc -lpthread
 
-.PHONY: all build run clean sim_clean
+.PHONY: all build run clean
 build: sim_sc
 
 all: run
@@ -143,7 +143,8 @@ trace.vcd: sim_sc
 	./$^
 
 mc_transactors_new.h:
-	sh apply_patch.sh
+	cp $(MGC_HOME)/shared/include/mc_transactors.h mc_transactors_orig.h
+	patch mc_transactors_orig.h $(SOURCE_DIR)mc_transactors.patch -o mc_transactors.h
 
 sim_sc: $(wildcard $(SOURCE_DIR)*.h) $(wildcard $(SOURCE_DIR)*.cpp) mc_transactors_new.h
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LIBDIRS) $(wildcard $(SOURCE_DIR)*.cpp) -o $@ $(LIBS)
@@ -155,9 +156,6 @@ sim_sc: $(wildcard $(SOURCE_DIR)*.h) $(wildcard $(SOURCE_DIR)*.cpp) mc_transacto
 
 view_wave: trace.wlf
 	vsim $< -nolog -do "add wave -r trace:/SystemC/*" -do "wave zoom full"
-
-sim_clean:
-	@rm -rf sim_*
 
 help: checkvars
 	-@echo "Makefile targets:"
@@ -181,8 +179,6 @@ help: checkvars
 	-@echo "  LD_LIBRARY_PATH    = $(LD_LIBRARY_PATH)"
 	-@echo ""
 
-clean: sim_clean
-	@rm -rf *.vcd *.wlf *atapul* resp_log.txt *.log mc_transactors_orig.h mc_transactors.h
-
-
+clean:
+	@rm -rf sim_sc trace.vcd trace.wlf mc_transactors.h mc_transactors_orig.h mem_prehls_read.log mem_prehls_write.log resp_log.txt
 

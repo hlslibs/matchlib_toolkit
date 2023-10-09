@@ -187,7 +187,7 @@ int sc_main(int argc, char **argv)
   trace_hierarchy(&top, trace_file_ptr);
 
   channel_logs logs;
-  logs.enable("log_chan");
+  logs.enable("chan_log");
   logs.log_hierarchy(top);
 
   sc_start();

@@ -13,8 +13,8 @@ options set /Input/CppStandard c++11
 if {$use_axi_mem} { 
   options set /Input/CompilerFlags {-DUSE_AXI_MEM=1}
 }
+options set /Input/SearchPath {$MGC_HOME/shared/examples/matchlib/toolkit/include} -append
 options set /Input/SearchPath {$MGC_HOME/shared/pkgs/matchlib/cmod/include} -append
-options set /Input/SearchPath {../../include} -append
 options set /Input/SearchPath {.} -append
 
 project new

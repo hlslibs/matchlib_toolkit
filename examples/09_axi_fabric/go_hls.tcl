@@ -11,7 +11,7 @@ if {$enable_preserve_fields} {
 } else {
   options set /Input/CompilerFlags { }
 }
-options set /Input/SearchPath {../../include} -append
+options set /Input/SearchPath {$MGC_HOME/shared/examples/matchlib/toolkit/include} -append
 options set /Input/SearchPath {$MGC_HOME/shared/pkgs/matchlib/cmod/include} -append
 
 project new
