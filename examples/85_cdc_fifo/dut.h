@@ -4,6 +4,12 @@
 
 #include <mc_connections.h>
 
+// Prevent redefine warnings from NVHLS
+#undef CONNECTIONS_ASSERT_MSG
+#undef CONNECTIONS_SIM_ONLY_ASSERT_MSG
+
+#include "mc_toolkit_utils.h"
+
 #ifndef CONNECTIONS_SIM_ONLY
 #include "ac_blackbox.h"
 #endif
@@ -112,7 +118,9 @@ public:
         wait();
       } while (!in1.vld);
       in1.rdy = false;
-      fifo1.put(in1.dat.read().to_uint64());
+      uint32_t tmp;
+      bits_to_type_if_needed(tmp, in1.dat);
+      fifo1.put(tmp);
     }
   }
 

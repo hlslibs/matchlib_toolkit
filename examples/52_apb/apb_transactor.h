@@ -9,9 +9,11 @@
 #undef CONNECTIONS_SIM_ONLY_ASSERT_MSG
 
 #include "axi/axi4.h"
-#include "TypeToBits.h"
 
 #include "auto_gen_fields.h"
+#include "mc_toolkit_utils.h"
+
+
 
 namespace apb
 {
@@ -271,11 +273,7 @@ namespace apb
             if (req_port.vld) {
               req_port.rdy = 0;
               state = APB_GET_RSP;
-#ifdef FORCE_AUTO_PORT
-              req = req_port.dat;
-#else
-              req = BitsToType<apb_req>(req_port.dat);
-#endif
+              bits_to_type_if_needed(req, req_port.dat);
               // SETUP state
               PSEL = 1;
               PENABLE = 0;
@@ -302,11 +300,7 @@ namespace apb
               PSEL = 0;
               PENABLE = 0;
               rsp_port.vld = 1;
-#ifdef FORCE_AUTO_PORT
-              rsp_port.dat = rsp;
-#else
-              rsp_port.dat = TypeToBits(rsp);
-#endif
+              type_to_bits_if_needed(rsp_port.dat, rsp);
               req_port.rdy = 1;
             } else {
               state = APB_GET_RSP;
@@ -397,11 +391,7 @@ namespace apb
              } else {
               pending_read = true;
              }
-#ifdef FORCE_AUTO_PORT
-             req_port.dat = req;
-#else
-             req_port.dat = TypeToBits(req);
-#endif
+             type_to_bits_if_needed(req_port.dat, req);
              req_port.vld = 1;
              rsp_port.rdy = 1;
              state = APB_GET_RSP;
@@ -414,11 +404,7 @@ namespace apb
 
             if (rsp_port.vld) {
               rsp_port.rdy = 0;
-#ifdef FORCE_AUTO_PORT
-	      rsp = rsp_port.dat;
-#else
-              rsp = BitsToType<apb_rsp>(rsp_port.dat);
-#endif
+              bits_to_type_if_needed(rsp, rsp_port.dat);
             }
 
             if ((!rsp_port.vld) || (PENABLE == 0)) {

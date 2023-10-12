@@ -1,11 +1,5 @@
 // INSERT_EULA_COPYRIGHT: 2020
 
-#include "nvhls_assert.h"
-#ifdef __SYNTHESIS__
-#undef NVHLS_ASSERT_MSG
-#define NVHLS_ASSERT_MSG(x, y) // workaround for when using DIRECT_PORT
-#endif
-
 
 #include "dma.h"
 #include "ram.h"
@@ -33,6 +27,15 @@ public:
 
   SC_CTOR(Top)
     :   clk("clk", 1, SC_NS, 0.5,0,SC_NS,true) {
+
+    auto_gen_wrapper dma_wrap("dma");
+    dma1.gen_port_info_vec(dma_wrap.port_info_vec);
+    dma_wrap.gen_wrappers(10, true);
+
+    auto_gen_wrapper ram_wrap("ram");
+    ram1.gen_port_info_vec(ram_wrap.port_info_vec);
+    ram_wrap.gen_wrappers(10, false);
+
     tb_w_master(dma_w_slave);
     tb_r_master(dma_r_slave);
 

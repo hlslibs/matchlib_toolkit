@@ -2,12 +2,6 @@
 
 #pragma once
 
-#include "nvhls_assert.h"
-#ifdef __SYNTHESIS__
-#undef NVHLS_ASSERT_MSG
-#define NVHLS_ASSERT_MSG(x, y) // workaround for when using DIRECT_PORT
-#endif
-
 #include "nvhls_array_new.h"
 #include "dma.h"
 #include "axi/AxiSplitter.h"

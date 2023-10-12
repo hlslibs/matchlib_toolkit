@@ -1,40 +1,40 @@
-// INSERT_EULA_COPYRIGHT: 2020
+// Auto generated on: Tue Oct 10 15:48:02 2023
 
 
-module ram (
+module ram(
   clk
 , rst_bar
-, r_slave0_ar_msg
-, r_slave0_ar_val
 , r_slave0_ar_rdy
-, r_slave0_r_msg
-, r_slave0_r_val
+, r_slave0_ar_vld
+, r_slave0_ar_dat
 , r_slave0_r_rdy
-, w_slave0_aw_msg
-, w_slave0_aw_val
+, r_slave0_r_vld
+, r_slave0_r_dat
 , w_slave0_aw_rdy
-, w_slave0_w_msg
-, w_slave0_w_val
+, w_slave0_aw_vld
+, w_slave0_aw_dat
 , w_slave0_w_rdy
-, w_slave0_b_msg
-, w_slave0_b_val
+, w_slave0_w_vld
+, w_slave0_w_dat
 , w_slave0_b_rdy
+, w_slave0_b_vld
+, w_slave0_b_dat
 );
   input [0:0] clk;
   input [0:0] rst_bar;
-  input  [43:0] r_slave0_ar_msg;
-  input  r_slave0_ar_val;
   output r_slave0_ar_rdy;
-  output [70:0] r_slave0_r_msg;
-  output r_slave0_r_val;
+  input  r_slave0_ar_vld;
+  input [43:0] r_slave0_ar_dat;
   input  r_slave0_r_rdy;
-  input  [43:0] w_slave0_aw_msg;
-  input  w_slave0_aw_val;
+  output r_slave0_r_vld;
+  output [70:0] r_slave0_r_dat;
   output w_slave0_aw_rdy;
-  input  [72:0] w_slave0_w_msg;
-  input  w_slave0_w_val;
+  input  w_slave0_aw_vld;
+  input [43:0] w_slave0_aw_dat;
   output w_slave0_w_rdy;
-  output [5:0] w_slave0_b_msg;
-  output w_slave0_b_val;
+  input  w_slave0_w_vld;
+  input [72:0] w_slave0_w_dat;
   input  w_slave0_b_rdy;
+  output w_slave0_b_vld;
+  output [5:0] w_slave0_b_dat;
 endmodule;

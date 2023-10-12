@@ -1,8 +1,9 @@
-// INSERT_EULA_COPYRIGHT: 2020-2022
+// INSERT_EULA_COPYRIGHT: 2020
 
 #pragma once
 
 #include "axi4_segment.h"
+#include "auto_gen_port_info.h"
 
 typedef axi::axi4_segment<axi::cfg::standard> local_axi;
 
@@ -21,6 +22,14 @@ public:
   sc_in<bool> CCS_INIT_S1(rst_bar);
   r_slave<AUTO_PORT>     CCS_INIT_S1(r_slave0);
   w_slave<AUTO_PORT>     CCS_INIT_S1(w_slave0);
+
+  AUTO_GEN_PORT_INFO(ram, ( \
+    clk \
+  , rst_bar \
+  , r_slave0 \
+  , w_slave0 \
+  ) )
+  //
 
   static const int sz = 0x10000; // size in axi_cfg::dataWidth words
 

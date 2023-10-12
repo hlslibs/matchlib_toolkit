@@ -58,6 +58,7 @@ public:
       t.array[0] = i;
       t.array[1] = i;
       t.enum4 = SizeBase::medium;
+      t.b = i & 1;
       in1.Push(t);
     }
 

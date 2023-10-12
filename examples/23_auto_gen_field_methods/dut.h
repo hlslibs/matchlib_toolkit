@@ -41,6 +41,7 @@ struct transaction_t {
   sub_trans_t<3,3> field3;
   uint16_t array[2];
   Size_t enum4;
+  bool b;
 
   AUTO_GEN_FIELD_METHODS(transaction_t, ( \
      field1 \
@@ -48,6 +49,7 @@ struct transaction_t {
    , field3 \
    , array  \
    , enum4  \
+   , b \
   ) )
   //
 };

@@ -1,7 +1,7 @@
 
 
 // Author: Stuart Swan, Platform Architect, Siemens EDA
-// Date: 10 June 2023
+// Date: 10 Aug 2023
 
 #pragma once
 
@@ -14,6 +14,7 @@
 
 #include <boost/preprocessor/list/for_each.hpp>
 #include <boost/preprocessor/tuple/to_list.hpp>
+#include <connections/marshaller.h>
 
 
 template <class T>

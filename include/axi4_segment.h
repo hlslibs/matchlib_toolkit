@@ -1,4 +1,4 @@
-// INSERT_EULA_COPYRIGHT: 2020-2022
+// INSERT_EULA_COPYRIGHT: 2020
 
 #pragma once
 
@@ -9,6 +9,7 @@
 #undef CONNECTIONS_SIM_ONLY_ASSERT_MSG
 
 #include "axi/axi4.h"
+#include "auto_gen_port_info.h"
 
 namespace axi
 {
@@ -87,9 +88,18 @@ namespace axi
     };
 
     template <Connections::connections_port_t PortType = AUTO_PORT>
-    struct w_master: public axi::axi4<Cfg>::write::template master<PortType> {
+    struct w_master: public axi::axi4<Cfg>::write::template master<PortType>,
+                     public gen_port_info_vec_if 
+    {
       typedef typename axi::axi4<Cfg>::write::template master<PortType> base;
       w_master(sc_module_name nm) : base(nm) {}
+
+      AUTO_GEN_PORT_INFO(w_master, ( \
+        base::aw \
+      , base::w \
+      , base::b \
+      ) );
+      //
 
       b_payload single_write(uint32 addr, uint32 data) {
         aw_payload aw_item;
@@ -136,9 +146,16 @@ namespace axi
     };
 
     template <Connections::connections_port_t PortType = AUTO_PORT>
-    struct r_master: public axi::axi4<Cfg>::read::template master<PortType> {
+    struct r_master: public axi::axi4<Cfg>::read::template master<PortType>,
+                     public gen_port_info_vec_if {
       typedef typename axi::axi4<Cfg>::read::template master<PortType> base;
       r_master(sc_module_name nm) : base(nm) {}
+
+      AUTO_GEN_PORT_INFO(r_master, ( \
+        base::ar \
+      , base::r \
+      ) );
+      //
 
       r_payload single_read(uint32 addr) {
         ar_payload ar_item;
@@ -177,8 +194,16 @@ namespace axi
     };
 
     template <Connections::connections_port_t PortType = AUTO_PORT>
-    struct r_slave : public axi::axi4<Cfg>::read::template slave<PortType> {
+    struct r_slave : public axi::axi4<Cfg>::read::template slave<PortType> ,
+                     public gen_port_info_vec_if
+      {
       typedef typename axi::axi4<Cfg>::read::template slave<PortType> base;
+
+      AUTO_GEN_PORT_INFO(r_slave, ( \
+        base::ar \
+      , base::r \
+      ) );
+      //
 
       r_slave(sc_module_name nm) : base(nm) {}
 
@@ -226,9 +251,17 @@ namespace axi
     };
 
     template <Connections::connections_port_t PortType = AUTO_PORT>
-    struct w_slave : public axi::axi4<Cfg>::write::template slave<PortType> {
+    struct w_slave : public axi::axi4<Cfg>::write::template slave<PortType>,
+                     public gen_port_info_vec_if {
       typedef typename axi::axi4<Cfg>::write::template slave<PortType> base;
       w_slave(sc_module_name nm) : base(nm) {}
+
+      AUTO_GEN_PORT_INFO(w_slave, ( \
+        base::aw \
+      , base::w \
+      , base::b \
+      ) );
+      //
 
       void reset() {
         base::aw.Reset();
@@ -295,7 +328,7 @@ namespace axi
     n ## _b_chan.ResetRead();
 
 
-    SC_MODULE(w_segment) {
+    struct w_segment : public sc_module {
       sc_in<bool> CCS_INIT_S1(clk);
       sc_in<bool> CCS_INIT_S1(rst_bar);
       Connections::Out<aw_payload>   CCS_INIT_S1(aw_out);
@@ -488,11 +521,17 @@ namespace axi
     _r_master . r.Reset();
 
 
-    SC_MODULE(r_segment) {
+    struct r_segment : public sc_module, public gen_port_info_vec_if {
       sc_in<bool> CCS_INIT_S1(clk);
       sc_in<bool> CCS_INIT_S1(rst_bar);
       Connections::Out<ar_payload>   CCS_INIT_S1(ar_out);
       Connections::In<ex_ar_payload> CCS_INIT_S1(ex_ar_chan);
+
+      AUTO_GEN_PORT_INFO(r_segment, ( \
+        ar_out \
+      , ex_ar_chan \
+      ) );
+      //
 
       SC_CTOR(r_segment) {
         SC_THREAD(ex_ar_process);

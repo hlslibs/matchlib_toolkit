@@ -3,6 +3,10 @@ This simple example demonstrates a "throughput accurate" DMA model using NVidia 
 
 See ../../docs/matchlib_intro_dac2019.pdf for a description of this example.
 
+This example also generates how to automatically generate a Verilog wrapper so that the SystemC
+DUT can be instantiated in a Verilog/SystemVerilog TB. Note the use of the auto_gen_wrapper
+class within the testbench.cpp file.
+
 Steps:
 
 0. Set your shell environment variables:

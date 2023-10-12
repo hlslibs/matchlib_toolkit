@@ -1,6 +1,5 @@
 #!/usr/bin/python2
 
-# This example code is unsupported and untested. 
 
 import sys
 import os
@@ -38,6 +37,11 @@ def stop_gdb(proc):
     print("non-zero gdb return code")
 
 def main():
+  print(' ')
+  print('This script is obsolete and will be removed in the future.')
+  print('Use the wrapper generator demonstrated in examples 08* and 45* to generate wrappers instead.')
+  print(' ')
+  print(' ')
   parser = argparse.ArgumentParser(description='Generate Verilog Wrapper around SystemC DUT.')
   parser.add_argument('--clock_name',help='Name the clock')
   parser.add_argument('--start_clk_low',help='Default the Connections clk to start low')

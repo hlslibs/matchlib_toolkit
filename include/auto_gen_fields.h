@@ -1,19 +1,23 @@
 
 
 // Author: Stuart Swan, Platform Architect, Siemens EDA
-// Date: 10 June 2023
+// Date: 10 Aug 2023
 
 #pragma once
 
 #ifdef __clang__
 #ifdef BOOST_PP_VARIADICS
+#ifndef OK_BOOST_PASS
 #error "For clang++ auto_gen_fields.h must be included before any other includes of boost headers"
 #endif
+#endif
 #define BOOST_PP_VARIADICS 1
+#define OK_BOOST_PASS 1
 #endif
 
 #include <boost/preprocessor/list/for_each.hpp>
 #include <boost/preprocessor/tuple/to_list.hpp>
+#include <connections/marshaller.h>
 
 
 template <class T>

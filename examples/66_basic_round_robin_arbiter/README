@@ -1,0 +1,34 @@
+
+
+Very simple Matchlib model showing Pre-HLS and Post-HLS simulations that demonstrates Matchlib Pop/Push operations.
+
+This is a very simple and basic round robin arbiter model that synthesizes thru Catapult HLS.
+The arbiter itself is coded in a low-level style that is "RTL in SystemC"
+in order to get best performance and smallest area.
+
+
+Steps:
+
+1. Build the SystemC simulation executable by typing:
+   make build
+
+2. Run the SC simulation by typing:
+   ./sim_sc
+
+3. View the waveforms generated from the SC simulation:
+   make view_wave
+
+4. Run Catapult HLS to generate Verilog RTL for DUT:
+   catapult -f go_hls.tcl
+
+5. Launch SCVerify / QuestaSim with generated RTL by typing in Catapult command line:
+   dofile scverify.tcl
+
+6. Run RTL Sim by typing in QuestaSim command line:
+   run -all
+   wave zoom full
+
+7. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+
+8. Delete all generated files
+    make clean

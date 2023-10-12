@@ -9,7 +9,7 @@
 #undef CONNECTIONS_ASSERT_MSG
 #undef CONNECTIONS_SIM_ONLY_ASSERT_MSG
 
-#include "TypeToBits.h"
+#include "mc_toolkit_utils.h"
 
 typedef uint32 DTYPE;
 
@@ -69,13 +69,11 @@ public:
   }
 
   void winner_method() {
-#ifdef FORCE_AUTO_PORT
-    packet p1 = in1.dat;
-    packet p2 = in2.dat;
-#else
-    packet p1 = BitsToType<packet>(in1.dat);
-    packet p2 = BitsToType<packet>(in2.dat);
-#endif
+    packet p1;
+    packet p2;
+    bits_to_type_if_needed(p1, in1.dat);
+    bits_to_type_if_needed(p2, in2.dat);
+
     ac_int<2, false> winval = 0;
 
     if (in1.vld) winval = 1;

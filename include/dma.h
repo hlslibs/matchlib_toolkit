@@ -1,9 +1,10 @@
-// INSERT_EULA_COPYRIGHT: 2020-2022
+// INSERT_EULA_COPYRIGHT: 2020
 
 #pragma once
 
 #include "mc_connections.h"
 #include "auto_gen_fields.h"
+#include "auto_gen_port_info.h"
 #include "axi4_segment.h"
 
 /**
@@ -52,6 +53,18 @@ public:
   w_slave<>  CCS_INIT_S1(w_slave0);
   Connections::Out<bool> CCS_INIT_S1(dma_done);
   Connections::Out<sc_uint<32>> CCS_INIT_S1(dma_dbg);
+
+  AUTO_GEN_PORT_INFO(dma, ( \
+    clk \
+  , rst_bar \
+  , r_master0 \
+  , w_master0 \
+  , r_slave0 \
+  , w_slave0 \
+  , dma_done \
+  , dma_dbg \
+  ) )
+  //
 
   SC_CTOR(dma) {
     SC_THREAD(slave_process);

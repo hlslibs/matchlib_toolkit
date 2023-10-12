@@ -2,6 +2,12 @@
 
 #pragma once
 
+// Prevent redefine warnings from NVHLS
+#undef CONNECTIONS_ASSERT_MSG
+#undef CONNECTIONS_SIM_ONLY_ASSERT_MSG
+
+#include "mc_toolkit_utils.h"
+
 template <class T>
 class OutToDatVld : public sc_module
 {
@@ -30,7 +36,8 @@ public:
 
   void drive_dat_vld() {
     vld = in1.vld;
-    T t = Connections::convert_from_lv<T>(in1.dat);
+    T t;
+    bits_to_type_if_needed(t, in1.dat);
     dat = t;
   }
 };
@@ -69,7 +76,8 @@ public:
 
   void drive_dat_vld() {
     out1.vld = vld;
-    out1.dat.write(Connections::convert_to_lv(dat.read()));
+    auto tmp = dat.read();
+    type_to_bits_if_needed(out1.dat, tmp);
   }
 };
 

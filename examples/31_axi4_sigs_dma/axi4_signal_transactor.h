@@ -7,6 +7,7 @@
 #undef CONNECTIONS_SIM_ONLY_ASSERT_MSG
 
 #include "axi4_segment.h"
+#include "mc_toolkit_utils.h"
 
 /*
 In effect this code below is just "wires" (or effectively Verilog "assign" statements)
@@ -358,7 +359,9 @@ public:
 
   void aw_fwd() { 
     AWVALID = aw_port.vld;
-    aw_payload aw = Connections::convert_from_lv<aw_payload>(aw_port.dat);
+    aw_payload aw;
+    bits_to_type_if_needed(aw, aw_port.dat);
+
     AWADDR = aw.addr.to_uint64();
     AWLEN  = aw.len.to_uint64();
   }
@@ -367,7 +370,8 @@ public:
   }
   void w_fwd() { 
     WVALID = w_port.vld;
-    w_payload w = Connections::convert_from_lv<w_payload>(w_port.dat);
+    w_payload w;
+    bits_to_type_if_needed(w, w_port.dat);
 
     WDATA  = w.data.to_uint64();
     WSTRB  = w.wstrb.to_uint64();
@@ -383,7 +387,7 @@ public:
     b_port.vld = BVALID;
     b_payload b;
     b.resp = BRESP.read();
-    b_port.dat = Connections::convert_to_lv(b);
+    type_to_bits_if_needed(b_port.dat, b);
   }
 };
 
@@ -464,7 +468,7 @@ public:
     aw_payload aw;
     aw.addr = AWADDR.read().to_uint64();
     aw.len = AWLEN.read().to_uint64();
-    aw_port.dat = Connections::convert_to_lv(aw);
+    type_to_bits_if_needed(aw_port.dat, aw);
   }
   void aw_bwd() { 
     AWREADY = aw_port.rdy;
@@ -475,7 +479,7 @@ public:
     w.data = WDATA.read().to_uint64();
     w.wstrb = WSTRB.read().to_uint64();
     w.last = WLAST.read();
-    w_port.dat = Connections::convert_to_lv(w);
+    type_to_bits_if_needed(w_port.dat, w);
   }
   void w_bwd() { 
     WREADY = w_port.rdy;
@@ -486,7 +490,8 @@ public:
   void b_bwd() { 
     BVALID = b_port.vld;
 
-    b_payload b = Connections::convert_from_lv<b_payload>(b_port.dat);
+    b_payload b;
+    bits_to_type_if_needed(b, b_port.dat);
     BRESP = b.resp;
   }
 };
@@ -547,7 +552,8 @@ public:
 
   void ar_fwd() { 
     ARVALID = ar_port.vld;
-    ar_payload ar = Connections::convert_from_lv<ar_payload>(ar_port.dat);
+    ar_payload ar;
+    bits_to_type_if_needed(ar, ar_port.dat);
     ARADDR = ar.addr.to_uint64();
     ARLEN  = ar.len.to_uint64();
   }
@@ -562,7 +568,7 @@ public:
     r_payload r;
     r.resp = RRESP.read();
     r.data = RDATA.read().to_uint64();
-    r_port.dat = Connections::convert_to_lv(r);
+    type_to_bits_if_needed(r_port.dat, r);
   }
 };
 
@@ -627,7 +633,7 @@ public:
     ar_payload ar;
     ar.addr = ARADDR.read().to_uint64();
     ar.len = ARLEN.read().to_uint64();
-    ar_port.dat = Connections::convert_to_lv(ar);
+    type_to_bits_if_needed(ar_port.dat, ar);
   }
   void ar_bwd() { 
     ARREADY = ar_port.rdy;
@@ -638,7 +644,8 @@ public:
   void r_bwd() { 
     RVALID = r_port.vld;
 
-    r_payload r = Connections::convert_from_lv<r_payload>(r_port.dat);
+    r_payload r;
+    bits_to_type_if_needed(r, r_port.dat);
     RRESP = r.resp;
     RDATA = r.data.to_uint64();
   }
