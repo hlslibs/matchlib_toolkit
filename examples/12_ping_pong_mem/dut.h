@@ -4,11 +4,7 @@
 
 #include <mc_connections.h>
 
-#ifdef __SYNTHESIS__
-#include <ac_shared.h>
-#endif
-
-#ifdef CCS_SYSC
+#if defined(__SYNTHESIS__) || defined(CCS_SYSC)
 #include <ac_shared.h>
 #endif
 
