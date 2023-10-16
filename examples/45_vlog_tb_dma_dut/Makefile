@@ -4,7 +4,7 @@ ifeq ($(MODEL_TECH),)
 	$(error Test requires MODEL_TECH for Questa simulation)
 endif
 
-CXXFLAGS += -g -std=c++11 -Wall -Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-label -Wno-maybe-uninitialized -DCONNECTIONS_NAMING_ORIGINAL
+CXXFLAGS += -g -std=c++11 -Wall -Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-label -Wno-maybe-uninitialized
 
 # =====================================================================
 # ENVIRONMENT VARIABLES
