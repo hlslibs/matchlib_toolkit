@@ -103,7 +103,8 @@ public:
         typename axi_cfg::r_payload r;
 
         r.data = read_buf[read_beat++];
-        r.resp = resp;
+        r.resp = (trans.get_response_status() == TLM_OK_RESPONSE) ?  
+           axi_cfg::Enc::XRESP::OKAY : axi_cfg::Enc::XRESP::SLVERR;
 
         if (!r_slave0.next_multi_read(ar, r)) { break; }
       }
