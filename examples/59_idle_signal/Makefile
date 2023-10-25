@@ -117,7 +117,7 @@ PWD := $(shell pwd)
 SOURCE_DIR1 = $(dir $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
 SOURCE_DIR = $(if $(subst ./,,$(SOURCE_DIR1)),$(SOURCE_DIR1),$(PWD)/)
 
-INCDIRS := -I$(SOURCE_DIR)
+INCDIRS := -I$(SOURCE_DIR) -I$(SOURCE_DIR)/../../include
 INCDIRS += -I$(SYSTEMC_HOME)/include -I$(SYSTEMC_HOME)/src
 INCDIRS += -I$(CONNECTIONS_HOME)/include
 INCDIRS += -I$(MATCHLIB_HOME)/cmod/include
