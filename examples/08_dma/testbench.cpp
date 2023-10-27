@@ -28,6 +28,7 @@ public:
   SC_CTOR(Top)
     :   clk("clk", 1, SC_NS, 0.5,0,SC_NS,true) {
 
+#ifndef CCS_SYSC
     auto_gen_wrapper dma_wrap("dma");
     dma1.gen_port_info_vec(dma_wrap.port_info_vec);
     dma_wrap.gen_wrappers(10, true);
@@ -35,6 +36,7 @@ public:
     auto_gen_wrapper ram_wrap("ram");
     ram1.gen_port_info_vec(ram_wrap.port_info_vec);
     ram_wrap.gen_wrappers(10, false);
+#endif
 
     tb_w_master(dma_w_slave);
     tb_r_master(dma_r_slave);
