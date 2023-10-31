@@ -11,8 +11,9 @@ if {$enable_preserve_fields} {
 } else {
   options set /Input/CompilerFlags { -DSEGMENT_BURST_SIZE=16}
 }
-options set /Input/SearchPath $sfd/../../include -append
+options set /Input/SearchPath {$MGC_HOME/shared/examples/matchlib/toolkit/include} -append
 options set /Input/SearchPath {$MGC_HOME/shared/pkgs/matchlib/cmod/include} -append
+options set /Input/SearchPath {$MGC_HOME/shared/pkgs/boostpp/pp/include} -append
 
 project new
 flow package require /DesignWrapper

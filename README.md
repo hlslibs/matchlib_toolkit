@@ -26,6 +26,7 @@ All of these packages are already available in a Catapult install tree (or your 
 If you do not have a Catapult installation you can do one of the following:
 1) Download the fully self-contained Matchlib examples kit at:
    https://forums.accellera.org/files/file/126-matchlib-examples-kit-for-accellera-systemc-evolution-day-2020-presentation/
+   (Note that this download contains a precompiled version SystemC)
    
 2) Use the set_vars.csh (or set_vars.sh) script contained in this repository to download the additional needed packages from github:
     > shell> cd MCToolkit/matchlib_toolkit<br>

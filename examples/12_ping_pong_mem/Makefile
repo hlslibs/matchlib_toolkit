@@ -138,12 +138,22 @@ all: run
 
 run: trace.vcd
 
+ifneq "$(MGC_HOME)" ""
 trace.vcd: sim_sc
 	-@echo "Starting execution in directory `pwd`"
 	./$^
 
 sim_sc: $(wildcard $(SOURCE_DIR)*.h) $(wildcard $(SOURCE_DIR)*.cpp)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LIBDIRS) $(wildcard $(SOURCE_DIR)*.cpp) -o $@ $(LIBS)
+
+else
+run:
+	echo "Simulation requires a Catapult instalation. Set the MGC_HOME environment variable"
+trace.vcd:
+	echo "Simulation requires a Catapult instalation. Set the MGC_HOME environment variable"
+sim_sc:
+	echo "Simulation requires a Catapult instalation. Set the MGC_HOME environment variable"
+endif
 
 # These two targets assume that the QuestaSim utilities 'vcd2wlf' and 'vsim'
 # are found in your PATH

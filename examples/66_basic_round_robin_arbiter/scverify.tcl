@@ -1,1 +1,1 @@
-/home/dgb/sb/sif/subprojs/hls_connections/any/Isrc/toolkit/examples/66_basic_round_robin_arbiter/scverify.tcl
+flow run /SCVerify/launch_make ./scverify/Verify_rtl_v_msim.mk simgui
