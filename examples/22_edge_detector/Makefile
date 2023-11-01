@@ -162,68 +162,6 @@ sim_sc: $(wildcard $(SOURCE_DIR)*.h) $(wildcard $(SOURCE_DIR)*.cpp)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LIBDIRS) $(wildcard $(SOURCE_DIR)*.cpp) $(BMP_SRC) -o $@ $(LIBS)
 
 #============================================================================================================
-# These variables/targets allow running CCoverage on the HLS SystemC MatchLib model
-export CCOV_COMPILE_DIR       := ccov/CCOV_COMPILE
-export CCOV_STATS_DIR         := ccov/CCOV_STATS
-export CCOV_CONSTRAINTS_FILE  := ccov_constraints.xml
-export CCOV_USER_SYSTEMC_HOME := $(SYSTEMC_HOME)
-export CCOV_USE_USER_GCC
-export CCOV_COVER_FEC_EXPRS
-# note: following is temporary
-export CCOV_KEEP_INSTRUMENTED_FILES
-ABS_CATAPULT_HOME := $(realpath $(CATAPULT_HOME))
-TEST_NAME         ?= test_top
-CCOV_DATA         := $(CCOV_STATS_DIR)/-1.ccov.cda
-VCOV_HTML_REPORT_OPTS ?= -details -annotate -code sbet -cvg
-SRC_FILES         := .
-
-# Generate constraints file for CCOV
-$(CCOV_CONSTRAINTS_FILE):
-	@-echo "Generating CCOV constraints file '$@'"
-	@-echo '<constraints>' >$@
-	@-echo '<path_cov_constraint include="0" token="$$CATAPULT_HOME/shared/include" />' >>$@
-	@-echo '<path_cov_constraint include="0" token="$$CATAPULT_HOME/shared/pkgs/matchlib/cmod/include" />' >>$@
-	@-echo '<path_cov_constraint include="0" token="$$CATAPULT_HOME/shared/examples/matchlib/toolkit/include" />' >>$@
-	@-echo '<path_cov_constraint include="0" token="$$CATAPULT_HOME/shared/include/bmpUtil" />' >>$@
-	@-echo '<path_cov_constraint include="0" token="'$(ABS_CATAPULT_HOME)'/shared/include/bmpUtil" />' >>$@
-	@-echo '<path_cov_constraint include="0" token="$$SYSTEMC_HOME/include/systemc" />' >>$@
-	@-echo '<path_cov_constraint include="0" token="$$SYSTEMC_HOME/include" />' >>$@
-	@-echo '<file_cov_constraint include="1" token="./EdgeHierarchy_wrap.cpp" />' >>$@
-	@-echo '<path_cov_constraint include="0" token="'$(realpath $(ABS_CATAPULT_HOME))'/shared/include/bmpUtil/bmp_io.cpp" />' >>$@
-	@-echo '<path_cov_constraint include="0" token="'$(realpath $(ABS_CATAPULT_HOME)/shared/include/bmpUtil/bmp_io.cpp)'" />' >>$@
-	@-echo '<file_cov_constraint include="0" token="'$(realpath $(SRC_FILES))'/sc_main.cpp" />' >>$@
-	@-echo '<file_cov_constraint include="0" token="'$(realpath $(SRC_FILES))'/top.h" />' >>$@
-	@-echo '<file_cov_constraint include="0" token="'$(realpath $(SRC_FILES))'/testbench.h" />' >>$@
-	@-echo '<file_cov_constraint include="0" token="'$(SRC_FILES)'/edge_alg.h" />' >>$@
-	@-echo '</constraints>' >>$@
-
-sim_sc_ccov: $(CCOV_CONSTRAINTS_FILE) $(wildcard $(SOURCE_DIR)*.h) $(wildcard $(SOURCE_DIR)*.cpp)
-	@-echo "Compiling design instrumented for CCOV"
-	@-mkdir -p $(CCOV_COMPILE_DIR) $(CCOV_STATS_DIR)
-	$(CCOV_HOME)/bin/ccov $(CXXFLAGS) $(CPPFLAGS) $(LIBDIRS) $(wildcard $(SOURCE_DIR)*.cpp) $(BMP_SRC) -o $@ $(LIBS)
-
-$(CCOV_DATA): sim_sc_ccov
-	@-echo "Generating coverage data"
-	$^ $(SOURCE_DIR)people_gray.bmp trace
-
-$(TEST_NAME).ucdb: $(CCOV_DATA)
-	$(CCOV_HOME)/bin/ccov --gen_ucdb -testname $(TEST_NAME) -output $(TEST_NAME).ucdb $(DUT_MERGE_OPTS)
-
-$(TEST_NAME).rpt: $(TEST_NAME).ucdb
-	$(QUESTA_HOME)/bin/vcover report -output $(TEST_NAME).rpt $(TEST_NAME).ucdb
-	$(QUESTA_HOME)/bin/vcover report -html -output html_report $(VCOV_HTML_REPORT_OPTS) $(TEST_NAME).ucdb
-
-ifneq "$(QUESTA_HOME)" ""
-run_ccov: $(TEST_NAME).rpt
-view_ccov: run_ccov
-	firefox html_report/index.html
-else
-run_ccov:
-	@-echo "Running CCOV requires a QuestaSim install. Set the QUESTA_HOME environment variable"
-view_ccov:
-	@-echo "Viewing CCOV results requires a QuestaSim install. Set the QUESTA_HOME environment variable"
-endif
-#============================================================================================================
 
 # These two targets assume that the QuestaSim utilities 'vcd2wlf' and 'vsim'
 # are found in your PATH
