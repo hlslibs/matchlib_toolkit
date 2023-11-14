@@ -5,6 +5,11 @@ set sfd [file dir [info script]]
 
 options defaults
 
+# Due to CAT34509, the new struct layout option does not work with the axi4_segment.h
+# for VHDL SCVerify. So this script disables VHDL output.
+
+options set /Output/OutputVHDL false
+
 options set /Input/CppStandard c++11
 if {$enable_preserve_fields} {
   options set /Input/CompilerFlags { "-DFORCE_AUTO_PORT=Connections::DIRECT_PORT" -DSEGMENT_BURST_SIZE=16}
