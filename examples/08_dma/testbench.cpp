@@ -36,6 +36,10 @@ public:
     auto_gen_wrapper ram_wrap("ram");
     ram1.gen_port_info_vec(ram_wrap.port_info_vec);
     ram_wrap.gen_wrappers(10, false);
+
+    auto_gen_split_wrap wrap1("dma");
+    dma1.gen_port_info_vec(wrap1.port_info_vec);
+    wrap1.gen_wrapper();
 #endif
 
     tb_w_master(dma_w_slave);

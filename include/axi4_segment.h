@@ -8,7 +8,7 @@
 #undef CONNECTIONS_ASSERT_MSG
 #undef CONNECTIONS_SIM_ONLY_ASSERT_MSG
 
-#include "axi/axi4.h"
+#include "axi4_new.h"
 #include "auto_gen_port_info.h"
 
 namespace axi
@@ -65,6 +65,15 @@ namespace axi
         sc_trace(tf,(const ar_payload &)v,    NAME + ".ar_payload");
         sc_trace(tf,v.ex_len,   NAME + ".ex_len");
       }
+
+      bool operator==(const ex_ar_payload& rhs) const {
+        return (ex_len == rhs.ex_len) && (ar_payload::operator==(rhs));
+      }
+
+      inline friend std::ostream &operator<<(ostream &os, const ex_ar_payload &rhs) {
+       os << (ar_payload&)(rhs) << " ex_len{" << rhs.ex_len << "}";
+       return os;
+      }
     };
 
     struct ex_aw_payload : public aw_payload {
@@ -85,11 +94,19 @@ namespace axi
         sc_trace(tf,(const aw_payload &)v,    NAME + ".aw_payload");
         sc_trace(tf,v.ex_len,   NAME + ".ex_len");
       }
+
+      bool operator==(const ex_aw_payload& rhs) const {
+        return (ex_len == rhs.ex_len) && (aw_payload::operator==(rhs));
+      }
+
+      inline friend std::ostream &operator<<(ostream &os, const ex_aw_payload &rhs) {
+       os << (aw_payload&)(rhs) << " ex_len{" << rhs.ex_len << "}";
+       return os;
+      }
     };
 
     template <Connections::connections_port_t PortType = AUTO_PORT>
-    struct w_master: public axi::axi4<Cfg>::write::template master<PortType>,
-                     public gen_port_info_vec_if 
+    struct w_master: public axi::axi4<Cfg>::write::template master<PortType>
     {
       typedef typename axi::axi4<Cfg>::write::template master<PortType> base;
       w_master(sc_module_name nm) : base(nm) {}
@@ -146,8 +163,7 @@ namespace axi
     };
 
     template <Connections::connections_port_t PortType = AUTO_PORT>
-    struct r_master: public axi::axi4<Cfg>::read::template master<PortType>,
-                     public gen_port_info_vec_if {
+    struct r_master: public axi::axi4<Cfg>::read::template master<PortType> {
       typedef typename axi::axi4<Cfg>::read::template master<PortType> base;
       r_master(sc_module_name nm) : base(nm) {}
 
@@ -194,8 +210,7 @@ namespace axi
     };
 
     template <Connections::connections_port_t PortType = AUTO_PORT>
-    struct r_slave : public axi::axi4<Cfg>::read::template slave<PortType> ,
-                     public gen_port_info_vec_if
+    struct r_slave : public axi::axi4<Cfg>::read::template slave<PortType> 
       {
       typedef typename axi::axi4<Cfg>::read::template slave<PortType> base;
 
@@ -251,8 +266,7 @@ namespace axi
     };
 
     template <Connections::connections_port_t PortType = AUTO_PORT>
-    struct w_slave : public axi::axi4<Cfg>::write::template slave<PortType>,
-                     public gen_port_info_vec_if {
+    struct w_slave : public axi::axi4<Cfg>::write::template slave<PortType> {
       typedef typename axi::axi4<Cfg>::write::template slave<PortType> base;
       w_slave(sc_module_name nm) : base(nm) {}
 
@@ -311,6 +325,12 @@ namespace axi
   Connections::Combinational<ex_aw_payload> CCS_INIT_S1(n ## _ex_aw_chan); \
   Connections::Combinational<w_payload>     CCS_INIT_S1(n ## _w_chan); \
   Connections::Combinational<b_payload> CCS_INIT_S1(n ## _b_chan);
+
+#define AXI4_W_SEGMENT_CFG(cfg, n) \
+  cfg::w_segment CCS_INIT_S1(n); \
+  Connections::Combinational<cfg::ex_aw_payload> CCS_INIT_S1(n ## _ex_aw_chan); \
+  Connections::Combinational<cfg::w_payload>     CCS_INIT_S1(n ## _w_chan); \
+  Connections::Combinational<cfg::b_payload> CCS_INIT_S1(n ## _b_chan); 
 
 #define AXI4_W_SEGMENT_BIND(n, _clk, _rst_bar, _w_master) \
     n .clk(_clk); \
@@ -510,6 +530,10 @@ namespace axi
   r_segment CCS_INIT_S1(n); \
   Connections::Combinational<ex_ar_payload> CCS_INIT_S1(n ## _ex_ar_chan);
 
+#define AXI4_R_SEGMENT_CFG(cfg, n) \
+  cfg::r_segment CCS_INIT_S1(n); \
+  Connections::Combinational<cfg::ex_ar_payload> CCS_INIT_S1(n ## _ex_ar_chan);
+
 #define AXI4_R_SEGMENT_BIND(n, _clk, _rst_bar, _r_master) \
     n .clk(_clk); \
     n .rst_bar(_rst_bar); \
@@ -521,7 +545,7 @@ namespace axi
     _r_master . r.Reset();
 
 
-    struct r_segment : public sc_module, public gen_port_info_vec_if {
+    struct r_segment : public sc_module {
       sc_in<bool> CCS_INIT_S1(clk);
       sc_in<bool> CCS_INIT_S1(rst_bar);
       Connections::Out<ar_payload>   CCS_INIT_S1(ar_out);
