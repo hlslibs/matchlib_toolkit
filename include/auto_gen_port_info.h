@@ -1,7 +1,7 @@
 
 
 // Author: Stuart Swan, Platform Architect, Siemens EDA
-// Date: 26 Oct 2023
+// Date: 29 Nov 2023
 
 #pragma once
 
@@ -57,6 +57,24 @@ public:
      obj->gen_port_info_vec(pi.child_vec);
      vec.push_back(pi);
      // call_gen_field_info<M>::gen_field_info(vec.back().field_vec);
+   }
+  }
+};
+
+template <class T, int X, int Y>
+class port_traits<T[X][Y]>
+{
+public:
+  static void gen_info(std::vector<port_info>& vec, std::string nm, T obj[X][Y]) {
+   for (unsigned x=0; x < X; ++x) {
+    for (unsigned y=0; y < Y; ++y) {
+     std::ostringstream os;
+     os << nm << "_" << x << "_" << y;
+     port_info pi = port_info("{}", 0, os.str()); // this is like a SV modport
+     (obj[0][0]).gen_port_info_vec(pi.child_vec);
+     vec.push_back(pi);
+     // call_gen_field_info<M>::gen_field_info(vec.back().field_vec);
+    }
    }
   }
 };
