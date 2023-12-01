@@ -1,0 +1,43 @@
+
+
+This example demonstrates how to automatically generate a Verilog wrapper for the Catapult 
+generated RTL that has all of the fields that are within ports which are structs/classes split out
+as separate input/output ports in the Verilog wrapper.
+Having separate input/output ports at the Verilog top level is sometimes required
+in some customer flows.
+
+
+
+Steps:
+
+1. Build the SystemC simulation executable by typing:
+   make build
+
+2. Run the SC simulation by typing:
+   ./sim_sc
+   Running ./sim_sc will automatically create the Verilog wrapper "dut_split_wrap.v".
+   View this file to understand what the wrapper is doing.
+
+3. View the waveforms generated from the SC simulation:
+   make view_wave
+
+4. Run Catapult HLS to generate Verilog RTL for DUT:
+   catapult -f go_hls.tcl
+   Note that Catapult has no knowledge of the Verilog wrapper and is run with normal options.
+
+5. Launch SCVerify / QuestaSim with generated RTL by typing in Catapult command line:
+   dofile scverify.tcl
+
+6. Run RTL Sim by typing in QuestaSim command line:
+   run -all
+   wave zoom full
+   Note that when the RTL is simulated within SCVerify, the Verilog wrapper is not used.
+
+7. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
+
+8. Run the simulation using the Verilog TB and Verilog DUT with the split port wrapper:
+   make vsim
+   Note that the dut_wrap module has all of the fields split out as separate ports.
+
+9. Delete all generated files
+    make clean

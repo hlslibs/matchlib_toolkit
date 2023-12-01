@@ -41,6 +41,12 @@ public:
     :   clk("clk", 1, SC_NS, 0.5,0,SC_NS,true)
     ,   test_num(test_num_) {
 
+#ifndef CCS_SYSC
+    auto_gen_split_wrap wrap1("fabric");
+    fabric1.gen_port_info_vec(wrap1.port_info_vec);
+    wrap1.gen_wrapper();
+#endif
+
     tb_w_master(fabric_w_slave0);
     tb_r_master(fabric_r_slave0);
 
@@ -223,7 +229,7 @@ int sc_main(int argc, char **argv)
   Top top("top", test_num);
 
   channel_logs logs;
-  logs.enable("chan_log");
+  logs.enable("chan_log", true);
   logs.log_hierarchy(top);
 
   trace_hierarchy(&top, trace_file_ptr);

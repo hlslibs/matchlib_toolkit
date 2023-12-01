@@ -7,6 +7,8 @@
 #include "axi/AxiSplitter.h"
 #include "axi/AxiArbiter.h"
 
+#include "auto_gen_port_info.h"
+
 typedef axi::axi4_segment<axi::cfg::standard> local_axi;
 
 //
@@ -30,6 +32,22 @@ public:
   Connections::Out<bool> CCS_INIT_S1(dma1_done);
   Connections::Out<sc_uint<32>> CCS_INIT_S1(dma0_dbg);
   Connections::Out<sc_uint<32>> CCS_INIT_S1(dma1_dbg);
+
+  AUTO_GEN_PORT_INFO(fabric, ( \
+    clk \
+  , rst_bar \
+  , r_master0 \
+  , w_master0 \
+  , r_master1 \
+  , w_master1 \
+  , r_slave0 \
+  , w_slave0 \
+  , dma0_done \
+  , dma1_done \
+  , dma0_dbg \
+  , dma1_dbg \
+  ) )
+  //
 
   static const int numAddrBitsToInspect = 20;
   static const int numSlaves = 2;

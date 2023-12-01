@@ -4,7 +4,9 @@
 
 #include <mc_connections.h>
 
+#if defined(__SYNTHESIS__) || defined(CCS_SYSC)
 #include <ac_shared.h>
+#endif
 
 #include "RAM_1R1W.h"
 #include <extended_array.h>

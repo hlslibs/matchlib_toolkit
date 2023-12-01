@@ -4,21 +4,6 @@
 #include "axi4_segment.h"
 #include "auto_gen_fields.h"
 
-// Below 2 macros should be moved into ../../include/axi4_segment.h
-#ifndef AXI4_W_SEGMENT_CFG
-#define AXI4_W_SEGMENT_CFG(cfg, n) \
-  cfg::w_segment CCS_INIT_S1(n); \
-  Connections::Combinational<cfg::ex_aw_payload> CCS_INIT_S1(n ## _ex_aw_chan); \
-  Connections::Combinational<cfg::w_payload>     CCS_INIT_S1(n ## _w_chan); \
-  Connections::Combinational<cfg::b_payload> CCS_INIT_S1(n ## _b_chan); 
-#endif
-
-#ifndef AXI4_R_SEGMENT_CFG
-#define AXI4_R_SEGMENT_CFG(cfg, n) \
-  cfg::r_segment CCS_INIT_S1(n); \
-  Connections::Combinational<cfg::ex_ar_payload> CCS_INIT_S1(n ## _ex_ar_chan);
-#endif
-
 
 /**
  *  * \brief dma command sent to the DMA engine

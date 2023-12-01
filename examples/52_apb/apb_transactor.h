@@ -8,7 +8,7 @@
 #undef CONNECTIONS_ASSERT_MSG
 #undef CONNECTIONS_SIM_ONLY_ASSERT_MSG
 
-#include "axi/axi4.h"
+#include "axi4_new.h"
 
 #include "auto_gen_fields.h"
 #include "mc_toolkit_utils.h"

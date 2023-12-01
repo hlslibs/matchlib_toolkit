@@ -16,10 +16,21 @@ public:
   SC_SIG(transaction_t, sig1);
   SC_SIG(Color_t, sig2);
   SC_SIG(Size_t,  sig3);
+  SC_SIG(uint16,  sig4);
 
   SC_CTOR(Top)
     :   clk("clk", 1, SC_NS, 0.5,0,SC_NS,true) {
     sc_object_tracer<sc_clock> trace_clk(clk);
+
+#ifndef CCS_SYSC
+    auto_gen_wrapper wrap0("dut");
+    dut1.gen_port_info_vec(wrap0.port_info_vec);
+    wrap0.gen_wrappers(10, true);
+
+    auto_gen_split_wrap wrap1("dut");
+    dut1.gen_port_info_vec(wrap1.port_info_vec);
+    wrap1.gen_wrapper();
+#endif
 
     dut1.clk(clk);
     dut1.rst_bar(rst_bar);
@@ -28,6 +39,7 @@ public:
     dut1.sig1(sig1);
     dut1.sig2(sig2);
     dut1.sig3(sig3);
+    dut1.sig4(sig4);
 
     SC_CTHREAD(reset, clk);
 

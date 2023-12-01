@@ -4,7 +4,7 @@
 
 #include <mc_connections.h>
 
-#include "auto_gen_fields.h"
+#include "auto_gen_port_info.h"
 #include "ac_enum.h"
 
 enum ColorBase { red, green, blue};  // C-style enum
@@ -105,6 +105,20 @@ public:
   sc_out<transaction_t> CCS_INIT_S1(sig1);
   sc_out<Color_t> CCS_INIT_S1(sig2);
   sc_out<Size_t> CCS_INIT_S1(sig3);
+  sc_out<uint16> CCS_INIT_S1(sig4);
+
+  AUTO_GEN_PORT_INFO(dut, ( \
+    clk \
+  , rst_bar \
+  , in1 \
+  , out1 \
+  , sig1 \
+  , sig2 \
+  , sig3 \
+  , sig4 \
+  ) )
+  //
+
 
   copyio<transaction_t> CCS_INIT_S1(copy1);
   copyio<transaction_t> CCS_INIT_S1(copy2);

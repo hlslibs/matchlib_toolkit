@@ -1,4 +1,3 @@
-// INSERT_EULA_COPYRIGHT: 2023
 
 #include "mc_scverify.h"
 #include "dut.h"

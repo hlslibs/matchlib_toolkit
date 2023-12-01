@@ -7,6 +7,15 @@ are represented with separate signal level ports. This makes it easier to identi
 fields when debugging or viewing waveforms in the RTL. However it also means that instantiating
 and binding the DMA in Verilog will require more lines of code (to bind to each port which represents an AXI4 field).
 
+
+Note that example ../08_dma also automatically generates the dma_split_wrap.v file. 
+That wrapper splits out all of the ports and fields in Verilog, and is an alternative approach
+to achieving a similar objective as this example. In fact, the automatically generated wrapper
+is simpler and easier and is the recommended approach.
+
+This example is presented to show that splitting out signals for each field in transaction objects
+in the pre-HLS model is possible, if desired.
+
 See ../../docs/matchlib_intro_dac2019.pdf for a description of this example.
 
 Steps:

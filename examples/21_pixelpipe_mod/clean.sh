@@ -1,2 +1,2 @@
 
-rm *atapul* *.jpg trace.vcd
+rm -rf *atapult* *.jpg trace.vcd
