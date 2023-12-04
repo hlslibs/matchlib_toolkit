@@ -1,3 +1,4 @@
+// INSERT_EULA_COPYRIGHT: 2023
 
 // ac_bank_array.h
 // Stuart Swan, Platform Architect, Siemens EDA

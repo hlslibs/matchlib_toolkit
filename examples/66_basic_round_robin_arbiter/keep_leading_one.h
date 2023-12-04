@@ -1,3 +1,4 @@
+// INSERT_EULA_COPYRIGHT: 2023
 
 #pragma once
 
