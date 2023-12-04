@@ -3,6 +3,15 @@
 // Author: Stuart Swan, Platform Architect, Siemens EDA
 // Date: 29 Nov 2023
 
+//*****************************************************************************************
+// File: auto_gen_fields.h
+//
+// Description: C++ Macros to simplify making user-defined struct types work in Connections
+//
+// Revision History:
+//       2.1.1 - Unspecified changes from Stuart Swan
+//*****************************************************************************************
+
 #pragma once
 
 #ifdef __clang__
