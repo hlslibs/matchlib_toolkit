@@ -1,7 +1,8 @@
 // INSERT_EULA_COPYRIGHT: 2023
 
+
 // Author: Stuart Swan, Platform Architect, Siemens EDA
-// Date: 26 Oct 2023
+// Date: 22 Dec 2023
 
 #pragma once
 
@@ -224,8 +225,8 @@ public:
    field_info i;
    i.name = NAME;
    i.width = Wrapped<T>::width ;
-   i.dim1 = d2;
-   i.dim0 = d1;
+   i.dim1 = d1;
+   i.dim0 = d2;
    call_gen_field_info<T>::gen_field_info(i.fields);
    vec.push_back(i);
   }
