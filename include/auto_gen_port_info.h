@@ -1,16 +1,8 @@
 // INSERT_EULA_COPYRIGHT: 2023
 
-// Author: Stuart Swan, Platform Architect, Siemens EDA
-// Date: 29 Nov 2023
 
-//*****************************************************************************************
-// File: auto_gen_fields.h
-//
-// Description: C++ Macros to simplify making user-defined struct types work in Connections
-//
-// Revision History:
-//       2.1.1 - Unspecified changes from Stuart Swan
-//*****************************************************************************************
+// Author: Stuart Swan, Platform Architect, Siemens EDA
+// Date: 22 Dec 2023
 
 #pragma once
 
@@ -226,7 +218,6 @@ public:
   //
 
 
-
 class auto_gen_split_wrap {
 public:
   auto_gen_split_wrap (std::string nm) : module_name(nm) {}
@@ -277,7 +268,17 @@ public:
         }
       }
       else {
-        emit_split_ports_fields(os, prefix + "_" + v[i].name, v[i].fields, io);
+        if ((v[i].dim1 == 0) && (v[i].dim0 == 0))
+          emit_split_ports_fields(os, prefix + "_" + v[i].name, v[i].fields, io);
+        else if (v[i].dim1 == 0) {
+          for (unsigned dim0=0; dim0 < v[i].dim0; ++dim0)
+            emit_split_ports_fields(os, prefix + "_" + v[i].name + "_" + std::to_string(dim0), v[i].fields, io);
+ 
+        } else {
+          for (unsigned dim1=0; dim1 < v[i].dim1; ++dim1)
+            for (unsigned dim0=0; dim0 < v[i].dim0; ++dim0)
+            emit_split_ports_fields(os, prefix + "_" + v[i].name + "_" + std::to_string(dim1) + "_" + std::to_string(dim0), v[i].fields, io);
+        }
       }
   }
 
@@ -337,7 +338,20 @@ public:
         }
       }
       else {
-        emit_split_ports_fields_bare(os, prefix + "_" + v[i].name, v[i].fields, comma);
+        if ((v[i].dim1 == 0) && (v[i].dim0 == 0)) {
+         emit_split_ports_fields_bare(os, prefix + "_" + v[i].name, v[i].fields, comma);
+        } else if (v[i].dim1 == 0) {
+          for (unsigned dim0=0; dim0 < v[i].dim0; ++dim0) {
+            emit_split_ports_fields_bare(os, prefix + "_" + v[i].name + "_" + std::to_string(dim0),
+              v[i].fields, comma);
+          }
+        } else {
+          for (unsigned dim1=0; dim1 < v[i].dim1; ++dim1)
+            for (unsigned dim0=0; dim0 < v[i].dim0; ++dim0) {
+             emit_split_ports_fields_bare(os, prefix + "_" + v[i].name + "_" + 
+               std::to_string(dim1) + "_" + std::to_string(dim0), v[i].fields, comma);
+            }
+        }
       }
   }
 
@@ -395,7 +409,20 @@ public:
         }
       }
       else {
-        emit_bindings_fields(os, prefix + "_" + v[i].name, v[i].fields, comma);
+        if ((v[i].dim1 == 0) && (v[i].dim0 == 0)) {
+          emit_bindings_fields(os, prefix + "_" + v[i].name, v[i].fields, comma);
+        } else if (v[i].dim1 == 0) {
+          for (int dim0=v[i].dim0 - 1; dim0 >= 0; --dim0) {  // descending order ..
+            emit_bindings_fields(os, prefix + "_" + v[i].name + "_" + std::to_string(dim0),
+               v[i].fields, comma);
+          }
+        } else {
+          for (int dim1=v[i].dim1 - 1; dim1 >= 0; --dim1)  // descending order ..
+            for (int dim0=v[i].dim0 - 1; dim0 >= 0; --dim0) {
+            emit_bindings_fields(os, prefix + "_" + v[i].name + "_" + std::to_string(dim1) +
+               "_" + std::to_string(dim0), v[i].fields, comma);
+            }
+        }
       }
     }
   }
