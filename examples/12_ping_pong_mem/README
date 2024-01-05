@@ -5,7 +5,8 @@ Very simple Matchlib model showing Pre-HLS and Post-HLS simulations
 This example shows how to model a "ping pong" memory.
 
 Note: this example uses ac_shared<> to model a RAM that
-is shared between two processes. 
+is shared between two processes.  As such you need a Catapult install tree
+that contains the ac_shared.h header file.
 
 See ../../doc/memory_logging_and_debug.pdf  for a detailed description
 of the memory logging and debug methodology and of this particular example.

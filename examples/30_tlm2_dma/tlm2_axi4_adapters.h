@@ -1,6 +1,46 @@
-// INSERT_EULA_COPYRIGHT: 2020
+/**************************************************************************
+ *                                                                        *
+ *  Catapult(R) MatchLib Toolkit Example Design Library                   *
+ *                                                                        *
+ *  Software Version: 2.1                                                 *
+ *                                                                        *
+ *  Release Date    : Fri Jan  5 08:41:49 PST 2024                        *
+ *  Release Type    : Production Release                                  *
+ *  Release Build   : 2.1.1                                               *
+ *                                                                        *
+ *  Copyright 2020 Siemens                                                *
+ *                                                                        *
+ **************************************************************************
+ *  Licensed under the Apache License, Version 2.0 (the "License");       *
+ *  you may not use this file except in compliance with the License.      * 
+ *  You may obtain a copy of the License at                               *
+ *                                                                        *
+ *      http://www.apache.org/licenses/LICENSE-2.0                        *
+ *                                                                        *
+ *  Unless required by applicable law or agreed to in writing, software   * 
+ *  distributed under the License is distributed on an "AS IS" BASIS,     * 
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
+ *  implied.                                                              * 
+ *  See the License for the specific language governing permissions and   * 
+ *  limitations under the License.                                        *
+ **************************************************************************
+ *                                                                        *
+ *  The most recent version of this package is available at github.       *
+ *                                                                        *
+ *************************************************************************/
+
 
 #pragma once
+
+//*****************************************************************************************
+// File: tlm2_axi4_adapters.h
+//
+// Description: 
+//
+// Revision History:
+//    2.1.1 - 
+//*****************************************************************************************
+
 
 // These adapters convert to/from Matchlib axi4 masters/slaves to TLM2 targets/initiators
 
@@ -96,12 +136,15 @@ public:
 
       tlm2_initiator->b_transport(trans, zero_time);
 
+      bool resp  = (trans.get_response_status() == TLM_OK_RESPONSE) ?  
+         axi_cfg::Enc::XRESP::OKAY : axi_cfg::Enc::XRESP::SLVERR;
+
       while (1) {
         typename axi_cfg::r_payload r;
 
         r.data = read_buf[read_beat++];
         r.resp = (trans.get_response_status() == TLM_OK_RESPONSE) ?  
-         axi_cfg::Enc::XRESP::OKAY : axi_cfg::Enc::XRESP::SLVERR;
+           axi_cfg::Enc::XRESP::OKAY : axi_cfg::Enc::XRESP::SLVERR;
 
         if (!r_slave0.next_multi_read(ar, r)) { break; }
       }
