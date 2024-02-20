@@ -1,40 +1,12 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 2.1                                                 *
- *                                                                        *
- *  Release Date    : Mon Jan 15 20:15:38 PST 2024                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 2.1.1                                               *
- *                                                                        *
- *  Copyright 2020 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
-
+// INSERT_EULA_COPYRIGHT: 2020
 
 #pragma once
 
 #include <mc_connections.h>
 
+#if defined(__SYNTHESIS__) || defined(CCS_SYSC)
 #include <ac_shared.h>
+#endif
 
 #include "RAM_1R1W.h"
 #include <extended_array.h>
@@ -84,9 +56,9 @@ SC_MODULE(dut)
     wait();                                 // WAIT
 
     while (1) {
+      sync1.sync_in();
 #pragma hls_pipeline_init_interval 1
 #pragma pipeline_stall_mode flush
-      sync1.sync_in();
       for (int i=0; i < 8; i++) {
         out1.Push(mem[i + (8 * ping_pong)]);
       }
