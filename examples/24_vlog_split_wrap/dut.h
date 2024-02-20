@@ -18,7 +18,7 @@ struct sub_trans_t {
 
 struct transaction_t {
   uint16 value;
-  sub_trans_t<3,3> sub;
+  sub_trans_t<5,2> sub;
 
   AUTO_GEN_FIELD_METHODS(transaction_t, ( \
      value \

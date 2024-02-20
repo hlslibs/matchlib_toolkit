@@ -13,33 +13,36 @@ module testbench ();
 
   wire  [15:0] out1_sub_array_0_0;
   wire  [15:0] out1_sub_array_0_1;
-  wire  [15:0] out1_sub_array_0_2;
   wire  [15:0] out1_sub_array_1_0;
   wire  [15:0] out1_sub_array_1_1;
-  wire  [15:0] out1_sub_array_1_2;
   wire  [15:0] out1_sub_array_2_0;
   wire  [15:0] out1_sub_array_2_1;
-  wire  [15:0] out1_sub_array_2_2;
+  wire  [15:0] out1_sub_array_3_0;
+  wire  [15:0] out1_sub_array_3_1;
+  wire  [15:0] out1_sub_array_4_0;
+  wire  [15:0] out1_sub_array_4_1;
   wire [15:0] in1_sub_array_0_0;
   wire [15:0] in1_sub_array_0_1;
-  wire [15:0] in1_sub_array_0_2;
   wire [15:0] in1_sub_array_1_0;
   wire [15:0] in1_sub_array_1_1;
-  wire [15:0] in1_sub_array_1_2;
   wire [15:0] in1_sub_array_2_0;
   wire [15:0] in1_sub_array_2_1;
-  wire [15:0] in1_sub_array_2_2;
+  wire [15:0] in1_sub_array_3_0;
+  wire [15:0] in1_sub_array_3_1;
+  wire [15:0] in1_sub_array_4_0;
+  wire [15:0] in1_sub_array_4_1;
 
   assign out1_rdy = 1'b1;
   assign in1_sub_array_0_0 = 15'b0;
   assign in1_sub_array_0_1 = 15'b0;
-  assign in1_sub_array_0_2 = 15'b0;
   assign in1_sub_array_1_0 = 15'b0;
   assign in1_sub_array_1_1 = 15'b0;
-  assign in1_sub_array_1_2 = 15'b0;
   assign in1_sub_array_2_0 = 15'b0;
   assign in1_sub_array_2_1 = 15'b0;
-  assign in1_sub_array_2_2 = 15'b0;
+  assign in1_sub_array_3_0 = 15'b0;
+  assign in1_sub_array_3_1 = 15'b0;
+  assign in1_sub_array_4_0 = 15'b0;
+  assign in1_sub_array_4_1 = 15'b0;
 
     parameter clock_period = 10;
 
@@ -114,21 +117,23 @@ module testbench ();
          , .out1_value(out1_value)
          , .out1_sub_array_0_0(out1_sub_array_0_0)
          , .out1_sub_array_0_1(out1_sub_array_0_1)
-         , .out1_sub_array_0_2(out1_sub_array_0_2)
          , .out1_sub_array_1_0(out1_sub_array_1_0)
          , .out1_sub_array_1_1(out1_sub_array_1_1)
-         , .out1_sub_array_1_2(out1_sub_array_1_2)
          , .out1_sub_array_2_0(out1_sub_array_2_0)
          , .out1_sub_array_2_1(out1_sub_array_2_1)
-         , .out1_sub_array_2_2(out1_sub_array_2_2)
+         , .out1_sub_array_3_0(out1_sub_array_3_0)
+         , .out1_sub_array_3_1(out1_sub_array_3_1)
+         , .out1_sub_array_4_0(out1_sub_array_4_0)
+         , .out1_sub_array_4_1(out1_sub_array_4_1)
          , .in1_sub_array_0_0(in1_sub_array_0_0)
          , .in1_sub_array_0_1(in1_sub_array_0_1)
-         , .in1_sub_array_0_2(in1_sub_array_0_2)
          , .in1_sub_array_1_0(in1_sub_array_1_0)
          , .in1_sub_array_1_1(in1_sub_array_1_1)
-         , .in1_sub_array_1_2(in1_sub_array_1_2)
          , .in1_sub_array_2_0(in1_sub_array_2_0)
          , .in1_sub_array_2_1(in1_sub_array_2_1)
-         , .in1_sub_array_2_2(in1_sub_array_2_2)
+         , .in1_sub_array_3_0(in1_sub_array_3_0)
+         , .in1_sub_array_3_1(in1_sub_array_3_1)
+         , .in1_sub_array_4_0(in1_sub_array_4_0)
+         , .in1_sub_array_4_1(in1_sub_array_4_1)
   );
 endmodule
