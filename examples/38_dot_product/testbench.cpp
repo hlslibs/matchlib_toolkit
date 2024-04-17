@@ -13,6 +13,8 @@
 #include "mat_mul_banked_multi_process.h"
 #endif
 
+#include <ac_bank_array.h>
+
 #include <mc_scverify.h>
 
 class Top : public sc_module {
@@ -24,9 +26,9 @@ class Top : public sc_module {
   Connections::Combinational<ac_int<8+8+3> > CCS_INIT_S1(C);
 
   CCS_DESIGN(matrixMultiply) CCS_INIT_S1(dut);
-  int8 A_ref[8][8];
-  int8 B_ref[8][8];
-  int19 C_ref[8][8];
+  ac_bank_array_2D<int8, 8, 8> A_ref;
+  ac_bank_array_2D<int8, 8, 8> B_ref;
+  ac_bank_array_2D<int19, 8, 8> C_ref;
 
   SC_CTOR(Top)
     :   clk("clk", 2, SC_NS, 1,0,SC_NS,true) {

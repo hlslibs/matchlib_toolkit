@@ -49,5 +49,3 @@ Steps:
 7. If desired, delete generated files:
    make clean
 
-8. To generate the Verilog wrapper around the SystemC DUT, use this command:
-../bin/wrapper_gen.py sim_sc --clock_period 10 --clock_name clk top.dma_inst

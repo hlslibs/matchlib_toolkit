@@ -1,48 +1,8 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 2.1                                                 *
- *                                                                        *
- *  Release Date    : Mon Jan 15 20:15:38 PST 2024                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 2.1.1                                               *
- *                                                                        *
- *  Copyright 2023 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
+// INSERT_EULA_COPYRIGHT: 2023
 
 
 // Author: Stuart Swan, Platform Architect, Siemens EDA
 // Date: 22 Dec 2023
-
-//*****************************************************************************************
-// File: auto_gen_fields.h
-//
-// Description: C++ Macros to simplify making user-defined struct types work in Connections
-//
-// Revision History:
-//       2.1.1 - Added back in typedef of 'this_type' for backward compatibility with
-//               older designs
-//             - Fix for CAT-35587 from Stuart Swan
-//*****************************************************************************************
 
 #pragma once
 
@@ -423,7 +383,6 @@ public:
 #define FIELD_LIST(X) BOOST_PP_TUPLE_TO_LIST(BOOST_PP_TUPLE_SIZE(X), X )
 
 #define AUTO_GEN_FIELD_METHODS(THIS_TYPE, X) \
-  typedef THIS_TYPE this_type; \
   typedef THIS_TYPE auto_gen_type; \
   GEN_MARSHALL_METHOD(FIELD_LIST(X)) \
   GEN_TRACE_METHOD(FIELD_LIST(X)) \
@@ -433,5 +392,11 @@ public:
   GEN_EQUAL(FIELD_LIST(X))
   //
 
+#define AUTO_GEN_FIELD_METHODS_V2(THIS_TYPE, X) \
+  typedef THIS_TYPE auto_gen_type; \
+  GEN_TRACE_METHOD(FIELD_LIST(X)) \
+  GEN_STREAM_METHOD(FIELD_LIST(X)) \
+  GEN_EQUAL(FIELD_LIST(X))
+  //
 
 

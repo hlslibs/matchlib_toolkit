@@ -1,38 +1,7 @@
-/**************************************************************************
- *                                                                        *
- *  Catapult(R) MatchLib Toolkit Example Design Library                   *
- *                                                                        *
- *  Software Version: 2.1                                                 *
- *                                                                        *
- *  Release Date    : Mon Jan 15 20:15:38 PST 2024                        *
- *  Release Type    : Production Release                                  *
- *  Release Build   : 2.1.1                                               *
- *                                                                        *
- *  Copyright 2023 Siemens                                                *
- *                                                                        *
- **************************************************************************
- *  Licensed under the Apache License, Version 2.0 (the "License");       *
- *  you may not use this file except in compliance with the License.      * 
- *  You may obtain a copy of the License at                               *
- *                                                                        *
- *      http://www.apache.org/licenses/LICENSE-2.0                        *
- *                                                                        *
- *  Unless required by applicable law or agreed to in writing, software   * 
- *  distributed under the License is distributed on an "AS IS" BASIS,     * 
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or       *
- *  implied.                                                              * 
- *  See the License for the specific language governing permissions and   * 
- *  limitations under the License.                                        *
- **************************************************************************
- *                                                                        *
- *  The most recent version of this package is available at github.       *
- *                                                                        *
- *************************************************************************/
-
 
 // ac_bank_array.h
 // Stuart Swan, Platform Architect, Siemens EDA
-// 22 June 2023
+// 11 April 2024
 //
 // ac_bank_array classes support banked memory modeling in HLS.
 //
@@ -48,27 +17,14 @@
 #pragma once
 
 #include <cstddef>
-#include <cassert>
+#include <ac_assert.h>
+
+#include <ac_pow2.h>
+#include <ac_array_1D.h>
+
+
 
 //==========================================================================
-
-// local helper class for maximum power of 2 <= W
-
-template <size_t W>
-struct ac_pow2;
-
-template <>
-struct ac_pow2<1>
-{
-  static const size_t P = 1;
-};
-
-template <size_t W>
-struct ac_pow2
-{
-  typedef ac_pow2<(W>>1)> SUB;
-  static const size_t P = SUB::P << 1;
-};
 
 //==========================================================================
 
@@ -87,6 +43,17 @@ public:
   const B &operator[](size_t idx) const { return a; }
 };
 
+// specialization to get index checking of rightmost dimension using ac_array_1D
+template <typename E, size_t D>
+class ac_bank_array_base<E [D], 1>
+{
+  typedef ac_array_1D<E,D> AC;
+  AC a;
+public:
+  AC &operator[](size_t idx) { return a; }
+  const AC &operator[](size_t idx) const { return a; }
+};
+
 template <typename B, size_t C>
 class ac_bank_array_base
 {
@@ -95,16 +62,33 @@ class ac_bank_array_base
   ac_bank_array_base<B, C-W> a1;
 public:
   B &operator[](size_t idx) { 
-#ifndef __SYNTHESIS__
     assert(idx < C);
-#endif
     size_t aidx = idx & (W-1); return idx&W ? a1[aidx] : a0[aidx]; 
   }
 
   const B &operator[](size_t idx) const {
-#ifndef __SYNTHESIS__
     assert(idx < C);
-#endif
+    size_t aidx = idx & (W-1); return idx&W ? a1[aidx] : a0[aidx]; 
+  }
+};
+
+// specialization to get index checking of rightmost dimension using ac_array_1D
+template <typename E, size_t D, size_t C>
+class ac_bank_array_base<E [D], C>
+{
+  typedef ac_array_1D<E,D> AC;
+  typedef E B[D];
+  static const size_t W = ac_pow2<C-1>::P;
+  ac_bank_array_base<B, W  > a0;
+  ac_bank_array_base<B, C-W> a1;
+public:
+  AC &operator[](size_t idx) { 
+    assert(idx < C);
+    size_t aidx = idx & (W-1); return idx&W ? a1[aidx] : a0[aidx]; 
+  }
+
+  const AC &operator[](size_t idx) const {
+    assert(idx < C);
     size_t aidx = idx & (W-1); return idx&W ? a1[aidx] : a0[aidx]; 
   }
 };

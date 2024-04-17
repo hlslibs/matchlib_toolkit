@@ -4,7 +4,8 @@
 #include <ac_int.h>   
 #include "array_t.h"
 #include <string>
-#include <ac_shared_proxy.h>
+#include <ac_shared_array_1D.h>
+
 
 #pragma hls_design top
 class matrixMultiply  : public sc_module {
@@ -16,7 +17,7 @@ class matrixMultiply  : public sc_module {
   Connections::In <ac_int<8>> CCS_INIT_S1(B);
   Connections::Out <ac_int<8+8+3>> CCS_INIT_S1(C);
 
-  ac_shared<ac_int<8> [64*2]> B_transpose;
+  ac_shared_array_1D<ac_int<8>, 64*2> B_transpose;
   Connections::Combinational <array_t<ac_int<8>,8>> CCS_INIT_S1(A_row);
   Connections::SyncChannel CCS_INIT_S1(sync); // memory synchronization between threads
 

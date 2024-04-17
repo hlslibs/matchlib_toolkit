@@ -1,7 +1,7 @@
 
 // ac_shared_bank_array.h
 // Stuart Swan, Platform Architect, Siemens EDA
-// 22 June 2023
+// 11 April 2024
 //
 // ac_shared_bank_array classes support banked memory modeling in HLS.
 //
@@ -17,28 +17,13 @@
 #pragma once
 
 #include <cstddef>
-#include <cassert>
+#include <ac_assert.h>
 #include <ac_shared_proxy.h>
 
-//==========================================================================
+#include <ac_pow2.h>
+#include <ac_array_1D.h>
 
-// local helper class for maximum power of 2 <= W
 
-template <size_t W>
-struct ac_pow2;
-
-template <>
-struct ac_pow2<1>
-{
-  static const size_t P = 1;
-};
-
-template <size_t W>
-struct ac_pow2
-{
-  typedef ac_pow2<(W>>1)> SUB;
-  static const size_t P = SUB::P << 1;
-};
 
 //==========================================================================
 
@@ -51,10 +36,21 @@ class ac_shared_bank_array_base;
 template <typename B>
 class ac_shared_bank_array_base<B, 1>
 {
-  ac_shared<B> a;
+  B a;
 public:
   B &operator[](size_t idx) { return a; }
   const B &operator[](size_t idx) const { return a; }
+};
+
+// specialization to get index checking of rightmost dimension using ac_array_1D
+template <typename E, size_t D>
+class ac_shared_bank_array_base<E [D], 1>
+{
+  typedef ac_array_1D<E,D> AC;
+  ac_shared<AC> a;
+public:
+  AC &operator[](size_t idx) { return a; }
+  const AC &operator[](size_t idx) const { return a; }
 };
 
 template <typename B, size_t C>
@@ -65,16 +61,33 @@ class ac_shared_bank_array_base
   ac_shared_bank_array_base<B, C-W> a1;
 public:
   B &operator[](size_t idx) { 
-#ifndef __SYNTHESIS__
     assert(idx < C);
-#endif
     size_t aidx = idx & (W-1); return idx&W ? a1[aidx] : a0[aidx]; 
   }
 
   const B &operator[](size_t idx) const {
-#ifndef __SYNTHESIS__
     assert(idx < C);
-#endif
+    size_t aidx = idx & (W-1); return idx&W ? a1[aidx] : a0[aidx]; 
+  }
+};
+
+// specialization to get index checking of rightmost dimension using ac_array
+template <typename E, size_t D, size_t C>
+class ac_shared_bank_array_base<E [D], C>
+{
+  typedef ac_array_1D<E,D> AC;
+  typedef E B[D];
+  static const size_t W = ac_pow2<C-1>::P;
+  ac_shared_bank_array_base<B, W  > a0;
+  ac_shared_bank_array_base<B, C-W> a1;
+public:
+  AC &operator[](size_t idx) { 
+    assert(idx < C);
+    size_t aidx = idx & (W-1); return idx&W ? a1[aidx] : a0[aidx]; 
+  }
+
+  const AC &operator[](size_t idx) const {
+    assert(idx < C);
     size_t aidx = idx & (W-1); return idx&W ? a1[aidx] : a0[aidx]; 
   }
 };

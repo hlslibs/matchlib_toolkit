@@ -1,6 +1,5 @@
 #!/usr/bin/python2
 
-# This example code is unsupported and untested.
 
 import sys
 import os

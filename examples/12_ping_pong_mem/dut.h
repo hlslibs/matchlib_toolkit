@@ -4,11 +4,7 @@
 
 #include <mc_connections.h>
 
-#if defined(__SYNTHESIS__) || defined(CCS_SYSC)
-#include <ac_shared.h>
-#endif
-
-#include "RAM_1R1W.h"
+#include <ac_shared_array_1D.h>
 #include <extended_array.h>
 
 SC_MODULE(dut)
@@ -26,11 +22,6 @@ SC_MODULE(dut)
     SC_THREAD(thread2);
     sensitive << clk.pos();
     async_reset_signal_is(rst_bar, false);
-
-#ifndef USE_EXT_ARRAY
-    //Instantiated memories must bind clocks
-    // mem.CK(clk);
-#endif
   }
 
   void thread1() {
@@ -71,8 +62,7 @@ SC_MODULE(dut)
 #ifdef USE_EXT_ARRAY
   extended_array<ac_int<16>,128> mem{"mem_prehls"};
 #else
-//  RAM_1R1W_model<>::mem<ac_int<16>,128> CCS_INIT_S1(mem);//Ping-pong shared memory
-  ac_shared<ac_int<16> [128]> mem;
+  ac_shared_array_1D<ac_int<16>, 128> mem;
 #endif
 };
 
