@@ -1,3 +1,8 @@
+// INSERT_EULA_COPYRIGHT: 2023
+
+
+// Author: Stuart Swan, Platform Architect, Siemens EDA
+// Date: 19 April 2024
 
 #pragma once
 
@@ -9,11 +14,12 @@ template <typename T, unsigned N>
 class extended_array : public ac_array_1D<T,N> {
 public:
 
-  extended_array(std::string _nm = "", bool _add_time_stamp=0) 
+  extended_array(std::string _nm = "", bool _add_time_stamp=0, bool _umr_assert=1) 
   {
 #ifndef __SYNTHESIS__
     name = _nm;
     add_time_stamp = _add_time_stamp;
+    umr_assert = _umr_assert;
     if (name != "") {
       mem_read_log.open(name + "_read.log");
       mem_write_log.open(name + "_write.log");
@@ -24,17 +30,12 @@ public:
 
 #ifndef __SYNTHESIS__
   void Reset() {
+    ac_array_1D<T,N>& tmp = *this; 
     for (unsigned i=0; i < N; i++) {
       write_cnt[i] = 0;
-      ac_array_1D<T,N>& tmp = *this; 
       tmp[i] = 0;
     }
   }
-
-  //use:  
-  //   sort -k1 *read.log > xxr 
-  //   sort -k1 *write.log > xxw 
-  //   diff -d -y xxw xxr
 
   static const int elem_width{Wrapped<T>::width};
   ofstream mem_read_log;
@@ -42,6 +43,7 @@ public:
   std::string name;
   uint32_t write_cnt[N];
   bool add_time_stamp;
+  bool umr_assert;
 
 
   struct elem_proxy {
@@ -59,6 +61,8 @@ public:
         os << "";
       sc_lv_base val(elem_width);
       assert(idx < N);
+      if (ext_array.umr_assert)
+        assert(ext_array.write_cnt[idx] > 0); // assert on uninitialized memory read (UMR)
       val = array[idx];
       ext_array.mem_read_log << std::setfill('0') << std::setw(8) << std::hex << idx 
            << " " << ext_array.write_cnt[idx] << " " << val << " " << os.str() << "\n";
