@@ -132,7 +132,7 @@ public:
             arr_t orig  = (*array)[aw.addr / bytesPerBeat];
             arr_t wdata = w.data.to_uint64();
 
-#pragma unroll
+#pragma hls_unroll
             for (int i=0; i<WSTRB_WIDTH; i++)
               if (w.wstrb[i]) {
                 orig = nvhls::set_slc(orig, nvhls::get_slc<8>(wdata, (i*8)), (i*8));
