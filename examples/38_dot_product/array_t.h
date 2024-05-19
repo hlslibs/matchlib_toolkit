@@ -8,7 +8,7 @@
  *  Release Type    : Production Release                                  *
  *  Release Build   : 2.1.1       *
  *                                                                        *
- *  Copyright  Siemens                                                *
+ *  Copyright 2024 Siemens                                                *
  *                                                                        *
  **************************************************************************
  *  Licensed under the Apache License, Version 2.0 (the "License");       *
