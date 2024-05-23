@@ -33,6 +33,16 @@
 // Author: Stuart Swan, Platform Architect, Siemens EDA
 // Date: 22 Dec 2023
 
+//*****************************************************************************************
+// File: auto_gen_fields.h
+//
+// Description: C++ Macros to simplify making user-defined struct types work in Connections
+//
+// Revision History:
+//       2.1.1 - Unspecified changes from Stuart Swan
+//             - Fix for CAT-35587 from Stuart Swan
+//*****************************************************************************************
+
 #pragma once
 
 #ifdef __clang__
@@ -245,6 +255,7 @@ public:
 #define AUTO_GEN_PORT_INFO(THIS_TYPE, X) \
   GEN_PORT_INFO_VEC(PORT_LIST(X)) \
   //
+
 
 
 class auto_gen_split_wrap {
