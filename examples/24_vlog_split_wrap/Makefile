@@ -1,4 +1,4 @@
-# Makefile for example 05_push_pop
+# Makefile for example 24_vlog_split_wrap
 
 CXXFLAGS += -g -std=c++11 -Wall -Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-label
 
@@ -131,7 +131,7 @@ CPPFLAGS += -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES
 
 LIBS += -lsystemc -lpthread
 
-.PHONY: all build run clean sim_clean
+.PHONY: all build run clean
 build: sim_sc
 
 all: run
@@ -181,8 +181,8 @@ help: checkvars
 	-@echo "  LD_LIBRARY_PATH    = $(LD_LIBRARY_PATH)"
 	-@echo ""
 
-clean: sim_clean
-	@rm -rf *.vcd *.wlf *atapult* *wrap* work transcript
+clean:
+	@rm -rf sim_sc trace.vcd trace.wlf dut_split_wrap.v
 
 
 
