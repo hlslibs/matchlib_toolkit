@@ -20,7 +20,7 @@
 #include <ac_assert.h>
 #include <ac_shared_proxy.h>
 
-#include <ac_pow2.h>
+#include <ac_max_pow2.h>
 #include <ac_array_1D.h>
 
 
@@ -56,7 +56,7 @@ public:
 template <typename B, size_t C>
 class ac_shared_bank_array_base
 {
-  static const size_t W = ac_pow2<C-1>::P;
+  static const size_t W = ac_max_pow2<C-1>::P;
   ac_shared_bank_array_base<B, W  > a0;
   ac_shared_bank_array_base<B, C-W> a1;
 public:
@@ -77,7 +77,7 @@ class ac_shared_bank_array_base<E [D], C>
 {
   typedef ac_array_1D<E,D> AC;
   typedef E B[D];
-  static const size_t W = ac_pow2<C-1>::P;
+  static const size_t W = ac_max_pow2<C-1>::P;
   ac_shared_bank_array_base<B, W  > a0;
   ac_shared_bank_array_base<B, C-W> a1;
 public:
