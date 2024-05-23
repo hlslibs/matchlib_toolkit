@@ -1,3 +1,4 @@
+# Makefile for example 38_dot_product
 
 CXXFLAGS += -g -std=c++11 -Wall -Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-label
 
@@ -19,13 +20,22 @@ CATAPULT_HOME ?= $(MGC_HOME)
 ifneq "$(CATAPULT_HOME)" ""
 
 # Pick up SystemC via "SYSTEMC_HOME"
-SYSTEMC_HOME ?= $(CATAPULT_HOME)/shared
+ifneq "$(SYSTEMC_HOME)" ""
+$(warning - Warning: SYSTEMC_HOME and MGC_HOME/CATAPULT_HOME are both set. Using SystemC from MGC_HOME/CATAPULT_HOME)
+endif
+SYSTEMC_HOME := $(CATAPULT_HOME)/shared
 
 # Pick up Connections via "CONNECTIONS_HOME"
 CONNECTIONS_HOME ?= $(CATAPULT_HOME)/shared
 
 # Pick up MatchLib via "MATCHLIB_HOME"
 MATCHLIB_HOME ?= $(CATAPULT_HOME)/shared/pkgs/matchlib
+
+# Pick up Boost Preprocessor via "BOOST_HOME"
+BOOST_HOME ?= $(CATAPULT_HOME)/shared/pkgs/boostpp/pp
+
+# Pick up RapidJSON via "RAPIDJSON_HOME"
+RAPIDJSON_HOME ?= $(CATAPULT_HOME)/shared
 
 # Pick up AC Datatypes via "AC_TYPES"
 AC_TYPES ?= $(CATAPULT_HOME)/shared
@@ -36,6 +46,8 @@ AC_SIMUTILS ?= $(CATAPULT_HOME)/shared
 # Pick up C++ compiler
 CXX := $(CATAPULT_HOME)/bin/g++
 LD_LIBRARY_PATH := $(if $(LD_LIBRARY_PATH),$(LD_LIBRARY_PATH):$(CATAPULT_HOME)/lib:$(CATAPULT_HOME)/shared/lib,$(CATAPULT_HOME)/lib:$(CATAPULT_HOME)/shared/lib)
+export LD_LIBRARY_PATH
+LIBDIRS += -L$(CATAPULT_HOME)/lib -L$(CATAPULT_HOME)/shared/lib
 
 else
 
@@ -50,6 +62,12 @@ endif
 ifndef MATCHLIB_HOME
 $(error - Environment variable MATCHLIB_HOME must be defined)
 endif
+ifndef BOOST_HOME
+$(error - Environment variable BOOST_HOME must be defined)
+endif
+ifndef RAPIDJSON_HOME
+$(error - Environment variable RAPIDJSON_HOME must be defined)
+endif
 ifndef AC_TYPES
 $(error - Environment variable AC_TYPES must be defined)
 endif
@@ -59,6 +77,9 @@ endif
 
 # Default to the compiler installed on the machine
 CXX ?= g++
+LD_LIBRARY_PATH := $(if $(LD_LIBRARY_PATH),$(LD_LIBRARY_PATH):$(SYSTEMC_HOME)/lib:$(SYSTEMC_HOME)/lib-linux64,$(SYSTEMC_HOME)/lib:$(SYSTEMC_HOME)/lib-linux64)
+export LD_LIBRARY_PATH
+LIBDIRS += -L$(SYSTEMC_HOME)/lib -L$(SYSTEMC_HOME)/lib-linux64
 
 endif
 
@@ -73,6 +94,12 @@ checkvar_CONNECTIONS_HOME: $(CONNECTIONS_HOME)/include/connections/connections.h
 # Check: $(MATCHLIB_HOME)/cmod/include/nvhls_marshaller.h
 checkvar_MATCHLIB_HOME: $(MATCHLIB_HOME)/cmod/include/nvhls_marshaller.h
 
+# Check: $(BOOST_HOME)/include/boost/preprocessor/arithmetic/add.hpp
+checkvar_BOOST_HOME: $(BOOST_HOME)/include/boost/preprocessor/arithmetic/add.hpp
+
+# Check: $(RAPIDJSON_HOME)/include/rapidjson/document.h
+checkvar_RAPIDJSON_HOME: $(RAPIDJSON_HOME)/include/rapidjson/document.h
+
 # Check: $(AC_TYPES)/include/ac_int.h
 checkvar_AC_TYPES: $(AC_TYPES)/include/ac_int.h
 
@@ -80,35 +107,45 @@ checkvar_AC_TYPES: $(AC_TYPES)/include/ac_int.h
 checkvar_AC_SIMUTILS: $(AC_SIMUTILS)/include/mc_scverify.h
 
 # Rule to check that environment variables are set correctly
-checkvars: checkvar_SYSTEMC_HOME checkvar_CONNECTIONS_HOME checkvar_MATCHLIB_HOME checkvar_AC_TYPES checkvar_AC_SIMUTILS
+checkvars: checkvar_SYSTEMC_HOME checkvar_CONNECTIONS_HOME checkvar_MATCHLIB_HOME checkvar_BOOST_HOME checkvar_RAPIDJSON_HOME checkvar_AC_TYPES checkvar_AC_SIMUTILS
 # =====================================================================
 
-# Determine the directory containing the source files from the path to this Makefile
-SOURCE_DIR = $(dir $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
+export CATAPULT_HOME SYSTEMC_HOME CONNECTIONS_HOME MATCHLIB_HOME BOOST_HOME RAPIDJSON_HOME AC_TYPES AC_SIMUTILS
 
-INCDIRS := -I$(SOURCE_DIR) -I../../include
+# Determine the director containing the source files from the path to this Makefile
+PWD := $(shell pwd)
+SOURCE_DIR1 = $(dir $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
+SOURCE_DIR = $(if $(subst ./,,$(SOURCE_DIR1)),$(SOURCE_DIR1),$(PWD)/)
+
+INCDIRS := -I$(SOURCE_DIR) -I$(SOURCE_DIR)/../../include
 INCDIRS += -I$(SYSTEMC_HOME)/include -I$(SYSTEMC_HOME)/src
 INCDIRS += -I$(CONNECTIONS_HOME)/include
 INCDIRS += -I$(MATCHLIB_HOME)/cmod/include
-INCDIRS += -I$(AC_TYPES)/include
-INCDIRS += -I$(AC_SIMUTILS)/include
 INCDIRS += -I$(BOOST_HOME)/include
 INCDIRS += -I$(RAPIDJSON_HOME)/include
+INCDIRS += -I$(AC_TYPES)/include
+INCDIRS += -I$(AC_SIMUTILS)/include
 
 CPPFLAGS += $(INCDIRS)
 CPPFLAGS += -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES
 
-LIBDIRS += -L$(SYSTEMC_HOME)/lib -L$(SYSTEMC_HOME)/lib-linux64
 LIBS += -lsystemc -lpthread
-LD_LIBRARY_PATH := $(if $(LD_LIBRARY_PATH),$(LD_LIBRARY_PATH):$(SYSTEMC_HOME)/lib,$(SYSTEMC_HOME)/lib)
-export LD_LIBRARY_PATH
 
 .PHONY: all build run clean sim_clean
 build: single_process multi_process banked_multi_process
 
 all: build
 
-run: trace.vcd
+run_single_process: single_process
+	./single_process
+
+run_multi_process: multi_process
+	./multi_process
+
+run_banked_multi_process: banked_multi_process
+	./banked_multi_process
+
+run: run_single_process run_multi_process run_banked_multi_process
 
 single_process: checkvars $(wildcard $(SOURCE_DIR)*.h) $(wildcard $(SOURCE_DIR)*.cpp)
 	$(CXX) -DSINGLE_PROCESS $(CXXFLAGS) $(CPPFLAGS) $(LIBDIRS) $(wildcard $(SOURCE_DIR)*.cpp) -o $@ $(LIBS)
@@ -128,30 +165,36 @@ view_wave: trace.wlf
 	vsim $< -nolog -do "add wave -r trace:/SystemC/*" -do "wave zoom full"
 
 sim_clean:
-	@rm -rf sim_*
+	@rm -rf my_log_data.txt my_log_names.txt trace.vcd
 
 help:
 	-@echo "Makefile targets:"
 	-@echo "  clean     - Clean up from previous make runs"
 	-@echo "  all       - Perform all of the targets below"
-	-@echo "  single_process - Compile SystemC design"
-	-@echo "  run       - Execute SystemC design and generate trace.vcd"
-	-@echo "  view_wave - Convert trace.vcd to QuestaSim wlf file and view in QuestaSim"
+	-@echo "  build     - Compile SystemC designs"
+	-@echo "  run_single_process       - Execute SystemC design and generate trace.vcd"
+	-@echo "  run_multi_process        - Execute SystemC design and generate trace.vcd"
+	-@echo "  run_banked_multi_process - Execute SystemC design and generate trace.vcd"
+	-@echo "  view_wave - Convert latest trace.vcd to QuestaSim wlf file and view in QuestaSim"
+	-@echo ""
+	-@echo "  SOURCE_DIR         = $(SOURCE_DIR)"
+	-@echo "  PWD                = $(PWD)"
 	-@echo ""
 	-@echo "Environment/Makefile Variables:"
 	-@echo "  CATAPULT_HOME      = $(CATAPULT_HOME)"
 	-@echo "  SYSTEMC_HOME       = $(SYSTEMC_HOME)"
 	-@echo "  CONNECTIONS_HOME   = $(CONNECTIONS_HOME)"
 	-@echo "  MATCHLIB_HOME      = $(MATCHLIB_HOME)"
+	-@echo "  BOOST_HOME         = $(BOOST_HOME)"
+	-@echo "  RAPIDJSON_HOME     = $(RAPIDJSON_HOME)"
 	-@echo "  AC_TYPES           = $(AC_TYPES)"
 	-@echo "  AC_SIMUTILS        = $(AC_SIMUTILS)"
 	-@echo "  CXX                = $(CXX)"
+	-@echo "  INCDIRS            = $(INCDIRS)"
 	-@echo "  LIBDIRS            = $(LIBDIRS)"
 	-@echo "  LD_LIBRARY_PATH    = $(LD_LIBRARY_PATH)"
 	-@echo ""
 
 clean: sim_clean
-	@rm -rf *.vcd *.wlf design_check* my_log* catapult.log vscode Catapult* matrixMultiply .vscode single_process multi_process banked_multi_process
-
-
+	@rm -rf banked_multi_process multi_process single_process
 

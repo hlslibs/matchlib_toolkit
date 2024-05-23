@@ -5,11 +5,16 @@ set sfd [file dirname [info script]]
 
 # Reset the options to the factory defaults
 options defaults
-project new
 
 # Set simulation options
 options set /Input/CppStandard c++11
 options set /Input/CompilerFlags {-DSINGLE_PROCESS -DSC_INCLUDE_DYNAMIC_PROCESSES}
+options set /Input/SearchPath {$MGC_HOME/shared/examples/matchlib/toolkit/include} -append
+options set /Input/SearchPath {$MGC_HOME/shared/pkgs/matchlib/cmod/include} -append
+options set /Input/SearchPath {$MGC_HOME/shared/pkgs/boostpp/pp/include} -append
+
+project new
+
 flow package require /SCVerify
 
 # Read Design and Libraries
