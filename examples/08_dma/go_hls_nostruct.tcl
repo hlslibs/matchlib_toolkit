@@ -44,7 +44,7 @@ if {$enable_preserve_fields} {
 }
 
 go analyze
-directive set -DESIGN_HIERARCHY dma
+solution design set dma -top
 
 go compile
 solution library add nangate-45nm_beh -- -rtlsyntool OasysRTL -vendor Nangate -technology 045nm
