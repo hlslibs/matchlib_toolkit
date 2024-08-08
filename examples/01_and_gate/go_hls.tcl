@@ -22,7 +22,7 @@ solution file add "$sfd/and_gate.h" -type CHEADER
 solution file add "$sfd/testbench.cpp" -type C++ -exclude true
 
 go analyze
-directive set -DESIGN_HIERARCHY and_gate
+solution design set and_gate -top
 
 # Enable addition of stall control pin to design
 #directive set -STALL_FLAG true

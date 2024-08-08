@@ -50,7 +50,7 @@ solution file add "$sfd/sc_main.cpp" -type C++ -exclude true
 solution file add {$MGC_HOME/shared/include/bmpUtil/bmp_io.cpp} -type C++ -exclude true
 
 go analyze
-directive set -DESIGN_HIERARCHY {EdgeHierarchy}
+solution design set {EdgeHierarchy} -top
 
 go compile
 

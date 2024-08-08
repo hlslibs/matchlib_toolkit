@@ -32,7 +32,7 @@ solution file add "$sfd/apb_dma.h" -type CHEADER
 solution file add "$sfd/testbench.cpp" -type C++ -exclude true
 
 go analyze
-directive set -DESIGN_HIERARCHY dma
+solution design set dma -top
 directive set -CHAN_IO_PROTOCOL coupled
 
 go compile

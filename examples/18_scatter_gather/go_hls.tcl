@@ -26,7 +26,7 @@ solution file add "$sfd/scatter_gather_dma.h" -type CHEADER
 solution file add "$sfd/testbench.cpp" -type C++ -exclude true
 
 go analyze
-directive set -DESIGN_HIERARCHY scatter_gather_dma
+solution design set scatter_gather_dma -top
 
 go compile
 solution library add nangate-45nm_beh -- -rtlsyntool OasysRTL -vendor Nangate -technology 045nm

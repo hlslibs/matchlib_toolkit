@@ -22,7 +22,7 @@ solution file add "$sfd/dut.h" -type CHEADER
 solution file add "$sfd/testbench.cpp" -type C++ -exclude true
 
 go analyze
-directive set -DESIGN_HIERARCHY dut
+solution design set dut -top
 directive set -IO_MODE fixed
 
 go compile

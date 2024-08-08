@@ -21,7 +21,7 @@ solution file add "$sfd/crossed_flops.h" -type CHEADER
 solution file add "$sfd/testbench.cpp" -type C++ -exclude true
 
 go analyze
-directive set -DESIGN_HIERARCHY crossed_flops
+solution design set crossed_flops -top
 
 go compile
 solution library add nangate-45nm_beh -- -rtlsyntool OasysRTL -vendor Nangate -technology 045nm

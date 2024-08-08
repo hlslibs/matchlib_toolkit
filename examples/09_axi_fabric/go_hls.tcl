@@ -39,7 +39,7 @@ if {$enable_preserve_fields} {
 }
 
 go analyze
-directive set -DESIGN_HIERARCHY fabric
+solution design set fabric -top
 
 go compile
 solution library add nangate-45nm_beh -- -rtlsyntool OasysRTL -vendor Nangate -technology 045nm

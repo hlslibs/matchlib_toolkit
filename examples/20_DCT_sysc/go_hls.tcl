@@ -36,7 +36,7 @@ solution file add "$sfd/sc_main.cpp" -exclude true
 directive set -STRICT_MIO_SCHEDULING false
 
 go analyze
-directive set -DESIGN_HIERARCHY dct
+solution design set dct -top
 
 go compile
 solution library add nangate-45nm_beh -- -rtlsyntool OasysRTL -vendor Nangate -technology 045nm

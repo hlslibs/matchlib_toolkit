@@ -29,7 +29,7 @@ foreach example {DESIGN_1 DESIGN_2 DESIGN_3 DESIGN_4 DESIGN_5 DESIGN_6 DESIGN_7 
   solution rename $example
   
   go analyze
-  directive set -DESIGN_HIERARCHY dut
+  solution design set dut -top
 
   go compile
   solution library add nangate-45nm_beh -- -rtlsyntool OasysRTL -vendor Nangate -technology 045nm
