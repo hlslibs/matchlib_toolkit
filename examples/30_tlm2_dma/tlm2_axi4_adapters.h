@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 2.1       *
+ *  Software Version: 2.2                                                 *
  *                                                                        *
- *  Release Date    : Mon Jan 15 20:15:38 PST 2024       *
+ *  Release Date    : Thu Aug 22 21:10:31 PDT 2024                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 2.1.1       *
+ *  Release Build   : 2.2.0                                               *
  *                                                                        *
  *  Copyright 2020 Siemens                                                *
  *                                                                        *
@@ -141,7 +141,7 @@ public:
 
         r.data = read_buf[read_beat++];
         r.resp = (trans.get_response_status() == TLM_OK_RESPONSE) ?  
-         axi_cfg::Enc::XRESP::OKAY : axi_cfg::Enc::XRESP::SLVERR;
+          axi_cfg::Enc::XRESP::OKAY : axi_cfg::Enc::XRESP::SLVERR;
 
         if (!r_slave0.next_multi_read(ar, r)) { break; }
       }
