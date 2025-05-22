@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 2.2                                                 *
+ *  Software Version: 2.3                                                 *
  *                                                                        *
- *  Release Date    : Thu Aug 22 21:10:31 PDT 2024                        *
+ *  Release Date    : Tue May 13 15:55:46 PDT 2025                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 2.2.0                                               *
+ *  Release Build   : 2.3.0                                               *
  *                                                                        *
  *  Copyright 2020 Siemens                                                *
  *                                                                        *
@@ -103,7 +103,7 @@ class BufferStatus : public sc_module {
 #else
     sensitive << tail;
     for(int i = 0; i < NumEntries; i++){
-      sensitive << buffer[i].msg;
+      sensitive << buffer[i].dat;
     }
 #endif
 
@@ -159,7 +159,7 @@ class BufferStatus : public sc_module {
     bool do_deq = !empty;
     if (do_deq) {
 #endif
-      deq.dat.write(buffer[tail.read()].msg.read());
+      deq.dat.write(buffer[tail.read()].dat.read());
 #ifndef __SYNTHESIS__
     } else {
       deq.dat.write(0);
@@ -242,7 +242,7 @@ class BufferStatus : public sc_module {
 
       // Enqueue message
       if (enq.vld.read() && !full.read()) {
-        buffer[head.read()].msg.write(enq.dat.read());
+        buffer[head.read()].dat.write(enq.dat.read());
       }
 
       wait();
@@ -256,7 +256,7 @@ class BufferStatus : public sc_module {
       unsigned int width = (Message().length() / 4);
       // Enqueue port
       if (enq.vld.read() && enq.rdy.read()) {
-        std::cout << std::hex << std::setw(width) << enq.msg.read();
+        std::cout << std::hex << std::setw(width) << enq.dat.read();
       } else {
         std::cout << std::setw(width + 1) << " ";
       }
@@ -265,7 +265,7 @@ class BufferStatus : public sc_module {
 
       // Dequeue port
       if (deq.vld.read() && deq.rdy.read()) {
-        std::cout << std::hex << std::setw(width) << deq.msg.read();
+        std::cout << std::hex << std::setw(width) << deq.dat.read();
       } else {
         std::cout << std::setw(width + 1) << " ";
       }

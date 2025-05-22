@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 2.2                                                 *
+ *  Software Version: 2.3                                                 *
  *                                                                        *
- *  Release Date    : Thu Aug 22 21:10:31 PDT 2024                        *
+ *  Release Date    : Tue May 13 15:55:46 PDT 2025                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 2.2.0                                               *
+ *  Release Build   : 2.3.0                                               *
  *                                                                        *
  *  Copyright 2023 Siemens                                                *
  *                                                                        *
@@ -32,7 +32,7 @@
 
 #pragma once
 
-#include "ac_int.h"
+#include <ac_int.h>
 
 template<typename T>
 inline T propagate_leading_one_internal(T valid){

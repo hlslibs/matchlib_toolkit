@@ -46,12 +46,16 @@ go libraries
 directive set -CLOCKS {clk {-CLOCK_PERIOD 5.0}}
 
 go assembly
-directive set /pixelpipe_mod/dct/dct_h/while -PIPELINE_INIT_INTERVAL 8
+directive set /pixelpipe_mod/dct/dct_h/while -PIPELINE_INIT_INTERVAL 0
+directive set /pixelpipe_mod/dct/dct_h/ROW0 -PIPELINE_INIT_INTERVAL 8
+
 directive set /pixelpipe_mod/dct/dct_h/COPY_ROW0 -UNROLL yes
 directive set /pixelpipe_mod/dct/dct_h/COL0 -UNROLL yes
 directive set /pixelpipe_mod/dct/dct_h/PRE_ADD -UNROLL yes
 directive set /pixelpipe_mod/dct/dct_h/MAC -UNROLL yes
-directive set /pixelpipe_mod/dct/dct_v/while -PIPELINE_INIT_INTERVAL 8
+directive set /pixelpipe_mod/dct/dct_v/while -PIPELINE_INIT_INTERVAL 0
+directive set /pixelpipe_mod/dct/dct_v/COL1 -PIPELINE_INIT_INTERVAL 8
+
 directive set /pixelpipe_mod/dct/dct_v/COPY_ROW1 -UNROLL yes
 directive set /pixelpipe_mod/dct/dct_v/ROW1 -UNROLL yes
 directive set /pixelpipe_mod/dct/dct_v/PRE_ADD -UNROLL yes

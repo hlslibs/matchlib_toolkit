@@ -30,8 +30,8 @@ solution library add ccs_sample_mem
 go libraries
 directive set -CLOCKS {clk {-CLOCK_PERIOD 2 -CLOCK_HIGH_TIME 1 -CLOCK_OFFSET 0.000000 -CLOCK_UNCERTAINTY 0.0}}
 go assembly
-directive set /dut/mem:rsc -MAP_TO_MODULE ccs_sample_mem.ccs_ram_sync_1R1W
-directive set /dut/mem:rsc -EXTERNAL_MEMORY true
+directive set /dut/main/mem:rsc -MAP_TO_MODULE ccs_sample_mem.ccs_ram_sync_1R1W
+directive set /dut/main/mem:rsc -EXTERNAL_MEMORY true
 go architect
 ignore_memory_precedences -from *write_mem* -to *read_mem*
 go extract

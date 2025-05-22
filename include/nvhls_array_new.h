@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 2.1       *
+ *  Software Version: 2.3                                                 *
  *                                                                        *
- *  Release Date    : Mon Jan 15 20:15:38 PST 2024       *
+ *  Release Date    : Tue May 13 15:55:46 PDT 2025                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 2.1.1       *
+ *  Release Build   : 2.3.0                                               *
  *                                                                        *
  *  Copyright 2023 Siemens                                                *
  *                                                                        *
@@ -50,13 +50,13 @@
 
 #ifndef NVHLS_ARRAY_BOOST
 
-#include "ac_bank_array_no_assert.h"
-#include "systemc.h"
+#include <ac_bank_array.h>
+#include <systemc.h>
 
 namespace nvhls {
 
 template <typename Type, unsigned int VectorLength>
-class nv_array : public ac_bank_array_no_assert_base<Type, VectorLength>
+class nv_array : public ac_bank_array_base<Type, VectorLength>
 {
 public:
   nv_array() {}

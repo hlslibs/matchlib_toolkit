@@ -22,6 +22,8 @@ flow package option set /QuestaSIM/MSIM_DOFILE $sfd/msim.do
 solution file add "$sfd/dut.h" -type CHEADER
 solution file add "$sfd/testbench.cpp" -type C++ -exclude true
 
+directive set -STRICT_WAITSYNC_IO_SCHEDULING false
+directive set -STRICT_CHANSYNC_IO_SCHEDULING false
 go analyze
 solution design set dut -top
 
