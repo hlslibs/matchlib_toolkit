@@ -30,5 +30,8 @@ Steps:
 
 7. View the RTL simulation waveforms and compare to SC waveforms before HLS synthesis
 
-8. Delete all generated files
+8. Run Catapult Coverage (CCOV) and Catapult Formal CoverCheck (CCoverCheck):
+   Please refer `./verif/README`.
+
+9. Delete all generated files
     make clean

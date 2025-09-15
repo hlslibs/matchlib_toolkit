@@ -3,37 +3,37 @@
         "dut1.dout0_comb_BA": {
             "latency": 0,
             "capacity": 0,
-            "src_name": "dut1.divergence_inst.dout0_vld",
-            "dest_name": "dut1.block0_inst.din_vld"
+            "src_name": "dut1.divergence_inst.dout0",
+            "dest_name": "dut1.block0_inst.din"
         },
         "dut1.dout1_comb_BA": {
             "latency": 0,
             "capacity": 0,
-            "src_name": "dut1.divergence_inst.dout1_vld",
-            "dest_name": "dut1.block1_inst.din_vld"
+            "src_name": "dut1.divergence_inst.dout1",
+            "dest_name": "dut1.block1_inst.din"
         },
         "dut1.bout0_comb_BA": {
             "latency": 8,
             "capacity": 8,
-            "src_name": "dut1.block0_inst.dout_vld",
-            "dest_name": "dut1.reconvergence_inst.din0_vld"
+            "src_name": "dut1.block0_inst.dout",
+            "dest_name": "dut1.reconvergence_inst.din0"
         },
         "dut1.bout1_comb_BA": {
             "latency": 0,
             "capacity": 0,
-            "src_name": "dut1.block1_inst.dout_vld",
-            "dest_name": "dut1.reconvergence_inst.din1_vld"
+            "src_name": "dut1.block1_inst.dout",
+            "dest_name": "dut1.reconvergence_inst.din1"
         },
         "din_comb_BA": {
             "latency": 0,
             "capacity": 0,
             "src_name": "UNBOUND",
-            "dest_name": "dut1.din_vld"
+            "dest_name": "dut1.din"
         },
         "dout_comb_BA": {
             "latency": 0,
             "capacity": 0,
-            "src_name": "dut1.dout_vld",
+            "src_name": "dut1.dout",
             "dest_name": "UNBOUND"
         }
     }

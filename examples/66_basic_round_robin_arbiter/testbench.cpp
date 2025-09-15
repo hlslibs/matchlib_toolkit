@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 2.3                                                 *
+ *  Software Version: 2.4                                                 *
  *                                                                        *
- *  Release Date    : Tue May 13 15:55:46 PDT 2025                        *
+ *  Release Date    : Tue Aug 12 22:42:26 PDT 2025                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 2.3.0                                               *
+ *  Release Build   : 2.4.0                                               *
  *                                                                        *
  *  Copyright 2023 Siemens                                                *
  *                                                                        *
@@ -30,8 +30,8 @@
  *************************************************************************/
 
 
-#include "mc_scverify.h"
 #include "dut.h"
+#include <mc_scverify.h>
 
 SC_MODULE(driver){
   sc_in<bool> clk{"clk"};

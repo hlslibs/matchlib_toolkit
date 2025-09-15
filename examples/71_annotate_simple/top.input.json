@@ -3,14 +3,14 @@
         "out1_comb_BA": {
             "latency": 10,
             "capacity": 10,
-            "src_name": "dut1.out1_vld",
+            "src_name": "dut1.out1",
             "dest_name": "UNBOUND"
         },
         "in1_comb_BA": {
             "latency": 0,
             "capacity": 0,
             "src_name": "UNBOUND",
-            "dest_name": "dut1.in1_vld"
+            "dest_name": "dut1.in1"
         }
     }
 }

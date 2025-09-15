@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 2.3                                                 *
+ *  Software Version: 2.4                                                 *
  *                                                                        *
- *  Release Date    : Tue May 13 15:55:46 PDT 2025                        *
+ *  Release Date    : Tue Aug 12 22:42:26 PDT 2025                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 2.3.0                                               *
+ *  Release Build   : 2.4.0                                               *
  *                                                                        *
  *  Copyright 2024 Siemens                                                *
  *                                                                        *
@@ -35,7 +35,7 @@
 #include <mc_connections.h>
 #include <ac_int.h> 
 #include "array_t.h"
-#include "ac_shared_bank_array.h"
+#include <ac_shared_bank_array.h>
 #include <string>
 
 

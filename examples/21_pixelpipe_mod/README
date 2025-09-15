@@ -9,3 +9,6 @@ Steps:
   catapult -f go_hls.tcl
 
 3. Within the Catapult GUI, launch QuestaSim to run the RTL simulation.
+
+4. Run Catapult Coverage (CCOV) and Catapult Formal CoverCheck (CCoverCheck):
+   Please refer `./verif/README`.

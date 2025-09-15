@@ -15,3 +15,6 @@ To see the input and output image results, compile with -DHAVE_DISPLAY
 5. Launch QuestaSim from Catapult GUI: Verfication->QuestaSim
 
 6. Type "run -all" in QuestaSim command line. Let run for 10 minutes at least.
+
+7. Run Catapult Coverage (CCOV) and Catapult Formal CoverCheck (CCoverCheck):
+   Please refer `./verif/README`.

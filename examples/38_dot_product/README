@@ -1,3 +1,6 @@
 
 
 See ./dot_product_example.pdf
+
+ Run Catapult Coverage (CCOV) and Catapult Formal CoverCheck (CCoverCheck):
+    Please refer `./verif/README`.

@@ -1,0 +1,24 @@
+<constraints>
+  <!-- Note: relative paths are relative to the location of this constraints file  -->
+
+  <!-- specify desired global constraints -->
+  <global_constraint name="CCOV_COMPILE_DIR" value="../cov_data/CCOV_COMPILE" />
+  <global_constraint name="CCOV_STATS_DIR" value="../cov_data/CCOV_STATS" />
+  <global_constraint name="CCOV_USE_USER_GCC" value="0" />
+  <!-- CCOV_USER_SYSTEMC_HOME is required iff SystemC HLS designs only -->
+  <global_constraint name="CCOV_USER_SYSTEMC_HOME" value="$(CATAPULT_HOME)/shared" />
+  
+  <!-- First flip the default CCOV 'instrument everything' by indicating,
+       via a path_cov_constraint, to not instrument anything -->
+  <path_cov_constraint include="0" token=".*" />
+
+  <!-- Note: relative paths are relative to the location of this ccov_constraints.xml file -->
+  <!-- Now instrument the hls design source -->
+  <file_cov_constraint include="1" token="../../wrap_dma_axi4_sigs.h" type="code" />
+  <file_cov_constraint include="1" token="../../axi4_signal_transactor.h" type="code" />
+  <file_cov_constraint include="1" token="../../../../include/dma.h" type="code" />
+
+  <!--
+    ...example comment...
+  -->
+</constraints>

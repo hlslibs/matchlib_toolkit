@@ -1,0 +1,47 @@
+This directory contains essential setup and configuration files to get coverage through Catapult Coverage (CCOV) and Catapult Formal CoverCheck (CCoverCheck):
+
+ ---------------------------------------
+Created and Verified with the following tool versions:
+   Catapult      2025.2
+   CCOV          2025.1
+   QuestaSim     2025.1
+   CoverCheck    2025.1
+ ---------------------------------------
+
+Steps:
+
+1. Set the required environment variables:
+
+    setenv CCOV_HOME /path to CCOV install
+    setenv QUESTA_HOME /Path to Questa Install
+    setenv CATAPULT_HOME /path to Mgc_home
+    setenv SLEC_HOME /path to SLEC Install or $CATAPULT_HOME/pkgs/cds_cpc/rls
+
+2. Run CDesignChecker and Generate .design_checker_db through Catapult:
+
+    make cat_cdc
+
+3. Compile and Instrument design with CCOV, generate the initial UCDB file from the CCOV generated data:
+
+    make run_ccov
+
+4. Run CCoverCheck and Apply CCoverCheck-generated exclusions to the initial UCDB using Visualizer:
+
+    make run_ccovercheck
+
+%> In order to Perform Steps 2 to 4:
+    
+    make all
+
+5. View UCDB file in Visualizer after applying CCoverCheck-generated exclusions:
+
+    make ccovercheck_viewcov
+
+6. If desired, delete generated files:
+
+    make clean
+
+%> To get the information about the all targets and environment variables:
+
+    make help
+

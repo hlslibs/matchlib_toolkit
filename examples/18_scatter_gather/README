@@ -35,6 +35,8 @@ Steps:
 
   Note in the waveforms the concurrent burst read and writes from the DMA fully utilize the AXI4 bus.
 
-7. If desired, delete generated files:
-   make clean
+7. Run Catapult Coverage (CCOV) and Catapult Formal CoverCheck (CCoverCheck):
+   Please refer `./verif/README`.
 
+8. If desired, delete generated files:
+   make clean

@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 2.3                                                 *
+ *  Software Version: 2.4                                                 *
  *                                                                        *
- *  Release Date    : Tue May 13 15:55:46 PDT 2025                        *
+ *  Release Date    : Tue Aug 12 22:42:26 PDT 2025                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 2.3.0                                               *
+ *  Release Build   : 2.4.0                                               *
  *                                                                        *
  *  Copyright 2020 Siemens                                                *
  *                                                                        *
@@ -38,10 +38,10 @@
 #undef CONNECTIONS_ASSERT_MSG
 #undef CONNECTIONS_SIM_ONLY_ASSERT_MSG
 
-#include "mc_toolkit_utils.h"
+#include <mc_toolkit_utils.h>
 
 #ifndef CONNECTIONS_SIM_ONLY
-#include "ac_blackbox.h"
+#include <ac_blackbox.h>
 #endif
 
 class block1 : public sc_module

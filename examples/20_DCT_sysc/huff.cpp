@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 2.3                                                 *
+ *  Software Version: 2.4                                                 *
  *                                                                        *
- *  Release Date    : Tue May 13 15:55:46 PDT 2025                        *
+ *  Release Date    : Tue Aug 12 22:42:26 PDT 2025                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 2.3.0                                               *
+ *  Release Build   : 2.4.0                                               *
  *                                                                        *
  *  Copyright 2020 Siemens                                                *
  *                                                                        *
@@ -31,7 +31,7 @@
 
 
 #include "huff.h"
-#include "ac_int.h"
+#include <ac_int.h>
 
 // Figure F.1 DC Difference magnitude categories
 unsigned char SSSS(int diff)
