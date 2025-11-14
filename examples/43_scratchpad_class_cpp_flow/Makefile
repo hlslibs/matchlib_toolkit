@@ -127,7 +127,8 @@ INCDIRS += -I$(AC_TYPES)/include
 INCDIRS += -I$(AC_SIMUTILS)/include
 
 CPPFLAGS += $(INCDIRS)
-CPPFLAGS += -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES 
+# Defining HLS_CATAPULT to ensure that CMOD_ASSERT_MSG is defined properly despite differences in matchlib versions
+CPPFLAGS += -DCONNECTIONS_ACCURATE_SIM -DSC_INCLUDE_DYNAMIC_PROCESSES  -DHLS_CATAPULT
 
 LIBS += -lsystemc -lpthread
 
