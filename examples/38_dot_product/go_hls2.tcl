@@ -13,6 +13,7 @@ options set /Input/SearchPath {$MGC_HOME/shared/examples/matchlib/toolkit/includ
 options set /Input/SearchPath {$MGC_HOME/shared/pkgs/matchlib/cmod/include} -append
 options set /Input/SearchPath {$MGC_HOME/shared/pkgs/boostpp/pp/include} -append
 options set /Input/SearchPath $sfd -append
+options set /Flows/QuestaSIM/MSIM_AC_TYPES false
 
 project new
 
