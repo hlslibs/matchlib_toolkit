@@ -2,11 +2,11 @@
  *                                                                        *
  *  Catapult(R) MatchLib Toolkit Example Design Library                   *
  *                                                                        *
- *  Software Version: 2025.4                                              *
+ *  Software Version: 2026.1                                              *
  *                                                                        *
- *  Release Date    : Thu Dec 11 11:04:23 PST 2025                        *
+ *  Release Date    : Tue Feb 10 19:00:18 PST 2026                        *
  *  Release Type    : Production Release                                  *
- *  Release Build   : 2025.4.1                                            *
+ *  Release Build   : 2026.1.0                                            *
  *                                                                        *
  *  Copyright 2020 Siemens                                                *
  *                                                                        *
@@ -353,13 +353,13 @@ namespace axi
   w_segment CCS_INIT_S1(n); \
   Connections::Combinational<ex_aw_payload> CCS_INIT_S1(n ## _ex_aw_chan); \
   Connections::Combinational<w_payload>     CCS_INIT_S1(n ## _w_chan); \
-  Connections::Combinational<b_payload> CCS_INIT_S1(n ## _b_chan);
+  Connections::Combinational<b_payload>     CCS_INIT_S1(n ## _b_chan);
 
 #define AXI4_W_SEGMENT_CFG(cfg, n) \
   cfg::w_segment CCS_INIT_S1(n); \
   Connections::Combinational<cfg::ex_aw_payload> CCS_INIT_S1(n ## _ex_aw_chan); \
   Connections::Combinational<cfg::w_payload>     CCS_INIT_S1(n ## _w_chan); \
-  Connections::Combinational<cfg::b_payload> CCS_INIT_S1(n ## _b_chan); 
+  Connections::Combinational<cfg::b_payload>     CCS_INIT_S1(n ## _b_chan); 
 
 #define AXI4_W_SEGMENT_BIND(n, _clk, _rst_bar, _w_master) \
     n .clk(_clk); \
@@ -376,13 +376,12 @@ namespace axi
     n ## _w_chan.ResetWrite(); \
     n ## _b_chan.ResetRead();
 
-
     struct w_segment : public sc_module {
       sc_in<bool> CCS_INIT_S1(clk);
       sc_in<bool> CCS_INIT_S1(rst_bar);
       Connections::Out<aw_payload>   CCS_INIT_S1(aw_out);
       Connections::Out<w_payload>    CCS_INIT_S1(w_out);
-      Connections::In<b_payload> CCS_INIT_S1(b_in);
+      Connections::In<b_payload>     CCS_INIT_S1(b_in);
 
       // queue incoming ex_aw_payload items
       Connections::In<ex_aw_payload> CCS_INIT_S1(ex_aw_chan);
